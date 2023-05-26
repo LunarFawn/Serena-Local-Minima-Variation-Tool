@@ -289,7 +289,7 @@ class LMV_Shuttle():
         self._token = new_token
 
 
-
+"""
 def SetModel(rna_model, temp_C):
     my_model = Model(material=rna_model, celsius=int(temp_C))
     return my_model
@@ -309,7 +309,7 @@ def GetPairProbs2DArray(mySequence, rna_model, temp_C ):
             pairValue = pairsArray[i][j]                    
             nucpairs[i].append(pairValue) 
     return nucpairs
-
+"""
 
 
 class EnsembleVariation:
@@ -467,10 +467,14 @@ class EnsembleVariation:
 
     def get_subopt_energy_gap(self, sequence_string, energy_delta_from_MFE: int):
         #run through subopt 
+        """
         my_model = SetModel(rna_model, 37)
         print(f'Starting subopt at {datetime.now()}')
         kcal_group_structures_list: Sara2StructureList = Sara2StructureList()
         ensemble_kcal_group= subopt(strands=sequence_string, model=my_model, energy_gap=energy_delta_from_MFE)
+        """
+        ensemble_kcal_group = []
+        kcal_group_structures_list: Sara2StructureList = Sara2StructureList()
         print(f'Completed subopt at {datetime.now()}')
         #get all the data out of it
         #list_of_nuc_lists: List[List[str]] = [[]]
