@@ -4,7 +4,6 @@ copyright 2023 Jennifer Pearl
 """
 from typing import List, Dict
 import struct
-from nupack import *
 import pandas as pd
 import sys
 import openpyxl
@@ -14,9 +13,7 @@ from datetime import datetime, timedelta
 import threading
 import time
 
-my_model = Model
 
-rna_model='rna95-nupack3'    
 # Define physical model 
 
 class Sara2SecondaryStructure(object):
