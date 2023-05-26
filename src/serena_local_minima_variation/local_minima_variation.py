@@ -6,7 +6,7 @@ nupack4, fyi.
 copyright 2023 Jennifer Pearl
 """
 
-from nupack import *
+
 import math
 import copy
 import matplotlib.pyplot as plt
