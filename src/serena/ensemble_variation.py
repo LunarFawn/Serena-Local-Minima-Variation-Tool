@@ -22,9 +22,9 @@ from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2
 
 
 class SourceMFE(Enum):
-    NONE: 0
-    UNBOUND: 1
-    BOUND: 2
+    NONE = 0
+    UNBOUND = 1
+    BOUND = 2
     
 
 @dataclass
@@ -151,14 +151,15 @@ class EnsembleVariation():
             raise Exception(message)
         
         #single_ensemble_group: List[Sara2StructureList] = [ensemble.group]
-        LMV_Thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble,source_mfe=source_mfe)
+        LMV_Thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble.raw_groups,source_mfe=source_mfe)
         result_thread_LMV:LMV_Token = LMV_Thread.run_LMV()
         group_ev_list: List[EV] = result_thread_LMV.group_results
         group_ev_dict: Dict[int,EV] = result_thread_LMV.group_dict
 
-        result_LMV_U_rel: EVResult = EVResult(groups_list=ensemble.raw_groups, groups_dict=ensemble.groups_dict, 
+        result_LMV: EVResult = EVResult(groups_list=ensemble.raw_groups, groups_dict=ensemble.groups_dict, 
                                               group_values=ensemble.group_values, group_ev_list=group_ev_list, 
                                               group_ev_dict=group_ev_dict)
+        return result_LMV
 
     def thread_EV(self, shuttle: LMV_Shuttle):
         total_EV_subscore1:int = 0

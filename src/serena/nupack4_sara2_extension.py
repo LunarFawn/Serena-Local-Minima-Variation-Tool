@@ -22,17 +22,25 @@ from enum import Enum
 from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
 
 class MaterialParameter(Enum):
-    NONE: 0
-
+    NONE = 0
     #"Based on [Mathews99] and [Lu06] with additional parameters [Xia98,Zuker03] including coaxial stacking [Mathews99,Turner10] and dangle stacking [Serra95,Zuker03,Turner10] in 1M Na+."
-    rna06_nupack4: 1
+    rna06_nupack4 = 1
     #"Based on [Serra95] with additional parameters [Zuker03] including coaxial stacking [Mathews99,Turner10] and dangle stacking [Serra95,Zuker03,Turner10] in 1M Na+."
-    rna95_nupack4: 2    
+    rna95_nupack4 = 2    
     #"Parameters from [Mathews99] with terminal mismatch free energies in exterior loops and multiloops replaced by two dangle stacking free energies. Parameters are provided only for 37 ∘C."
-    rna99_nupack3: 3    
+    rna99_nupack3 = 3    
     #"Same as rna95 except that terminal mismatch free energies in exterior loops and multiloops are replaced by two dangle stacking free energies."
-    rna95_nupack3: 4
+    rna95_nupack3 = 4
 
+@dataclass
+class NupackSettings():  
+    material_param:MaterialParameter = MaterialParameter.NONE
+    temp_C: int = 0
+    kcal_delta_span_from_mfe:int = 0
+    Kcal_unit_increments: float = 0
+    sequence:str = ''
+    folded_2nd_state_structure:str=''
+    folded_2nd_state_kcal:float = 0
 
 class NUPACK4Interface():
     """
@@ -62,8 +70,8 @@ class NUPACK4Interface():
         return my_model
 
     def GetPairProbs2DArray(self, sequence, material_param:MaterialParameter, temp_C:int):
-        param: str = self.select_material_parameters(material_param)
-        my_model = self.select_model(param, temp_C)
+        #param: str = self.select_material_parameters(material_param)
+        my_model = self.select_model(material_param, temp_C)
         #convert into form the named touple is expecting
         #pairs = List[List[float]]
         nucpairs = list()
@@ -77,21 +85,25 @@ class NUPACK4Interface():
                 nucpairs[i].append(pairValue) 
         return nucpairs
 
-    def get_ensemble_groups(self, sequence:str, kcal_delta_span_from_mfe:int, Kcal_unit_increments: float, folded_2nd_state_structure:str='', folded_2nd_state_kcal:float=0):
+    def get_ensemble_groups(self, settings: NupackSettings):
         start_time=datetime.now()
         #print(f'Starting test at {start_time}')
         #print("Getting subopt\n")
         nucs_lists:List[List[str]]
         span_structures: Sara2StructureList
-        span_structures = self.get_subopt_energy_gap(sequence_string=sequence, energy_delta_from_MFE=kcal_delta_span_from_mfe)       
+        span_structures = self.get_subopt_energy_gap(material_param=settings.material_param,
+                                                     temp_C=settings.temp_C,
+                                                     sequence_string=settings.sequence, 
+                                                     energy_delta_from_MFE=settings.kcal_delta_span_from_mfe)    
+           
         mfe_energy:float =  span_structures.mfe_freeEnergy
         
         
         #print(f'Done with subopt gathering. {span_structures.num_structures} structures found\n')
 
         #this is for increments of 1 kcal need to do fraction
-        num_groups: int = int(kcal_delta_span_from_mfe / Kcal_unit_increments)
-        remainder: int = kcal_delta_span_from_mfe % Kcal_unit_increments
+        num_groups: int = int(settings.kcal_delta_span_from_mfe / settings.Kcal_unit_increments)
+        remainder: int = settings.kcal_delta_span_from_mfe % settings.Kcal_unit_increments
 
         groups_list : List[Sara2StructureList] = []
         groups_index_used: List[bool] = []
@@ -104,7 +116,7 @@ class NUPACK4Interface():
         current_energy: float = mfe_energy
         group_values.append(current_energy)
         for index in range(num_groups):
-            current_energy = current_energy + Kcal_unit_increments
+            current_energy = current_energy + settings.Kcal_unit_increments
             group_values.append(current_energy)
         
         #if remainder > 0:
@@ -141,9 +153,9 @@ class NUPACK4Interface():
             this_group: SingleEnsembleGroup = SingleEnsembleGroup()
             this_group.group = groups_list[group_index]
             this_group.append_multi_state_mfe_data(span_structures.mfe_structure, span_structures.mfe_freeEnergy)
-            this_group.append_multi_state_mfe_data(folded_2nd_state_structure, folded_2nd_state_kcal)
-            this_group.kcal_span = Kcal_unit_increments
-            this_group.kcal_start = group_values[group_index] - Kcal_unit_increments
+            this_group.append_multi_state_mfe_data(settings.folded_2nd_state_structure, settings.folded_2nd_state_kcal)
+            this_group.kcal_span = settings.Kcal_unit_increments
+            this_group.kcal_start = group_values[group_index] - settings.Kcal_unit_increments
             this_group.kcal_end = group_values[group_index]
             groups_dict[group_index] = groups_list[group_index]
             ensemble_groups.groups = groups_list
@@ -153,10 +165,10 @@ class NUPACK4Interface():
             
         return ensemble_groups
     
-    def get_subopt_energy_gap(self, material_param:MaterialParameter, temp_C:int, sequence_string, energy_delta_from_MFE: int):
+    def get_subopt_energy_gap(self, material_param:MaterialParameter, temp_C:int, sequence_string:str, energy_delta_from_MFE: int):
         #run through subopt
-        param: str = self.select_material_parameters(material_param)
-        my_model = self.select_model(param, temp_C)
+        #param: str = self.select_material_parameters(material_param)
+        my_model = self.select_model(material_param, temp_C)
         #print(f'Starting subopt at {datetime.now()}')
         kcal_group_structures_list: Sara2StructureList = Sara2StructureList()
         ensemble_kcal_group= subopt(strands=sequence_string, model=my_model, energy_gap=energy_delta_from_MFE)
