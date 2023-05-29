@@ -16,8 +16,8 @@ from typing import List
 from datetime import datetime
 import numpy as np
 
-import serena_local_minima_variation.nupackAPI_Sara2 as nupack_api
-from serena_local_minima_variation.nupackAPI_Sara2 import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
+import serena.structures as nupack_api
+from serena.structures import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
 
 debug:bool = False
 
