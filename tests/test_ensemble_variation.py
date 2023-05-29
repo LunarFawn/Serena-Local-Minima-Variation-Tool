@@ -44,10 +44,9 @@ settings: NupackSettings = NupackSettings(material_param=rna_model, kcal_delta_s
 ensemble_groups: MultipleEnsembleGroups = nupack.get_ensemble_groups(settings)
 
 ensemble_variation: EnsembleVariation = EnsembleVariation()
-
-
 local_minima_variations_unbound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, state_source=1)
 local_minima_variations_bound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, state_source=2)
 
 print (local_minima_variations_bound)
+
 print (local_minima_variations_bound)
