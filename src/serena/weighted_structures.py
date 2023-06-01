@@ -15,7 +15,7 @@ import time
 import numpy as np
 import collections
 
-from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
+from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult, WeightedStructureData
 
 @dataclass
 class WeightedResult():
@@ -43,7 +43,7 @@ class WeightedStructures():
         try:
             if group.num_structures > 0:
                 weighted_struct = self.make_weighted_struct(group)
-                comp_struct = self.compair_weighted_structure(ensemble.multi_state_mfe[0], ensemble.multi_state_mfe[1], 
+                comp_struct = self.compair_weighted_structure(ensemble.multi_state_mfe_struct[0], ensemble.multi_state_mfe_struct[1], 
                                                                           weighted_struct, ensemble.group.nuc_count)                    
             else:
                 comp_struct = "EMPTY GROUP"
@@ -154,4 +154,79 @@ class WeightedStructures():
             compared_struct = compared_struct + comp_nuc_symbol
         
         return compared_struct
+    
+    def calculate_performance_group(self, weighted_data: WeightedStructureData):
+        group = weighted_data.raw_group
+        folded_2nd_state_structure = weighted_data.bound_mfe_dot_paren_struct
+        bound: int = 0
+        unbound: int= 0
+        print("weighted structs per group")
+        mfe_energy = weighted_data.unbound_mfe_kcal
+        start_group_mfe:float = mfe_energy + 0.5
+        end_group_mfe:float = weighted_data.kcal_stop
+        folded_kcal = weighted_data.bound_mfe_kcal
+        bond_range_start:float = folded_kcal - 3
+        bond_range_end:float = folded_kcal + 3
+        last_unbound:float=0
+        last_bound:float=0
+        is_functional_switch = False
+        is_powerful_switch = False
+        is_good_switch = False
+     
+        comp_struct:str =''
+        result:str = ''
+        is_in_bound_range: bool = False
+        modifier:str=''
+        try:
+            if group.num_structures > 0:
+                new_struct = self.make_weighted_struct(group)
+                comp_struct, bound, unbound = self.compair_weighted_structure(group.sara_stuctures[0].structure, folded_2nd_state_structure, new_struct, group.nuc_count)                    
+                if start_group_mfe >= bond_range_start and start_group_mfe <= bond_range_end and end_group_mfe >= bond_range_start and end_group_mfe <= bond_range_end:
+                #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
+                    is_in_bound_range = True
+                    modifier = '***'
+            else:
+                comp_struct = "no structures in kcal group"
+        except Exception as error:
+            comp_struct = f'bad list Error:{error}'
+        unbound_to_total_ratio:float = 0
+        bound_ratio: float = 0
+        last_unbound_ratio = 0
+        last_bound_ratio = 0
+        if unbound != 0:
+            last_unbound_ratio = last_unbound/unbound 
+            bound_ratio = bound/unbound
+        if last_bound != 0:
+            last_bound_ratio = bound/last_bound 
+        unbound_to_total_ratio = unbound/group.nuc_count
+
+        bound_stats: str = f'BURatio:{round(bound_ratio,1)}, BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)} B:{bound}, U:{unbound}'
+        last_unbound = unbound
+        last_bound = bound
+        line: str = f'{modifier} {round(start_group_mfe,2)} to {round(end_group_mfe,2)} kcal: {bound_stats}  {comp_struct}'
+        print (line)
+
+            
+        limit: float = 1.5 
+
+        if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.25 and is_in_bound_range is True:
+            is_good_switch = True
+        
+        if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and is_in_bound_range is True:
+            is_powerful_switch = True
+
+        if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.2 and is_in_bound_range is True:
+            is_powerful_switch = True
+
+        if bound_ratio >=  limit and unbound_to_total_ratio <=.15 and is_in_bound_range is True:
+            is_powerful_switch = True
+            
+        if is_good_switch is True or is_powerful_switch is True:
+            print("Functional Switch")
+            if is_powerful_switch is True:
+                print('High Fold Change Predicted')
+            else:
+                print("Low fold change predicted")
+        else:
+            print("Bad Switch")
     
