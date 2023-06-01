@@ -6,6 +6,12 @@ import time
 from typing import List, Dict
 from dataclasses import dataclass
 from datetime import datetime
+import numpy as np
+
+import matplotlib.pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
+import matplotlib
+
 
 import serena.ensemble_variation as ev
 from serena.ensemble_variation import EnsembleVariation, EVResult
@@ -79,6 +85,18 @@ class FullRunInfo():
         def run_ID(self, ID:int):
             self._run_ID = ID
 
+@dataclass
+class PrepedReportData():
+    new_list_string_mfe: List[float]
+    new_list_string_rel: List[float]
+    new_switch_string_folded: List[float]
+    time_span: List[float]
+    #tick_span = []
+    mfe_value:float 
+    #seed_value:float
+    #tick_value:float
+    #units:int
+
 
 class LocalMinimaVariationReport():
     """
@@ -95,6 +113,55 @@ class LocalMinimaVariationReport():
     @working_folder.setter
     def working_folder(self, folder_path:Path):
         self._working_folder = folder_path
+
+    
+
+    def prep_data_for_report(self, run_info: FullRunInfo):
+        #now save data to csv file        
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+
+        ev_result_mfe: EVResult = run_info.run_results[0].result_data
+        ev_result_rel: EVResult = run_info.run_results[1].result_data
+        switch_result_folded: EVResult = run_info.run_results[2].result_data
+
+        time_span: List[float] = []
+        tick_span = []
+        index_span = range(len(ev_result_mfe.groups_list))
+        
+
+        mfe_value:float = ev_result_mfe.groups_list[0].mfe_freeEnergy
+        seed_value:float = mfe_value
+        tick_value:float = 0
+        
+        units:int = run_info.sequence_info.units
+
+        num_samples: int = len(ev_result_mfe.groups_list)
+        for index in range(num_samples):
+            seed_value = seed_value + float(units)
+            tick_value = tick_value + float(units)
+            #time_span is teh MFE values
+            #tick_span is the index value (i.e. 0, 0.5, 1, 1.5)
+            time_span.append(seed_value)
+            tick_span.append(tick_value)
+
+        
+
+        new_list_string_mfe: List[float] = []
+        for ev in ev_result_mfe.group_ev_list:
+            ev_value = ev.ev_normalized
+            new_list_string_mfe.append(ev_value)
+
+        new_list_string_rel: List[float] = []
+        for ev in ev_result_rel.group_ev_list:
+            ev_value = ev.ev_normalized
+            new_list_string_rel.append(ev_value)
+
+        new_switch_string_folded: List[float] = []
+        for ev in switch_result_folded.group_ev_list:
+            ev_value = ev.ev_normalized
+            new_switch_string_folded.append(ev_value)
+
+    
 
     def generate_text_report(self, run_info: FullRunInfo):
         #now save data to csv file        
@@ -141,6 +208,8 @@ class LocalMinimaVariationReport():
             ev_value = ev.ev_normalized
             new_switch_string_folded.append(ev_value)
 
+
+
         csv_log_results: List[str]=[]
         csv_log_results.append("Kcal,LMSV_U_mfe,LMSV_U_rel,LMSV_US_target,LMSV_US_folded\n")
         for index in range(len(new_list_string_mfe)):
@@ -177,4 +246,55 @@ class LocalMinimaVariationReport():
             csv_lines.append("EOF\n")
             csv_file.writelines(csv_lines)
     
+    def generate_plot(self, run_info: FullRunInfo, report_data:PrepedReportData, save_folder_name:Path):
+        #now save teh data
 
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        fig, ax = plt.subplots()
+        info_str:str = f'Eterna_Score = {run_info.sequence_info.eterna_score}, FoldChange = {run_info.sequence_info.fold_change}, Num Clusters = {run_info.sequence_info.number_of_clusters}'
+        plt.suptitle(f'LMV Switch plot for {run_info.sequence_info.sequence_name}\nEterna Lab = {run_info.sequence_info.lab_name}\nDesign ID = {run_info.sequence_info.sequence_ID}\n',fontsize=12)
+        plt.title(info_str, fontsize=10)
+        #fig = plt.figure()
+        
+        #ax.set_xticks(tick_span)
+        plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}')) # 2 decimal places
+        plt.plot(report_data.time_span, report_data.new_list_string_mfe, 'b^-', label='LMV_U mfe')
+        plt.plot(report_data.time_span, report_data.new_list_string_rel, 'ro-', label='LMV_U rel')
+        plt.plot(report_data.time_span, report_data.new_switch_string_folded, 'gs-', label='LMV_US folded')
+        #y_ticks = [0,5,10,15,20,25,30,35,40,45,50]
+        y_ticks = np.arange(-10,65, step=5)
+        plt.xticks(report_data.time_span)
+        plt.yticks(y_ticks)
+        #plt.yticks()
+        plt.grid(True)   
+        plt.legend(loc='lower right',fontsize="x-small")
+        plt.subplots_adjust(top=.8, bottom=.2, left=.12, right=.95)  
+        plt.tick_params(axis='x',labelrotation=90)  
+        plt.ylabel("Local Minima Structure Variation (LMSV)")
+        plt.xlabel("Local Kcal Energy along Ensemble")
+        #plt.figtext(0.54, 0.01, delta_message, ha="center", fontsize=10, bbox={"facecolor":"orange", "alpha":.5, "pad":2})
+        trans = ax.get_xaxis_transform()
+        delat_energy:float = 2
+        lower_range_folded_energy: float = run_info.sequence_info.folded_energy - (delat_energy/2)
+        uper_range_folded_energy: float = run_info.sequence_info.folded_energy + (delat_energy/2)
+        plt.axvline(x=run_info.sequence_info.folded_energy, color="green", linestyle="--")
+        plt.axvline(x=lower_range_folded_energy, color="green", linestyle=":")
+        plt.axvline(x=uper_range_folded_energy, color="green", linestyle=":")
+        plt.text(lower_range_folded_energy, .06, '   2nd State', transform=trans, fontsize=7)
+        plt.text(lower_range_folded_energy, .01, ' 2Kcal range', transform=trans, fontsize=7)
+        plt.text(run_info.sequence_info.folded_energy, .06, '    2nd State', transform=trans, fontsize=7)
+        plt.text(run_info.sequence_info.folded_energy, .01, '  folded Energy', transform=trans, fontsize=7)
+
+        ev_mfe_lower:float = report_data.time_span[0]
+        ev_mfe_upper:float = report_data.mfe_value + delat_energy
+        
+        plt.axvline(x=ev_mfe_lower, color="blue", linestyle=":")
+        plt.axvline(x=ev_mfe_upper, color="blue", linestyle=":")
+        plt.text(ev_mfe_lower, .06, '   1st State', transform=trans, fontsize=7)
+        plt.text(ev_mfe_lower, .01, ' 2Kcal range', transform=trans, fontsize=7)
+        #ax.set_ybound(lower=0, upper=70)
+        
+
+        file_name:str = f'{run_info.sequence_info.sequence_name}_{run_info.sequence_info.sequence_ID}'
+        
+        plt.savefig(f'{save_folder_name.as_posix()}/{file_name}_{timestr}.png')

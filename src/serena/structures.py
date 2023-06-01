@@ -14,9 +14,6 @@ from datetime import datetime, timedelta
 import threading
 import time
 
-
-
-
 class Sara2SecondaryStructure(object):
 
     def __init__(self, sequence:str = '', structure: str = '', freeEnergy: float = 0, stackEnergy: float = 0) -> None:
@@ -450,9 +447,6 @@ class MultipleEnsembleGroups():
     @group_values.setter
     def group_values(self, values :List[float]):
         self._group_values = values
-
-
-
 
 @dataclass
 class WeightedStructureData():
