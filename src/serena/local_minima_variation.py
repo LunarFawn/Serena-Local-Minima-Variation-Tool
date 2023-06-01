@@ -3,7 +3,7 @@ Pyhton file that provides the classes neccessary to perform
 local minima varitation calululations. This code is writtent to
 be as agnostic to the source of data as possibel, but was developed using
 nupack4, fyi.
-copyright 2023 Jennifer Pearl
+copyright 2023 Jennifer Pearl a.k.a. GrizzlyEngineer
 """
 
 
@@ -16,9 +16,8 @@ from typing import List
 from datetime import datetime
 import numpy as np
 
-
-import nupackAPI_Sara2_Ver2 as nupack_api
-from nupackAPI_Sara2_Ver2 import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
+import serena.structures as nupack_api
+from serena.structures import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
 
 debug:bool = False
 

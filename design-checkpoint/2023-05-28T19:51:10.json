@@ -1,0 +1,515 @@
+{
+    "model": {
+        "beta": 1.6225317071110157,
+        "conditions": {
+            "mg_molarity": 0.0,
+            "na_molarity": 1.0,
+            "temperature": 310.15
+        },
+        "ensemble": 1,
+        "has_terminal_penalty": true,
+        "pairable": {
+            "wobble_closing": true,
+            "wobble_pairing": true
+        },
+        "parameters": {
+            "file": {
+                "path": "rna06.json"
+            },
+            "kind": "dG",
+            "loop_bias": -0.0,
+            "temperature": 310.15
+        },
+        "possible_pairs": [
+            [
+                3
+            ],
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ],
+            [
+                0,
+                2
+            ]
+        ]
+    },
+    "objectives": [
+        {
+            "info": {},
+            "type": "Multitube"
+        }
+    ],
+    "parameters": {
+        "H_split": 2,
+        "M_bad": 300,
+        "M_reopt": 3,
+        "M_reseed": 50,
+        "N_split": 12,
+        "cache_bytes_of_RAM": 0,
+        "dG_clamp": -20.0,
+        "decomposition_log": "None",
+        "f_passive": 0.01,
+        "f_redecomp": 0.03,
+        "f_refocus": 0.03,
+        "f_sparse": 1e-05,
+        "f_split": 0.99,
+        "f_stop": 0.5,
+        "f_stringent": 0.99,
+        "log": "",
+        "rng_seed": 0,
+        "slowdown": 0,
+        "thermo_log": "None",
+        "time_analysis": false
+    },
+    "results": [
+        {
+            "complexes": [
+                {
+                    "defect": 0.0,
+                    "log_partition_function": 19.7910681617043,
+                    "name": "(A+A)",
+                    "normalized_defect": 0.0,
+                    "pair_probabilities": {
+                        "col_ptrs": [
+                            0
+                        ],
+                        "row_indices": [
+                            0
+                        ],
+                        "shape": [
+                            0,
+                            0
+                        ],
+                        "values": [
+                            0.0
+                        ]
+                    },
+                    "sequence": [
+                        "TTGAATATGCGCTGGTTAAC",
+                        "TTGAATATGCGCTGGTTAAC"
+                    ],
+                    "structure": ""
+                },
+                {
+                    "defect": 2.081117009567505,
+                    "log_partition_function": 56.755777249778895,
+                    "name": "C",
+                    "normalized_defect": 0.052027925239187624,
+                    "pair_probabilities": {
+                        "col_ptrs": [
+                            0,
+                            3,
+                            6,
+                            8,
+                            10,
+                            12,
+                            14,
+                            16,
+                            18,
+                            20,
+                            22,
+                            24,
+                            26,
+                            28,
+                            30,
+                            32,
+                            34,
+                            36,
+                            39,
+                            42,
+                            44,
+                            46,
+                            49,
+                            52,
+                            54,
+                            56,
+                            58,
+                            60,
+                            62,
+                            64,
+                            66,
+                            68,
+                            70,
+                            72,
+                            74,
+                            76,
+                            78,
+                            80,
+                            82,
+                            85,
+                            88
+                        ],
+                        "row_indices": [
+                            0,
+                            38,
+                            39,
+                            1,
+                            38,
+                            39,
+                            2,
+                            37,
+                            3,
+                            36,
+                            4,
+                            35,
+                            5,
+                            34,
+                            6,
+                            33,
+                            7,
+                            32,
+                            8,
+                            31,
+                            9,
+                            30,
+                            10,
+                            29,
+                            11,
+                            28,
+                            12,
+                            27,
+                            13,
+                            26,
+                            14,
+                            25,
+                            15,
+                            24,
+                            16,
+                            23,
+                            17,
+                            21,
+                            22,
+                            18,
+                            21,
+                            22,
+                            19,
+                            20,
+                            19,
+                            20,
+                            17,
+                            18,
+                            21,
+                            17,
+                            18,
+                            22,
+                            16,
+                            23,
+                            15,
+                            24,
+                            14,
+                            25,
+                            13,
+                            26,
+                            12,
+                            27,
+                            11,
+                            28,
+                            10,
+                            29,
+                            9,
+                            30,
+                            8,
+                            31,
+                            7,
+                            32,
+                            6,
+                            33,
+                            5,
+                            34,
+                            4,
+                            35,
+                            3,
+                            36,
+                            2,
+                            37,
+                            0,
+                            1,
+                            38,
+                            0,
+                            1,
+                            39,
+                            0
+                        ],
+                        "shape": [
+                            40,
+                            40
+                        ],
+                        "values": [
+                            0.752340735302951,
+                            0.0005617239050334678,
+                            0.24709753975774867,
+                            0.11614133371962165,
+                            0.8835704013518239,
+                            0.00028826282712147907,
+                            0.0003851554361421483,
+                            0.999612848516017,
+                            0.0007957600119103958,
+                            0.9992020665690534,
+                            0.0018736975571880254,
+                            0.998125049910571,
+                            0.0010275947591767975,
+                            0.9989723995032574,
+                            0.0010032243692131848,
+                            0.9989967666152711,
+                            0.0008031683810064694,
+                            0.9991968273776077,
+                            2.0086460675083906e-05,
+                            0.9999799134026929,
+                            3.646527270173561e-05,
+                            0.9999635347207338,
+                            3.648391404109663e-05,
+                            0.9999635160816684,
+                            1.944912426976586e-05,
+                            0.9999805508715215,
+                            0.0004886642322803336,
+                            0.9995113247402012,
+                            2.3271682083714218e-05,
+                            0.9999767029179939,
+                            2.124562435923405e-05,
+                            0.9999787270867431,
+                            0.0010140506105447145,
+                            0.9989837673792671,
+                            0.002001665051313495,
+                            0.9979950370788063,
+                            0.005066374435579335,
+                            6.325094054224702e-05,
+                            0.9948703746237831,
+                            0.03526014427432955,
+                            0.9646924001649038,
+                            4.745556024617252e-05,
+                            0.12122825027457418,
+                            0.8787717465465823,
+                            0.8787717465465823,
+                            0.1212278234712133,
+                            6.325094054224702e-05,
+                            0.9646924001649038,
+                            0.03524434877193139,
+                            0.9948703746237831,
+                            4.745556024617252e-05,
+                            0.0050821695724598825,
+                            0.9979950370788063,
+                            0.0020027875819709218,
+                            0.9989837673792671,
+                            0.0010133548382845747,
+                            0.9999787270867431,
+                            2.1244374861506543e-05,
+                            0.9999767029179939,
+                            2.3273255115086044e-05,
+                            0.9995113247402012,
+                            0.0004886752591308774,
+                            0.9999805508715215,
+                            1.9438098052715347e-05,
+                            0.9999635160816684,
+                            3.6483911158291527e-05,
+                            0.9999635347207338,
+                            3.646526554756946e-05,
+                            0.9999799134026929,
+                            2.0086591982604318e-05,
+                            0.9991968273776077,
+                            0.0008031683065322648,
+                            0.9989967666152711,
+                            0.001003222326072306,
+                            0.9989723995032574,
+                            0.0010275940236548209,
+                            0.998125049910571,
+                            0.0018727434665547493,
+                            0.9992020665690534,
+                            0.0007947201469055143,
+                            0.999612848516017,
+                            0.0003871514828076572,
+                            0.0005617239050334678,
+                            0.8835704013518239,
+                            0.11586787339686622,
+                            0.24709753975774867,
+                            0.00028826282712147907,
+                            0.7526141966215143,
+                            0.0
+                        ]
+                    },
+                    "sequence": [
+                        "TTGAATATGCGCTGGTTAAC",
+                        "GTTAACCAGCGCATATTCAA"
+                    ],
+                    "structure": "(20+)20"
+                },
+                {
+                    "defect": 0.0,
+                    "log_partition_function": 18.45317157683728,
+                    "name": "(B+B)",
+                    "normalized_defect": 0.0,
+                    "pair_probabilities": {
+                        "col_ptrs": [
+                            0
+                        ],
+                        "row_indices": [
+                            0
+                        ],
+                        "shape": [
+                            0,
+                            0
+                        ],
+                        "values": [
+                            0.0
+                        ]
+                    },
+                    "sequence": [
+                        "GTTAACCAGCGCATATTCAA",
+                        "GTTAACCAGCGCATATTCAA"
+                    ],
+                    "structure": ""
+                },
+                {
+                    "defect": 0.0,
+                    "log_partition_function": 0.9168221589560992,
+                    "name": "(A)",
+                    "normalized_defect": 0.0,
+                    "pair_probabilities": {
+                        "col_ptrs": [
+                            0
+                        ],
+                        "row_indices": [
+                            0
+                        ],
+                        "shape": [
+                            0,
+                            0
+                        ],
+                        "values": [
+                            0.0
+                        ]
+                    },
+                    "sequence": [
+                        "TTGAATATGCGCTGGTTAAC"
+                    ],
+                    "structure": ""
+                },
+                {
+                    "defect": 0.0,
+                    "log_partition_function": 0.6911154248397008,
+                    "name": "(B)",
+                    "normalized_defect": 0.0,
+                    "pair_probabilities": {
+                        "col_ptrs": [
+                            0
+                        ],
+                        "row_indices": [
+                            0
+                        ],
+                        "shape": [
+                            0,
+                            0
+                        ],
+                        "values": [
+                            0.0
+                        ]
+                    },
+                    "sequence": [
+                        "GTTAACCAGCGCATATTCAA"
+                    ],
+                    "structure": ""
+                }
+            ],
+            "defects": [
+                0.05202793269201775
+            ],
+            "domains": {
+                "a": "TTGAATATGCGCTGGTTAAC",
+                "a*": "GTTAACCAGCGCATATTCAA"
+            },
+            "strands": {
+                "A": "TTGAATATGCGCTGGTTAAC",
+                "B": "GTTAACCAGCGCATATTCAA"
+            },
+            "tubes": [
+                {
+                    "complexes": [
+                        {
+                            "concentration": 9.999999921381332e-07,
+                            "concentration_defect": 3.1447466972058663e-13,
+                            "defect": 2.08111730768071e-06,
+                            "name": "C",
+                            "normalized_defect_contribution": 0.052027932692017755,
+                            "structural_defect": 2.0811169932060403e-06,
+                            "target_concentration": 1e-06
+                        },
+                        {
+                            "concentration": 7.86186854259911e-15,
+                            "concentration_defect": 0.0,
+                            "defect": 0.0,
+                            "name": "(A)",
+                            "normalized_defect_contribution": 0.0,
+                            "structural_defect": 0.0,
+                            "target_concentration": 0.0
+                        },
+                        {
+                            "concentration": 7.053548111662785e-23,
+                            "concentration_defect": 0.0,
+                            "defect": 0.0,
+                            "name": "(A+A)",
+                            "normalized_defect_contribution": 0.0,
+                            "structural_defect": 0.0,
+                            "target_concentration": 0.0
+                        },
+                        {
+                            "concentration": 7.861868404023636e-15,
+                            "concentration_defect": 0.0,
+                            "defect": 0.0,
+                            "name": "(B)",
+                            "normalized_defect_contribution": 0.0,
+                            "structural_defect": 0.0,
+                            "target_concentration": 0.0
+                        },
+                        {
+                            "concentration": 2.906784875450468e-23,
+                            "concentration_defect": 0.0,
+                            "defect": 0.0,
+                            "name": "(B+B)",
+                            "normalized_defect_contribution": 0.0,
+                            "structural_defect": 0.0,
+                            "target_concentration": 0.0
+                        }
+                    ],
+                    "defect": 2.08111730768071e-06,
+                    "name": "tube1",
+                    "normalized_defect": 0.052027932692017755,
+                    "nucleotide_concentration": 3.9999999999999996e-05
+                }
+            ],
+            "weighted_defects": [
+                0.05202793269201775
+            ]
+        }
+    ],
+    "stats": {
+        "analysis_time": 0.0,
+        "design_time": 0.008427800000000001,
+        "final_Psi": {
+            "deflate": 0.005,
+            "mask": [
+                false,
+                true,
+                false,
+                false,
+                false
+            ]
+        },
+        "num_leaf_evaluations": 1,
+        "num_redecompositions": [],
+        "num_reseeds": 0,
+        "offtargets_added_per_refocus": []
+    },
+    "success": true,
+    "weights": {
+        "objective_weights": [
+            1.0
+        ],
+        "per_complex": null,
+        "per_tube": null,
+        "reversed_complexes": null,
+        "specifications": []
+    }
+}
