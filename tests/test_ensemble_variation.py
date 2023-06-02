@@ -10,6 +10,7 @@ import serena.structures as ser_structs
 from serena.structures import MultipleEnsembleGroups, Sara2StructureList, Sara2SecondaryStructure, ComparisonStructures
 import serena.nupack4_sara2_extension as nupack_extension
 from serena.nupack4_sara2_extension import NUPACK4Interface, NupackSettings, MaterialParameter
+from serena.weighted_structures import WeightedResult, WeightedStructureData, WeightedStructures
 
 
 
@@ -67,6 +68,13 @@ comparison_structures.add_structure(folded_structure, folded_struct_name)
 ensemble_variation: EnsembleVariation = EnsembleVariation()
 local_minima_variations_unbound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, comparison_structure=comparison_structures.get_structure_by_name[mfe_struct_name])
 local_minima_variations_bound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, comparison_structure=comparison_structures.get_structure_by_name[folded_struct_name])
+
+
+#now get weighted structure data
+
+weighted : WeightedStructures = WeightedStructures()
+
+
 
 print (local_minima_variations_bound)
 

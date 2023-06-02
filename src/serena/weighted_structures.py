@@ -15,7 +15,28 @@ import time
 import numpy as np
 import collections
 
-from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult, WeightedStructureData
+from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
+
+@dataclass
+class WeightedStructureData():
+    #need to fill in
+    raw_group: Sara2StructureList = Sara2StructureList()
+    unbound_mfe_dot_paren_struct: str = ''
+    unbound_mfe_kcal:float = 0
+    bound_mfe_dot_paren_struct: str = ''
+    bound_mfe_kcal:float = 0
+
+    weighted_dot_paren_structure: str = ''
+    weighted_compared_line:str = ''
+    BURatio: float = -1
+    BRaise: float = -1
+    UDrop: float = -1
+    UTotal: float = -1
+    bound_num:float = -1
+    unbound_num: float = -1
+    switch_score:float = -1
+    kcal_start:float = -1
+    kcal_stop:float = -1
 
 @dataclass
 class WeightedResult():
@@ -123,6 +144,9 @@ class WeightedStructures():
         
         return weighted_structure
     
+    
+
+
     def compair_weighted_structure(self, unbound_mfe_struct:str, bound_mfe_struct:str, weighted_struct:str, nuc_count:int):
         """
         Compaire the weighted structure against the folded and not-folded mfe's.
@@ -155,7 +179,7 @@ class WeightedStructures():
         
         return compared_struct
     
-    def calculate_performance_group(self, weighted_data: WeightedStructureData):
+    def calculate_performance_group(self, weighted_data: WeightedStructureData, ev: EVResult):
         group = weighted_data.raw_group
         folded_2nd_state_structure = weighted_data.bound_mfe_dot_paren_struct
         bound: int = 0
@@ -230,3 +254,17 @@ class WeightedStructures():
         else:
             print("Bad Switch")
     
+    def score_weighted_struct(self, unbound: int, bound:int, last_unbound:int, last_bound:int, total_nucs:int ):
+        unbound_to_total_ratio:float = 0
+        bound_ratio: float = 0
+        last_unbound_ratio = 0
+        last_bound_ratio = 0
+        if unbound != 0:
+            last_unbound_ratio = last_unbound/unbound 
+            bound_ratio = bound/unbound
+        if last_bound != 0:
+            last_bound_ratio = bound/last_bound 
+        unbound_to_total_ratio = unbound/total_nucs
+
+        bound_stats: str = f'BURatio:{round(bound_ratio,1)}, BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)} B:{bound}, U:{unbound}'
+        return bound_stats

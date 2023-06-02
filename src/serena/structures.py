@@ -492,21 +492,4 @@ class MultipleEnsembleGroups():
     def group_values(self, values :List[float]):
         self._group_values = values
 
-@dataclass
-class WeightedStructureData():
-    raw_group: Sara2StructureList = Sara2StructureList()
-    weighted_dot_paren_structure: str = ''
-    weighted_compared_line:str = ''
-    unbound_mfe_dot_paren_struct: str = ''
-    unbound_mfe_kcal:float = 0
-    bound_mfe_dot_paren_struct: str = ''
-    bound_mfe_kcal:float = 0
-    BURatio: float = -1
-    BRaise: float = -1
-    UDrop: float = -1
-    UTotal: float = -1
-    bound_num:float = -1
-    unbound_num: float = -1
-    switch_score:float = -1
-    kcal_start:float = -1
-    kcal_stop:float = -1
+
