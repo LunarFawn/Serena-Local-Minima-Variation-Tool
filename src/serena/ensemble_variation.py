@@ -132,7 +132,7 @@ class EnsembleVariation():
     def __init__(self) -> None:
         pass
 
-    def get_ensemble_variation(self, ensemble: MultipleEnsembleGroups, state_source:int = 1):        
+    def get_ensemble_variation(self, ensemble: MultipleEnsembleGroups, comparison_structure:Sara2SecondaryStructure, state_source:int = 1):        
         #now process all the groups
        
         source_mfe: SourceMFE = SourceMFE.NONE
@@ -228,14 +228,14 @@ class EnsembleVariation():
 
 class LMV_ThreadProcessor():
     
-    def __init__(self, stuctures: List[Sara2StructureList], source_mfe: SourceMFE) -> None:
+    def __init__(self, stuctures: List[Sara2StructureList], comparison_structure: Sara2SecondaryStructure) -> None:
         self._sara2_groups: List[Sara2StructureList] = stuctures
-        self._source_mfe: SourceMFE= source_mfe
         num_groups:int = len(stuctures)
         self._num_groups: int =  num_groups
         self._group_token: LMV_Token = LMV_Token(num_groups)
         self._LMV: EnsembleVariation = EnsembleVariation()
-    
+        self._comparison_structure: Sara2SecondaryStructure = comparison_structure
+
     @property
     def sara2_groups(self):
         return self._sara2_groups
@@ -245,12 +245,12 @@ class LMV_ThreadProcessor():
         self._sara2_groups = new_list
     
     @property
-    def source_mfe(self):
-        return self._source_mfe
+    def comparison_structure(self):
+        return self._comparison_structure
 
-    @source_mfe.setter
-    def source_mfe(self, new_struct:Sara2SecondaryStructure):
-        self._source_mfe = new_struct
+    @comparison_structure.setter
+    def comparison_structure(self, new_struct:Sara2SecondaryStructure):
+        self._comparison_structure = new_struct
 
     @property
     def num_groups(self):
@@ -292,18 +292,7 @@ class LMV_ThreadProcessor():
     def start_calculations(self):
         for thread_index in range(self.num_groups):
             sara2_structs: Sara2StructureList  = self.sara2_groups[thread_index]
-            temp_source_mfe:Sara2SecondaryStructure
-            if len(sara2_structs.sara_stuctures) == 0:
-                #use mfe as its always there
-                temp_source_mfe = self.sara2_groups[0].sara_stuctures[0]
-            else:
-                if self.source_mfe == SourceMFE.BOUND:
-                    temp_source_mfe = sara2_structs.sara_stuctures[0]
-                elif self.source_mfe == SourceMFE.UNBOUND:
-                    temp_source_mfe = self.sara2_groups[0].sara_stuctures[0]
-                else:
-                    temp_source_mfe = self.source_mfe
-            new_shuttle: LMV_Shuttle = LMV_Shuttle(structs_list=sara2_structs, mfe=temp_source_mfe, group_index=thread_index,token=self.group_token) 
+            new_shuttle: LMV_Shuttle = LMV_Shuttle(structs_list=sara2_structs, mfe=self.comparison_structure, group_index=thread_index,token=self.group_token) 
             mew_thread = threading.Thread(target=self.LMV.thread_EV, args=[new_shuttle])
             mew_thread.start()
 

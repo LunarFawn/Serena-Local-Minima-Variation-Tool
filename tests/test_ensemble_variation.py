@@ -7,7 +7,7 @@ import pytest
 import serena.ensemble_variation as ev
 from serena.ensemble_variation import EnsembleVariation, EVResult
 import serena.structures as ser_structs
-from serena.structures import MultipleEnsembleGroups
+from serena.structures import MultipleEnsembleGroups, Sara2StructureList, Sara2SecondaryStructure
 import serena.nupack4_sara2_extension as nupack_extension
 from serena.nupack4_sara2_extension import NUPACK4Interface, NupackSettings, MaterialParameter
 
@@ -35,6 +35,15 @@ temp_C: int = 37
 
 
 rna_model: MaterialParameter = MaterialParameter.rna95_nupack3
+
+comparison_structures:Sara2StructureList = Sara2StructureList()
+
+folded_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence, 
+                                                                    structure=folded, 
+                                                                    freeEnergy=folded_energy_ligoligo)
+
+comparison_structures.add_structure(folded_structure)
+
 
 settings: NupackSettings = NupackSettings(material_param=rna_model, kcal_delta_span_from_mfe=span,
                                           temp_C=temp_C,Kcal_unit_increments=units,

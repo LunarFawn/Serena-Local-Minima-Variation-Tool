@@ -14,6 +14,9 @@ from datetime import datetime, timedelta
 import threading
 import time
 
+
+
+
 class Sara2SecondaryStructure(object):
 
     def __init__(self, sequence:str = '', structure: str = '', freeEnergy: float = 0, stackEnergy: float = 0) -> None:
@@ -466,3 +469,8 @@ class WeightedStructureData():
     switch_score:float = -1
     kcal_start:float = -1
     kcal_stop:float = -1
+
+class ComparisonStructures():
+
+    def __init__(self) -> None:
+        self._structures:Sara2StructureList = Sara2StructureList() 
