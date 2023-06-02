@@ -132,26 +132,18 @@ class EnsembleVariation():
     def __init__(self) -> None:
         pass
 
-    def get_ensemble_variation(self, ensemble: MultipleEnsembleGroups, comparison_structure:Sara2SecondaryStructure, state_source:int = 1):        
+    def get_ensemble_variation(self, ensemble: MultipleEnsembleGroups, comparison_structure:Sara2SecondaryStructure):        
         #now process all the groups
        
         source_mfe: SourceMFE = SourceMFE.NONE
 
         #should be able to populate before hand and add to the group stuff i am working on
         #seams to push for the need a bit more
-
-        if state_source == 1:    
-            source_mfe = SourceMFE.UNBOUND
-            print(f'Begining LMV_U processing at {datetime.now()}')
-        elif state_source == 2:
-            source_mfe = SourceMFE.BOUND
-            print(f'Begining LMV_UB processing at {datetime.now()}')
-        else:
-            message :str =  "Only supports 2 states right now or didi you mean 1st state if 0 entered. 1 based index please remember for this one."
-            raise Exception(message)
+        print(f'Begining LMV processing at {datetime.now()}')
         
         #single_ensemble_group: List[Sara2StructureList] = [ensemble.group]
-        LMV_Thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble.raw_groups,source_mfe=source_mfe)
+        LMV_Thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble.raw_groups,
+                                                              comparison_structure=comparison_structure)
         result_thread_LMV:LMV_Token = LMV_Thread.run_LMV()
         group_ev_list: List[EV] = result_thread_LMV.group_results
         group_ev_dict: Dict[int,EV] = result_thread_LMV.group_dict
@@ -228,13 +220,13 @@ class EnsembleVariation():
 
 class LMV_ThreadProcessor():
     
-    def __init__(self, stuctures: List[Sara2StructureList], comparison_structure: Sara2SecondaryStructure) -> None:
+    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure) -> None:
         self._sara2_groups: List[Sara2StructureList] = stuctures
         num_groups:int = len(stuctures)
         self._num_groups: int =  num_groups
         self._group_token: LMV_Token = LMV_Token(num_groups)
         self._LMV: EnsembleVariation = EnsembleVariation()
-        self._comparison_structure: Sara2SecondaryStructure = comparison_structure
+        self._comparison_structure: Sara2SecondaryStructure = comp_structure
 
     @property
     def sara2_groups(self):

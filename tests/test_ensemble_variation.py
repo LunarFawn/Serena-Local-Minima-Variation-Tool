@@ -7,7 +7,7 @@ import pytest
 import serena.ensemble_variation as ev
 from serena.ensemble_variation import EnsembleVariation, EVResult
 import serena.structures as ser_structs
-from serena.structures import MultipleEnsembleGroups, Sara2StructureList, Sara2SecondaryStructure
+from serena.structures import MultipleEnsembleGroups, Sara2StructureList, Sara2SecondaryStructure, ComparisonStructures
 import serena.nupack4_sara2_extension as nupack_extension
 from serena.nupack4_sara2_extension import NUPACK4Interface, NupackSettings, MaterialParameter
 
@@ -36,13 +36,8 @@ temp_C: int = 37
 
 rna_model: MaterialParameter = MaterialParameter.rna95_nupack3
 
-comparison_structures:Sara2StructureList = Sara2StructureList()
 
-folded_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence, 
-                                                                    structure=folded, 
-                                                                    freeEnergy=folded_energy_ligoligo)
 
-comparison_structures.add_structure(folded_structure)
 
 
 settings: NupackSettings = NupackSettings(material_param=rna_model, kcal_delta_span_from_mfe=span,
@@ -52,9 +47,26 @@ settings: NupackSettings = NupackSettings(material_param=rna_model, kcal_delta_s
 
 ensemble_groups: MultipleEnsembleGroups = nupack.get_ensemble_groups(settings)
 
+comparison_structures:ComparisonStructures = ComparisonStructures()
+
+#add unbound mfe
+unbound_mfe_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence, 
+                                                                    structure=ensemble_groups.groups[0].group.mfe_structure, 
+                                                                    freeEnergy=ensemble_groups.groups[0].group.mfe_freeEnergy)
+mfe_struct_name:str = 'unbound'
+comparison_structures.add_structure(unbound_mfe_structure, mfe_struct_name)
+
+
+#add bound folded structures
+folded_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence, 
+                                                                    structure=folded, 
+                                                                    freeEnergy=folded_energy_ligoligo)
+folded_struct_name:str = 'bound'
+comparison_structures.add_structure(folded_structure, folded_struct_name)
+
 ensemble_variation: EnsembleVariation = EnsembleVariation()
-local_minima_variations_unbound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, state_source=1)
-local_minima_variations_bound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, state_source=2)
+local_minima_variations_unbound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, comparison_structure=comparison_structures.get_structure_by_name[mfe_struct_name])
+local_minima_variations_bound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, comparison_structure=comparison_structures.get_structure_by_name[folded_struct_name])
 
 print (local_minima_variations_bound)
 
