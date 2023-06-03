@@ -15,43 +15,60 @@ import time
 import numpy as np
 import collections
 
-from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
+from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult, EV, LocalMinimaVariation
+
 
 @dataclass
 class WeightedStructureResult():
     weighted_struct: str = ''
-    comp_struct: str = ''
     result_line: str = ''
 
 @dataclass
-class WeightedRatios():
+class WeightedComparisonResult():
+    comp_struct: str = ''
+    unbound_mfe_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+    bound_mfe_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
+    num_bound:float = -1
+    num_unbound:float = -1
+    num_both:float = -1
+    num_dot:float = -1
+
+@dataclass
+class WeightedValueRatios():
     unbound_to_total_nuc_ratio:float = -1
     last_unbound_to_current_unbound_ratio: float = -1
     bound_to_total_nuc_ratio:float = -1
     current_bound_to_last_bound_ratio: float = -1
     bound_to_unbound_ratio: float = -1
 
+
+@dataclass
+class WeightedLocalMinimaVariation():
+    local_minima_variation_weighted_struct:EV = EV()
+    local_minima_variation_unbound_struct:EV = EV()
+    local_minima_variation_bound_struct:EV = EV()
+    local_minima_variation_weighted_span_struct:EV = EV()
+
 @dataclass
 class WeightedScores():
-    switch_score:float = -1
+    base_switch_score:float = 0
+    penalties:int = 0
+    bonuses:int = 0
+    total_switch_score:int = 0
     is_on_switch:bool = False
     is_off_switch:bool = False
-    functional_switch:bool = False
-    low_foldchange:bool = False
-    medium_foldchange:bool = False
-    high_foldchange:bool = False
+    is_functional_switch:bool = False
+    is_low_foldchange:bool = False
+    is_medium_foldchange:bool = False
+    is_high_foldchange:bool = False
 
 @dataclass
 class WeightedGroupResult():
-    weighted_result: WeightedStructureResult
-    unbound_mfe_struct:Sara2SecondaryStructure
-    bound_mfe_struct: Sara2SecondaryStructure
-    compared_struct: str
-    num_bound:float
-    num_unbound:float
-    num_both:float
-    num_dot:float
-    ratios: WeightedRatios = WeightedRatios()
+    raw_ensemble_goup:SingleEnsembleGroup = SingleEnsembleGroup()
+    weighted_result: WeightedStructureResult = WeightedStructureResult()
+    weighted_comparision: WeightedComparisonResult = WeightedComparisonResult()
+    ratios: WeightedValueRatios = WeightedValueRatios()
+    lmv: WeightedLocalMinimaVariation = WeightedLocalMinimaVariation()
     scores: WeightedScores = WeightedScores()
 
 class WeightedStructures():
@@ -152,7 +169,9 @@ class WeightedStructures():
                 most_common_char = new_char
             weighted_structure = weighted_structure + most_common_char
         
-        return weighted_structure
+        weighted_result: WeightedStructureResult = WeightedStructureResult(weighted_struct=weighted_structure)
+
+        return weighted_result
     
     def compair_weighted_structure(self, unbound_mfe_struct:Sara2SecondaryStructure, bound_mfe_struct:Sara2SecondaryStructure, weighted_result:WeightedStructureResult, nuc_count:int):
         """
@@ -194,20 +213,76 @@ class WeightedStructures():
             
             compared_struct = compared_struct + comp_nuc_symbol
         
-        compared_data: WeightedGroupResult = WeightedGroupResult(weighted_result=weighted_result,
-                                                             compared_struct=compared_struct,
-                                                             num_bound=num_bound,
-                                                             num_unbound=num_unbound,
-                                                             num_both=num_both,
-                                                             num_dot=num_dot,
-                                                             unbound_mfe_struct=unbound_mfe_struct,
-                                                             bound_mfe_struct=bound_mfe_struct)
+        compared_data: WeightedComparisonResult = WeightedComparisonResult(comp_struct=compared_struct,
+                                                                           unbound_mfe_struct=unbound_mfe_struct,
+                                                                           bound_mfe_struct=bound_mfe_struct,
+                                                                           num_bound=num_bound,
+                                                                           num_unbound=num_unbound,
+                                                                           num_both=num_both,
+                                                                           num_dot=num_dot)
         
         return compared_data
-            
     
-    def score_weighted_group(self):
-        pass
+    def score_weighted_group(self, current_compared_data: WeightedComparisonResult, last_compared_data: WeightedComparisonResult, raw_ensemble_goup:SingleEnsembleGroup):
+        start_group_mfe:float = raw_ensemble_goup.kcal_start
+        modifier= ''
+        end_group_mfe:float = raw_ensemble_goup.kcal_end
+        folded_kcal:float = raw_ensemble_goup.multi_state_mfe_kcal[1]
+        bond_range_start:float = folded_kcal - 3
+        bond_range_end:float = folded_kcal + 3
+        last_unbound:float=last_compared_data.num_unbound
+        last_bound:float=last_compared_data.num_bound
+        is_functional_switch = False
+        is_powerful_switch = False
+        is_good_switch = False
+        unbound_to_total_ratio:float = 0
+        bound_ratio: float = 0
+        last_unbound_ratio = 0
+        last_bound_ratio = 0
+        unbound = current_compared_data.num_unbound
+        bound = current_compared_data.num_bound
+        if unbound != 0:
+            last_unbound_ratio = last_unbound/unbound 
+            bound_ratio = bound/unbound
+        if last_bound != 0:
+            last_bound_ratio = bound/last_bound 
+        unbound_to_total_ratio = unbound/raw_ensemble_goup.group.nuc_count
+
+        score:int = 0
+        bonus:int = 0
+
+        if start_group_mfe >= bond_range_start and start_group_mfe <= bond_range_end and end_group_mfe >= bond_range_start and end_group_mfe <= bond_range_end:
+                    #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
+                        is_in_bound_range = True
+                        modifier = '***'
+
+        bound_stats: str = f'BURatio:{round(bound_ratio,1)}, BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)} B:{bound}, U:{unbound}'
+                    
+        limit: float = 1.5 
+
+        if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.25 and is_in_bound_range is True:
+            is_good_switch = True
+            score = score +1
+        
+        if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and is_in_bound_range is True:
+            is_powerful_switch = True
+            bonus = bonus +1
+
+        if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.2 and is_in_bound_range is True:
+            is_powerful_switch = True
+            bonus = bonus +1
+
+        if bound_ratio >=  limit and unbound_to_total_ratio <=.15 and is_in_bound_range is True:
+            is_powerful_switch = True
+            bonus = bonus +1
+
+        total_score = score+ bonus
+        weighted_scores: WeightedScores = WeightedScores(is_functional_switch=is_good_switch,
+                                                         is_high_foldchange=is_powerful_switch,
+                                                         base_switch_score=score,
+                                                         bonuses=bonus,
+                                                         total_switch_score=total_score
+                                                         )
 
     def calculate_performance(self, weighted_struct: str, ):
         bound: int = 0

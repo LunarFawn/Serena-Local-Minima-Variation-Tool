@@ -25,7 +25,8 @@ class SourceMFE(Enum):
     NONE = 0
     UNBOUND = 1
     BOUND = 2
-    
+
+
 
 @dataclass
 class EV:
@@ -40,6 +41,8 @@ class EVResult():
     group_values: List[float]
     group_ev_list: List[EV]
     group_ev_dict: Dict[int,EV]
+
+
 
 class LMV_Token():
     def __init__(self, num_groups: int) -> None:

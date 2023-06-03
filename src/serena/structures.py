@@ -255,6 +255,7 @@ class EVResult():
     group_ev_dict: Dict[int,EV]
 
 
+
 class LMV_Token():
     def __init__(self, num_groups: int) -> None:
         self._group_results: List[EV] = num_groups * [EV()]
@@ -491,5 +492,11 @@ class MultipleEnsembleGroups():
     @group_values.setter
     def group_values(self, values :List[float]):
         self._group_values = values
+    
+@dataclass
+class LocalMinimaVariation():
+    reference_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+    group:SingleEnsembleGroup = SingleEnsembleGroup()
+    local_minima_variation: EV = EV()   
 
 
