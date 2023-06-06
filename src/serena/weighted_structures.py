@@ -289,6 +289,26 @@ class WeightedStructures():
             ensemble_groups.append(weighted_group.ensemble_goup.group)
             structures.append(weighted_group.weighted_struct)
 
+        
+
+        #first run the MFE structs          
+
+        #lmv_mfe_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_stuct=mfe_struct)
+        #lmv_mfe_thread_result:LMV_Token = lmv_mfe_thread.run_LMV()
+
+        #now run comp structs
+        #lmv_comp_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,comp_struct_list_option=comp_structures)
+        #lmv_comp_thread_result:LMV_Token = lmv_comp_thread.run_LMV()
+
+        #now run rel structs
+        #lmv_rel_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
+        #lmv_rel_thread_result:LMV_Token = lmv_rel_thread.run_LMV()
+
+        #now run folded structs
+        #lmv_folded_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
+        #lmv_folded_thread_result:LMV_Token = lmv_folded_thread.run_LMV()
+
+        #now all the groups have been processed and need to peel back all the data
 
         lmv_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,
                                                                   comp_struct_list_option=structures)
@@ -320,26 +340,7 @@ class WeightedStructures():
 
 
 
-        #first run the MFE structs          
-
-        #lmv_mfe_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_stuct=mfe_struct)
-        #lmv_mfe_thread_result:LMV_Token = lmv_mfe_thread.run_LMV()
-
-        #now run comp structs
-        #lmv_comp_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,comp_struct_list_option=comp_structures)
-        #lmv_comp_thread_result:LMV_Token = lmv_comp_thread.run_LMV()
-
-        #now run rel structs
-        #lmv_rel_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
-        #lmv_rel_thread_result:LMV_Token = lmv_rel_thread.run_LMV()
-
-        #now run folded structs
-        #lmv_folded_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
-        #lmv_folded_thread_result:LMV_Token = lmv_folded_thread.run_LMV()
-
-        #now all the groups have been processed and need to peel back all the data
-
-    def score_lmv_group(self,current_group_index:int,lmv_results:List[WeightedLocalMinimaVariation], setting:SettingsLMV):          
+    def evaluate_lmv_for_structure_presence(self,current_group_index:int,lmv_results:List[WeightedLocalMinimaVariation], setting:SettingsLMV):          
 
         ev_comp = lmv_results[current_group_index].local_minima_variation_weighted_struct.ev_normalized
         ev_comp_limit: float = 25
@@ -348,18 +349,18 @@ class WeightedStructures():
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
 
-        result_lmv: LMVResult = LMVResult()
+        lmv_presence_result: LMVResult = LMVResult()
                
 
         diff_comp:float = round(ev_mfe,2) - round(ev_comp,2)
         if round(ev_comp,2) < round(ev_mfe,2) and diff_comp >= diff_limit_comp:
-            result_lmv.comp_pronounced = True
+            lmv_presence_result.comp_pronounced = True
 
         diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
         if round(ev_mfe,2) <= round(ev_comp,2) and (diff_mfe >= diff_limit_mfe):
-            result_lmv.mfe_pronounced = True
+            lmv_presence_result.mfe_pronounced = True
         
-        return result_lmv
+        return lmv_presence_result
 
     def do_calculations_group(self, current_compared_data: WeightedComparisonResult, last_compared_data: WeightedComparisonResult, weighted_lmv:WeightedLocalMinimaVariation, raw_current_goup:SingleEnsembleGroup):
         start_group_mfe:float = raw_current_goup.kcal_start
