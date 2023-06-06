@@ -223,7 +223,7 @@ class EnsembleVariation():
 
 class LMV_ThreadProcessor():
     
-    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure) -> None:
+    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(), comp_struct_list_option: List[Sara2SecondaryStructure] = []) -> None:
         self._sara2_groups: List[Sara2StructureList] = stuctures
         num_groups:int = len(stuctures)
         self._num_groups: int =  num_groups
@@ -246,6 +246,14 @@ class LMV_ThreadProcessor():
     @comparison_structure.setter
     def comparison_structure(self, new_struct:Sara2SecondaryStructure):
         self._comparison_structure = new_struct
+    
+    @property
+    def comp_struct_list_option(self):
+        return self._comp_struct_list_option
+
+    @comp_struct_list_option.setter
+    def comp_struct_list_option(self, new_list:List[Sara2SecondaryStructure]):
+        self._comp_struct_list_option = new_list
 
     @property
     def num_groups(self):
@@ -285,9 +293,14 @@ class LMV_ThreadProcessor():
         return self.group_token
 
     def start_calculations(self):
+        comp_structure: Sara2SecondaryStructure = Sara2SecondaryStructure()               
         for thread_index in range(self.num_groups):
+            if len(self.comp_struct_list_option) == self.num_groups:
+                comp_structure = self.comp_struct_list_option[thread_index]
+            else:
+                comp_structure = self.comparison_structure
             sara2_structs: Sara2StructureList  = self.sara2_groups[thread_index]
-            new_shuttle: LMV_Shuttle = LMV_Shuttle(structs_list=sara2_structs, mfe=self.comparison_structure, group_index=thread_index,token=self.group_token) 
+            new_shuttle: LMV_Shuttle = LMV_Shuttle(structs_list=sara2_structs, mfe=comp_structure, group_index=thread_index,token=self.group_token) 
             mew_thread = threading.Thread(target=self.LMV.thread_EV, args=[new_shuttle])
             mew_thread.start()
 
