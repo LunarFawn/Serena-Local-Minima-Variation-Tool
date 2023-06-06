@@ -48,8 +48,9 @@ class WeightedValueRatios():
 class WeightedLocalMinimaVariation():
     local_minima_variation_weighted_struct:EV = EV()
     local_minima_variation_unbound_struct:EV = EV()
-    local_minima_variation_bound_struct:EV = EV()
-    local_minima_variation_weighted_span_struct:EV = EV()
+    #local_minima_variation_bound_struct:EV = EV()
+    #local_minima_variation_relative_struct:EV = EV()
+    #local_minima_variation_weighted_span_struct:EV = EV()
 
 @dataclass
 class WeightedScores():
@@ -99,7 +100,15 @@ class EnsembleAndWeightedStructures():
     def groups(self):
         return self._groups
 
+@dataclass
+class SettingsLMV():
+    diff_limit_mfe:float = 0
+    diff_limit_comp:float = 1
 
+@dataclass
+class LMVResult():
+    mfe_pronounced:bool = False
+    comp_pronounced: bool = False
 
 class WeightedStructures():
     """
@@ -259,60 +268,98 @@ class WeightedStructures():
         return compared_data
     
     def process_ensemble_comp_lmv(weighted_groups_list:List[WeightedStructureResult], mfe_struct: Sara2SecondaryStructure, folded_struct: Sara2SecondaryStructure):
-
+        
+        num_groups:int = len(weighted_groups_list)
         lmv_results:List[WeightedLocalMinimaVariation] = []
         ensemble_groups: List[Sara2StructureList] =  []
-        comp_structures: List[Sara2SecondaryStructure] = []
-        rel_structs: List[Sara2SecondaryStructure] = []
-  
+        structures: List[Sara2SecondaryStructure] = []
+
+
+        #comp_structures: List[Sara2SecondaryStructure] = []
+        #rel_structs: List[Sara2SecondaryStructure] = []
+    
+        #first add the mfe stuff
         for weighted_group in weighted_groups_list:    
             ensemble_groups.append(weighted_group.ensemble_goup.group)
-            comp_structures.append(weighted_group.weighted_struct)
-            rel_structs.append(weighted_group.ensemble_goup.group.sara_stuctures[0].structure)
+            structures.append(mfe_struct)
+            #comp_structures.append(weighted_group.weighted_struct)
+            #rel_structs.append(weighted_group.ensemble_goup.group.sara_stuctures[0].structure)
+        
+        for weighted_group in weighted_groups_list:    
+            ensemble_groups.append(weighted_group.ensemble_goup.group)
+            structures.append(weighted_group.weighted_struct)
+
+
+        lmv_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,
+                                                                  comp_struct_list_option=structures)
+        lmv_thread_result:LMV_Token = lmv_thread.run_LMV()
+
+        mixed_results: List[EV] = lmv_thread_result.group_results
+
+        #now need to seperate MFE from comp
+
+        mfe_lmv_groups_result: List[EV] = []
+        comp_lmv_groups_result: List[EV] = []
+
+        for _ in range(num_groups):
+            mfe_lmv_groups_result.append(mixed_results.pop(0))
+
+        #what is leftin mixed results is only comp lmv now so just make it equal
+        comp_lmv_groups_result = mixed_results
+        #for _ in range(num_groups):
+        #    comp_lmv_groups_result.append(mixed_results.pop(0))    
+
+        for index in range(num_groups):
+            weighted_lmv: WeightedLocalMinimaVariation = WeightedLocalMinimaVariation()
+            weighted_lmv.local_minima_variation_weighted_struct = comp_lmv_groups_result[index]
+            weighted_lmv.local_minima_variation_unbound_struct = mfe_lmv_groups_result[index]
+            lmv_results.append(weighted_lmv)
+
+
+        return lmv_results
+
+
 
         #first run the MFE structs          
 
-        lmv_mfe_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_stuct=mfe_struct)
-        lmv_mfe_thread_result:LMV_Token = lmv_mfe_thread.run_LMV()
+        #lmv_mfe_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_stuct=mfe_struct)
+        #lmv_mfe_thread_result:LMV_Token = lmv_mfe_thread.run_LMV()
 
         #now run comp structs
-        lmv_comp_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,comp_struct_list_option=comp_structures)
-        lmv_comp_thread_result:LMV_Token = lmv_comp_thread.run_LMV()
+        #lmv_comp_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,comp_struct_list_option=comp_structures)
+        #lmv_comp_thread_result:LMV_Token = lmv_comp_thread.run_LMV()
 
         #now run rel structs
-        lmv_rel_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
-        lmv_rel_thread_result:LMV_Token = lmv_rel_thread.run_LMV()
+        #lmv_rel_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
+        #lmv_rel_thread_result:LMV_Token = lmv_rel_thread.run_LMV()
 
         #now run folded structs
-        lmv_folded_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
-        lmv_folded_thread_result:LMV_Token = lmv_folded_thread.run_LMV()
+        #lmv_folded_thread: LMV_ThreadProcessor = LMV_ThreadProcessor(stuctures=ensemble_groups,mfe_struct=rel_structs)
+        #lmv_folded_thread_result:LMV_Token = lmv_folded_thread.run_LMV()
 
-        comp_ev_list_target: List[EV] = lmv_mfe_thread_result.group_results
+        #now all the groups have been processed and need to peel back all the data
 
-        #print(comp_ev_list_target)
+    def score_lmv_group(self,current_group_index:int,lmv_results:List[WeightedLocalMinimaVariation], setting:SettingsLMV):          
 
-        ev_comp = comp_ev_list_target[0].ev_normalized
+        ev_comp = lmv_results[current_group_index].local_minima_variation_weighted_struct.ev_normalized
         ev_comp_limit: float = 25
-        ev_mfe = group_ev_list_mfe[group_index].ev_normalized
+        ev_mfe = lmv_results[current_group_index].local_minima_variation_unbound_struct.ev_normalized
 
-        diff_limit:float = 1
+        diff_limit_mfe:float = setting.diff_limit_mfe
+        diff_limit_comp:float = setting.diff_limit_comp
 
+        result_lmv: LMVResult = LMVResult()
+               
+
+        diff_comp:float = round(ev_mfe,2) - round(ev_comp,2)
+        if round(ev_comp,2) < round(ev_mfe,2) and diff_comp >= diff_limit_comp:
+            result_lmv.comp_pronounced = True
+
+        diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
+        if round(ev_mfe,2) <= round(ev_comp,2) and (diff_mfe >= diff_limit_mfe):
+            result_lmv.mfe_pronounced = True
         
-        #if group_index == 1:
-        if mfe_pronounced_first_group is True:
-            diff:float = round(ev_mfe,2) - round(ev_comp,2)
-            if round(ev_comp,2) < round(ev_mfe,2) and diff >= diff_limit:
-                is_off_on_switch = True
-                modifier = modifier + '+++'
-                found_bound_list.append(group_index)
-                if stop_diff is False:
-                    found_bound_index = group_index
-                stop_diff = True
-
-        #if group_index == 0:
-        diff = round(ev_comp,2) - round(ev_mfe,2)
-        if round(ev_mfe,2) <= round(ev_comp,2):# and (diff >= diff_limit or diff == 0):
-            mfe_pronounced_first_group = True
+        return result_lmv
 
     def do_calculations_group(self, current_compared_data: WeightedComparisonResult, last_compared_data: WeightedComparisonResult, weighted_lmv:WeightedLocalMinimaVariation, raw_current_goup:SingleEnsembleGroup):
         start_group_mfe:float = raw_current_goup.kcal_start
