@@ -362,6 +362,9 @@ class WeightedStructures():
         
         return lmv_presence_result
 
+    def do_deep_lmv(self):
+        pass
+
     def do_calculations_group(self, current_compared_data: WeightedComparisonResult, last_compared_data: WeightedComparisonResult, weighted_lmv:WeightedLocalMinimaVariation, raw_current_goup:SingleEnsembleGroup):
         start_group_mfe:float = raw_current_goup.kcal_start
         modifier= ''
@@ -422,3 +425,6 @@ class WeightedStructures():
                                                          bonuses=bonus,
                                                          total_switch_score=total_score
                                                          )
+
+
+ 
