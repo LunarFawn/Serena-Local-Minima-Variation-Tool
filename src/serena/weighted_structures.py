@@ -505,11 +505,25 @@ class WeightedStructures():
 
         return all_groups
 
-    def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults):
+    @dataclass
+    class IdealRangeSettings():
+        bound_kcal_span_plus:float = 3
+        bound_kcal_span_minus:float = 3
+        mfe_effect_range_plus:float = 2
+
+    def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults, settings: IdealRangeSettings):
         ensemble: MultipleEnsembleGroups = raw_results.ensemble_groups
         for temp_index in range(len(raw_results.temperatures)):
             current_temp: int = raw_results.temperatures[temp_index]
             current_group: SingleGroupRawResults = raw_results.single_group_results[temp_index]
+
+            groups_unbound_only_nucs:List[int] = []
+            groups_bound_only_nucs:List[int] = []
+            groups_both_only_nucs:List[int] = []
+            groups_neither_only_nucs:List[int] = []
+
+            for kcal_group_index in range(current_group.num_kcal_groups):
+                
 
             #do each group 1 at a time
             for kcal_group_index in range(current_group.num_kcal_groups):
@@ -520,22 +534,29 @@ class WeightedStructures():
                 last_bound_ratio = -1
                 
                 #variables for tracking strcuture stuff
-                unbound_only_nucs:int = current_group.comp_structures[kcal_group_index].num_unbound
-                bound_only_nucs: int = current_group.comp_structures[kcal_group_index].num_bound
-                both_only_nucs: int = current_group.comp_structures[kcal_group_index].num_both
-                neither_only_nucs: int = current_group.comp_structures[kcal_group_index].num_dot
+                current_unbound_only_nucs:int = current_group.comp_structures[kcal_group_index].num_unbound
+                current_bound_only_nucs: int = current_group.comp_structures[kcal_group_index].num_bound
+                current_both_only_nucs: int = current_group.comp_structures[kcal_group_index].num_both
+                current_neither_only_nucs: int = current_group.comp_structures[kcal_group_index].num_dot
+
+                #variables for tracking strcuture stuff
+                current_unbound_only_nucs:int = current_group.comp_structures[kcal_group_index].num_unbound
+                current_bound_only_nucs: int = current_group.comp_structures[kcal_group_index].num_bound
+                current_both_only_nucs: int = current_group.comp_structures[kcal_group_index].num_both
+                current_neither_only_nucs: int = current_group.comp_structures[kcal_group_index].num_dot
 
 
-
-
-
-
-                start_group_mfe:float = raw_current_goup.kcal_start
+                #now get the kcal ranges for bound and unbound effect ranges
+                group_kcal_start:float = current_group.weighted_structures[kcal_group_index].ensemble_goup.kcal_start
+                group_kcal_stop:float = current_group.weighted_structures[kcal_group_index].ensemble_goup.kcal_end
+                group_bonded_kcal: float = ensemble.switched_state_mfe_kcal
+                ground_bonded_kcal_span_start: float = group_bonded_kcal - settings.bound_kcal_span_minus
+                ground_bonded_kcal_span_stop: float = group_bonded_kcal + settings.bound_kcal_span_plus
+                ensemble_mfe_kcal: float = ensemble.non_switch_state_mfe_kcal
+                ensemble_mfe_kcal_effect_range = ensemble_mfe_kcal + settings.mfe_effect_range_plus
+         
                 modifier= ''
-                end_group_mfe:float = raw_current_goup.kcal_end
-                folded_kcal:float = raw_current_goup.multi_state_mfe_kcal[1]
-                bond_range_start:float = folded_kcal - 3
-                bond_range_end:float = folded_kcal + 3
+        
                 last_unbound:float=last_compared_data.num_unbound
                 last_bound:float=last_compared_data.num_bound
                 is_functional_switch = False
