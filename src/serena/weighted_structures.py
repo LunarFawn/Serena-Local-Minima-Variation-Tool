@@ -84,9 +84,18 @@ class WeightedGroupResult():
 
 @dataclass
 class SingleGroupRawResults():
-    temperature_weighted_structures: List[WeightedStructureResult]
-    temperature_comp_structures: List[WeightedComparisonResult]
-    temperature_lmv_unbound_bound_assertion: List[LMVResult]
+    weighted_structures: List[WeightedStructureResult]
+    comp_structures: List[WeightedComparisonResult]
+    lmv_assertions: List[LMVResult]
+    lmv: List[WeightedLocalMinimaVariation]
+    temperature: int
+    
+
+@dataclass
+class MultipleGroupRawResults():
+    single_group_results: List[SingleGroupRawResults]
+    ensemble_groups: MultipleEnsembleGroups
+    temperatures: List[int]
 
 class EnsembleAndWeightedStructures():   
 
@@ -432,8 +441,8 @@ class WeightedStructures():
                                                          bonuses=bonus,
                                                          total_switch_score=total_score
                                                          )
-
-    def find_ideal_switch_range_ensemble(self, temperature_list:List[int], ensemble_groups: MultipleEnsembleGroups):
+ 
+    def get_multi_temp_full_raw_data(self, temperature_list:List[int], ensemble_groups: MultipleEnsembleGroups) -> MultipleGroupRawResults:
         """
         This is the function that gives you the info for how
         the rna sequence and ensemble want to switch and the ideal
@@ -445,6 +454,8 @@ class WeightedStructures():
         bound_mfe_stuct:Sara2SecondaryStructure = Sara2SecondaryStructure(structure=ensemble_groups.switched_state_structure,
                                                                          freeEnergy=ensemble_groups.switched_state_mfe_kcal)
         
+        full_temp_results: List[SingleGroupRawResults] = []
+
         #need to process each temperature one by one
         for temp_index in range(len(temperature_list)):
             current_temp: int = temperature_list[temp_index]
@@ -479,6 +490,26 @@ class WeightedStructures():
                 temperature_lmv_unbound_bound_assertion.append(lmv_data)
             
             #now should have all the info for the temperature group
+            temperature_raw_data: SingleGroupRawResults = SingleGroupRawResults(comp_structures=temperature_comp_structures,
+                                                                                weighted_structures=temperature_weighted_structures,
+                                                                                lmv_assertions=temperature_lmv_unbound_bound_assertion,
+                                                                                lmv=temperature_lmv_result,
+                                                                                temperature=current_temp)
+            full_temp_results.append(temperature_raw_data)
+        
+        all_groups: MultipleGroupRawResults = MultipleGroupRawResults(single_group_results=full_temp_results,
+                                                                      ensemble_groups=ensemble_groups,
+                                                                      temperatures=temperature_list)
+
+        return all_groups
+
+    def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults):
+        ensemble: MultipleEnsembleGroups = raw_results.ensemble_groups
+        for temp_index in range(len(raw_results.temperatures)):
+            current_temp: int = raw_results.temperatures[temp_index]
+            current_group: SingleEnsembleGroup = raw_results.single_group_results[temp_index]
+            
+            
 
 
     def asses_lab_switch_design(self):
