@@ -18,12 +18,21 @@ import collections
 from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult, EV, LocalMinimaVariation
 from serena.ensemble_variation import LMV_Token, LMV_ThreadProcessor, LMV_Shuttle
 
+@dataclass
+class SettingsLMV():
+    diff_limit_mfe:float = 0
+    diff_limit_comp:float = 1
+
+@dataclass
+class LMVResult():
+    mfe_pronounced:bool = False
+    comp_pronounced: bool = False
+    rel_pronounced: bool = False
 
 @dataclass
 class WeightedStructureResult():
     ensemble_goup:SingleEnsembleGroup = SingleEnsembleGroup()
     weighted_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
-    result_line: str = ''
 
 @dataclass
 class WeightedComparisonResult():
@@ -73,6 +82,12 @@ class WeightedGroupResult():
     lmv: WeightedLocalMinimaVariation = WeightedLocalMinimaVariation()
     scores: WeightedScores = WeightedScores()
 
+@dataclass
+class SingleGroupRawResults():
+    temperature_weighted_structures: List[WeightedStructureResult]
+    temperature_comp_structures: List[WeightedComparisonResult]
+    temperature_lmv_unbound_bound_assertion: List[LMVResult]
+
 class EnsembleAndWeightedStructures():   
 
     def __init__(self) -> None:
@@ -100,15 +115,8 @@ class EnsembleAndWeightedStructures():
     def groups(self):
         return self._groups
 
-@dataclass
-class SettingsLMV():
-    diff_limit_mfe:float = 0
-    diff_limit_comp:float = 1
 
-@dataclass
-class LMVResult():
-    mfe_pronounced:bool = False
-    comp_pronounced: bool = False
+
 
 class WeightedStructures():
     """
@@ -267,7 +275,7 @@ class WeightedStructures():
         
         return compared_data
     
-    def process_ensemble_comp_lmv(weighted_groups_list:List[WeightedStructureResult], mfe_struct: Sara2SecondaryStructure, folded_struct: Sara2SecondaryStructure):
+    def process_ensemble_comp_lmv(self, weighted_groups_list:List[WeightedStructureResult], mfe_struct: Sara2SecondaryStructure, folded_struct: Sara2SecondaryStructure):
         
         num_groups:int = len(weighted_groups_list)
         lmv_results:List[WeightedLocalMinimaVariation] = []
@@ -340,11 +348,11 @@ class WeightedStructures():
 
 
 
-    def evaluate_lmv_for_structure_presence(self,current_group_index:int,lmv_results:List[WeightedLocalMinimaVariation], setting:SettingsLMV):          
+    def evaluate_lmv_for_structure_presence(self, lmv_results:WeightedLocalMinimaVariation, setting:SettingsLMV):          
 
-        ev_comp = lmv_results[current_group_index].local_minima_variation_weighted_struct.ev_normalized
+        ev_comp = lmv_results.local_minima_variation_weighted_struct.ev_normalized
         ev_comp_limit: float = 25
-        ev_mfe = lmv_results[current_group_index].local_minima_variation_unbound_struct.ev_normalized
+        ev_mfe = lmv_results.local_minima_variation_unbound_struct.ev_normalized
 
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
@@ -362,8 +370,7 @@ class WeightedStructures():
         
         return lmv_presence_result
 
-    def do_deep_lmv(self):
-        pass
+    
 
     def do_calculations_group(self, current_compared_data: WeightedComparisonResult, last_compared_data: WeightedComparisonResult, weighted_lmv:WeightedLocalMinimaVariation, raw_current_goup:SingleEnsembleGroup):
         start_group_mfe:float = raw_current_goup.kcal_start
@@ -426,5 +433,55 @@ class WeightedStructures():
                                                          total_switch_score=total_score
                                                          )
 
+    def find_ideal_switch_range_ensemble(self, temperature_list:List[int], ensemble_groups: MultipleEnsembleGroups):
+        """
+        This is the function that gives you the info for how
+        the rna sequence and ensemble want to switch and the ideal
+        switch energy range as well as what stucture it will accept
+        """
+        unbound_mfe_stuct:Sara2SecondaryStructure = Sara2SecondaryStructure(structure=ensemble_groups.non_switch_state_structure,
+                                                                         freeEnergy=ensemble_groups.non_switch_state_mfe_kcal)
+        
+        bound_mfe_stuct:Sara2SecondaryStructure = Sara2SecondaryStructure(structure=ensemble_groups.switched_state_structure,
+                                                                         freeEnergy=ensemble_groups.switched_state_mfe_kcal)
+        
+        #need to process each temperature one by one
+        for temp_index in range(len(temperature_list)):
+            current_temp: int = temperature_list[temp_index]
+
+            temperature_weighted_structures: List[WeightedStructureResult] = []
+            temperature_comp_structures: List[WeightedComparisonResult] = []
+            temperature_lmv_unbound_bound_assertion:List[LMVResult] = []
+
+            #get weighted struct and comp struct for each group in esemble
+            for group_index in range(ensemble_groups.num_groups):
+                current_group: SingleEnsembleGroup =  ensemble_groups.groups[group_index]
+                current_weight_struct: WeightedStructureResult = self.make_weighted_struct(current_group)
+                temperature_weighted_structures.append(current_weight_struct)
+                current_comp_struct: WeightedComparisonResult = self.compair_weighted_structure(unbound_mfe_struct=unbound_mfe_stuct,
+                                                                                                bound_mfe_struct=bound_mfe_stuct,
+                                                                                                weighted_result=current_weight_struct)
+                temperature_comp_structures.append(current_comp_struct)
+            
+            #now process LMV
+            temperature_lmv_result: List[WeightedLocalMinimaVariation] = []
+            temperature_lmv_result = self.process_ensemble_comp_lmv(weighted_groups_list=temperature_weighted_structures,
+                                                        mfe_struct=unbound_mfe_stuct,
+                                                        folded_struct=bound_mfe_stuct)
+            
+            settings: SettingsLMV = SettingsLMV(diff_limit_comp=1,
+                                                diff_limit_mfe=1)
+
+            #now get lmv assertions for unbound or bound
+            for lmv in temperature_lmv_result:
+                lmv_data: LMVResult = self.evaluate_lmv_for_structure_presence(lmv_results=lmv,
+                                                                               setting=settings)
+                temperature_lmv_unbound_bound_assertion.append(lmv_data)
+            
+            #now should have all the info for the temperature group
+
+
+    def asses_lab_switch_design(self):
+        pass
 
  
