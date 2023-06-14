@@ -522,38 +522,56 @@ class WeightedStructures():
             groups_both_only_nucs:List[int] = []
             groups_neither_only_nucs:List[int] = []
 
+            groups_lmv_weighted: List[float] = []
+            groups_lmv_unbound: List[float] = []
+
+            group_kcal_starts:List[float] = []
+            group_kcal_stops:List[float] = []
+
+            group_bonded_kcal: float = ensemble.switched_state_mfe_kcal
+            ground_bonded_kcal_span_start: float = group_bonded_kcal - settings.bound_kcal_span_minus
+            ground_bonded_kcal_span_stop: float = group_bonded_kcal + settings.bound_kcal_span_plus
+            ensemble_mfe_kcal: float = ensemble.non_switch_state_mfe_kcal
+            ensemble_mfe_kcal_effect_range = ensemble_mfe_kcal + settings.mfe_effect_range_plus
+
+            #variabels for ratios for scores
+            unbound_to_total_ratio:float = -1
+            bound_ratio: float = -1
+            last_unbound_ratio = -1
+            last_bound_ratio = -1
+
             for kcal_group_index in range(current_group.num_kcal_groups):
-                
+                groups_unbound_only_nucs.append(current_group.comp_structures[kcal_group_index].num_unbound)
+                groups_bound_only_nucs.append(current_group.comp_structures[kcal_group_index].num_bound)
+                groups_both_only_nucs.append(current_group.comp_structures[kcal_group_index].num_both)
+                groups_neither_only_nucs.append(current_group.comp_structures[kcal_group_index].num_dot)
+
+                groups_lmv_weighted.append(current_group.lmv[kcal_group_index].local_minima_variation_weighted_struct.ev_normalized)
+                groups_lmv_unbound.append(current_group.lmv[kcal_group_index].local_minima_variation_unbound_struct.ev_normalized)
+
+                group_kcal_starts.append(current_group.weighted_structures[kcal_group_index].ensemble_goup.kcal_start)
+                group_kcal_stops.append(current_group.weighted_structures[kcal_group_index].ensemble_goup.kcal_end)
+
+
+            #check for number of bound vrs unbound nucs indicating a switch 
+            #and the kcal group associated with the strongest signal as well
+            #as the range of the signal if applicable. should be a new function to call
+
 
             #do each group 1 at a time
             for kcal_group_index in range(current_group.num_kcal_groups):
-                #variabels for ratios for scores
-                unbound_to_total_ratio:float = -1
-                bound_ratio: float = -1
-                last_unbound_ratio = -1
-                last_bound_ratio = -1
+
                 
                 #variables for tracking strcuture stuff
-                current_unbound_only_nucs:int = current_group.comp_structures[kcal_group_index].num_unbound
-                current_bound_only_nucs: int = current_group.comp_structures[kcal_group_index].num_bound
-                current_both_only_nucs: int = current_group.comp_structures[kcal_group_index].num_both
-                current_neither_only_nucs: int = current_group.comp_structures[kcal_group_index].num_dot
-
-                #variables for tracking strcuture stuff
-                current_unbound_only_nucs:int = current_group.comp_structures[kcal_group_index].num_unbound
-                current_bound_only_nucs: int = current_group.comp_structures[kcal_group_index].num_bound
-                current_both_only_nucs: int = current_group.comp_structures[kcal_group_index].num_both
-                current_neither_only_nucs: int = current_group.comp_structures[kcal_group_index].num_dot
+                current_unbound_only_nucs:int = groups_unbound_only_nucs[kcal_group_index]
+                current_bound_only_nucs: int = groups_bound_only_nucs[kcal_group_index]
+                current_both_only_nucs: int = groups_both_only_nucs[kcal_group_index]
+                current_neither_only_nucs: int = groups_neither_only_nucs[kcal_group_index]
 
 
                 #now get the kcal ranges for bound and unbound effect ranges
-                group_kcal_start:float = current_group.weighted_structures[kcal_group_index].ensemble_goup.kcal_start
-                group_kcal_stop:float = current_group.weighted_structures[kcal_group_index].ensemble_goup.kcal_end
-                group_bonded_kcal: float = ensemble.switched_state_mfe_kcal
-                ground_bonded_kcal_span_start: float = group_bonded_kcal - settings.bound_kcal_span_minus
-                ground_bonded_kcal_span_stop: float = group_bonded_kcal + settings.bound_kcal_span_plus
-                ensemble_mfe_kcal: float = ensemble.non_switch_state_mfe_kcal
-                ensemble_mfe_kcal_effect_range = ensemble_mfe_kcal + settings.mfe_effect_range_plus
+
+
          
                 modifier= ''
         
