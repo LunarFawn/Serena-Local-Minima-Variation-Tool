@@ -15,9 +15,25 @@ import time
 import numpy as np
 import collections
 
-from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult, EV, LocalMinimaVariation
+from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult, EV, LocalMinimaVariation, KcalRanges
 from serena.ensemble_variation import LMV_Token, LMV_ThreadProcessor, LMV_Shuttle
 
+@dataclass
+class AptamerBondInfo():
+    aptamer_bond_kcal: float
+    aptamer_bond_kcal_range: KcalRanges
+
+@dataclass
+class MFEAffectInfo():
+    unbound_mfe_kcal: float
+    unboung_mfe_kcal_affectance_range:KcalRanges
+
+@dataclass
+class AptamerAcceptanceInfo():
+    good_aptamer_acceptance_kcals: List[float]
+    good_aptamer_acceptance_kcal_range: List[KcalRanges]
+    powerfull_aptamer_acceptance_kcals: List[float]
+    powerfull_aptamer_acceptance_kcal_range: List[KcalRanges]
 
 @dataclass
 class SwitchabilitySettings():
@@ -672,8 +688,36 @@ class WeightedStructures():
                                                       powerfull_groups_list=powerfull_groups_list)
         return result
 
-    def evaluate_aptamer_bond(self):
-        pass           
+
+
+    def evaluate_aptamer_acceptance(self, switchability_result: SwitchynessResult, ensemble_groups: MultipleEnsembleGroups):
+        good_aptamer_acceptance_kcals: List[float] = []
+        good_aptamer_acceptance_kcal_range: List[KcalRanges] = []
+        powerfull_aptamer_acceptance_kcals: List[float] = []
+        powerfull_aptamer_acceptance_kcal_range: List[KcalRanges] = []
+
+        if len(switchability_result.switchable_groups_list) > 0:
+            for group_index in switchability_result.switchable_groups_list:
+                good_aptamer_acceptance_kcals.append(ensemble_groups.group_values[group_index])
+                good_aptamer_acceptance_kcal_range.append(ensemble_groups.group_kcal_ranges[group_index])
+            
+        if len(switchability_result.powerfull_groups_list) > 0:
+            for group_index in switchability_result.powerfull_groups_list:
+                powerfull_aptamer_acceptance_kcals.append(ensemble_groups.group_values[group_index])
+                powerfull_aptamer_acceptance_kcal_range.append(ensemble_groups.group_kcal_ranges[group_index])
+        
+        aptamer_acceptance_result: AptamerAcceptanceInfo = AptamerAcceptanceInfo(good_aptamer_acceptance_kcals=good_aptamer_acceptance_kcals,
+                                                                                           good_aptamer_acceptance_kcal_range=good_aptamer_acceptance_kcal_range,
+                                                                                           powerfull_aptamer_acceptance_kcal_range=powerfull_aptamer_acceptance_kcal_range,
+                                                                                           powerfull_aptamer_acceptance_kcals=powerfull_aptamer_acceptance_kcals)
+
+        return aptamer_acceptance_result
+
+
+    def evaluate_aptamer_bond(self, aptamer_info: AptamerBondInfo, ensemble_groups: MultipleEnsembleGroups):
+        aptamer_kcal_range:KcalRanges = KcalRanges()
+
+        groups_with_match:List[int] = []           
     
     @dataclass
     class IdealRangeSettings():
@@ -698,11 +742,23 @@ class WeightedStructures():
             group_kcal_starts:List[float] = []
             group_kcal_stops:List[float] = []
 
+            
             group_bonded_kcal: float = ensemble.switched_state_mfe_kcal
+           
             ground_bonded_kcal_span_start: float = group_bonded_kcal - settings.bound_kcal_span_minus
             ground_bonded_kcal_span_stop: float = group_bonded_kcal + settings.bound_kcal_span_plus
+            group_bonded_kcal_ranage:KcalRanges = KcalRanges(start=ground_bonded_kcal_span_start,
+                                                              stop=ground_bonded_kcal_span_stop)
             ensemble_mfe_kcal: float = ensemble.non_switch_state_mfe_kcal
-            ensemble_mfe_kcal_effect_range = ensemble_mfe_kcal + settings.mfe_effect_range_plus
+            ensemble_mfe_kcal_effect_range: KcalRanges =KcalRanges(start=ensemble_mfe_kcal,
+                                                                   stop=ensemble_mfe_kcal + settings.mfe_effect_range_plus)
+
+
+            mfe_affect_info: MFEAffectInfo = MFEAffectInfo(unbound_mfe_kcal=ensemble_mfe_kcal,
+                                                                     unboung_mfe_kcal_affectance_range=ensemble_mfe_kcal_effect_range)
+
+            aptamer_bond_info:AptamerBondInfo = AptamerBondInfo(aptamer_bond_kcal=ensemble.switched_state_mfe_kcal,
+                                                                          aptamer_bond_kcal_range=group_bonded_kcal_ranage)
 
             #variabels for ratios for scores
             unbound_to_total_ratio:float = -1
