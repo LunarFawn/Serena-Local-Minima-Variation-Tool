@@ -744,7 +744,16 @@ class WeightedStructures():
         aptamer_bond: AptamerBondInfo = AptamerBondInfo(aptamer_bond_kcal=aptamer_kcal_mfe,
                                                         aptamer_bond_kcal_range=aptamer_range,
                                                         aptamer_bond_kcal_groups=aptamer_groups)
+        return aptamer_bond
 
+    @dataclass
+    class PredictionResult():
+        good_aptamer_bonding_kcal_ranges:List[KcalRanges] 
+        good_aptamer_bonding_group_kcals: List[float] 
+        good_groups_with_match:List[int]
+        powerfull_aptamer_bonding_kcal_ranges:List[KcalRanges] 
+        powerfull_aptamer_bonding_group_kcals: List[float]
+        powerfull_groups_with_match:List[int]
 
     def predict_aptamer_bonding(self, aptamer_acceptance: AptamerAcceptanceInfo, aptamer_bond: AptamerBondInfo, ensemble_groups: MultipleEnsembleGroups):
         good_aptamer_bonding_kcal_ranges:List[KcalRanges] = []
@@ -763,14 +772,40 @@ class WeightedStructures():
             good_kcal = aptamer_acceptance.good_aptamer_acceptance_kcals[kcal_index]
             good_start: float = good_kcal_range.start
             good_stop: float = good_kcal_range.stop
-           
+
             if (good_start >= aptamer_start and good_start <= aptamer_stop) or (good_stop >= aptamer_start and good_stop <= aptamer_stop):
                 #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
                 good_aptamer_bonding_kcal_ranges.append(good_kcal_range)
                 good_aptamer_bonding_group_kcals.append(good_kcal)
+       
+        for kcal_index in range(len(aptamer_acceptance.powerfull_aptamer_acceptance_kcal_ranges)):
+            powerfull_kcal_range = aptamer_acceptance.powerfull_aptamer_acceptance_kcal_ranges[kcal_index]
+            powerfull_kcal = aptamer_acceptance.powerfull_aptamer_acceptance_kcals[kcal_index]
+            powerfull_start: float = powerfull_kcal_range.start
+            powerfull_stop: float = powerfull_kcal_range.stop
+
+            if (powerfull_start >= aptamer_start and powerfull_start <= aptamer_stop) or (powerfull_stop >= aptamer_start and powerfull_stop <= aptamer_stop):
+                #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
+                powerfull_aptamer_bonding_kcal_ranges.append(powerfull_kcal_range)
+                powerfull_aptamer_bonding_group_kcals.append(powerfull_kcal)
+            
+        
+        for group_index in aptamer_bond.aptamer_bond_kcal_groups:
+            if group_index in aptamer_acceptance.good_aptamer_acceptance_groups:
+                good_groups_with_match.append(group_index)
+            
+            if group_index in aptamer_acceptance.powerfull_aptamer_acceptance_groups:
+                powerfull_groups_with_match.append(group_index)
 
 
+        result: self.PredictionResult = self.PredictionResult(good_aptamer_bonding_kcal_ranges=good_aptamer_bonding_kcal_ranges,
+                                                              good_aptamer_bonding_group_kcals=good_aptamer_bonding_group_kcals,
+                                                              good_groups_with_match=good_groups_with_match,
+                                                              powerfull_aptamer_bonding_group_kcals=powerfull_aptamer_bonding_group_kcals,
+                                                              powerfull_aptamer_bonding_kcal_ranges=powerfull_aptamer_bonding_kcal_ranges,
+                                                              powerfull_groups_with_match=powerfull_groups_with_match)
 
+        return result
     
    
 
