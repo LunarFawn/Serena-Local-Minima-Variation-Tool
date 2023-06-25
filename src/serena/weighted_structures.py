@@ -22,7 +22,7 @@ from serena.ensemble_variation import LMV_Token, LMV_ThreadProcessor, LMV_Shuttl
 class AptamerBondInfo():
     aptamer_bond_kcal: float
     aptamer_bond_kcal_range: KcalRanges
-
+    
 @dataclass
 class MFEAffectInfo():
     unbound_mfe_kcal: float
@@ -30,10 +30,12 @@ class MFEAffectInfo():
 
 @dataclass
 class AptamerAcceptanceInfo():
+    good_aptamer_acceptance_groups: List[int]
     good_aptamer_acceptance_kcals: List[float]
-    good_aptamer_acceptance_kcal_range: List[KcalRanges]
+    good_aptamer_acceptance_kcal_ranges: List[KcalRanges]
+    powerfull_aptamer_acceptance_groups: List[int]
     powerfull_aptamer_acceptance_kcals: List[float]
-    powerfull_aptamer_acceptance_kcal_range: List[KcalRanges]
+    powerfull_aptamer_acceptance_kcal_ranges: List[KcalRanges]
 
 @dataclass
 class SwitchabilitySettings():
@@ -42,9 +44,9 @@ class SwitchabilitySettings():
 @dataclass
 class SwitchynessResult():
     is_switchable_group:List[bool]
-    switchable_groups_list:List[bool]
+    switchable_groups_list:List[int]
     is_powerfull_switch_group:List[bool]
-    powerfull_groups_list:List[bool]
+    powerfull_groups_list:List[int]
 
 @dataclass
 class SettingsLMV():
@@ -707,23 +709,50 @@ class WeightedStructures():
                 powerfull_aptamer_acceptance_kcal_range.append(ensemble_groups.group_kcal_ranges[group_index])
         
         aptamer_acceptance_result: AptamerAcceptanceInfo = AptamerAcceptanceInfo(good_aptamer_acceptance_kcals=good_aptamer_acceptance_kcals,
-                                                                                           good_aptamer_acceptance_kcal_range=good_aptamer_acceptance_kcal_range,
-                                                                                           powerfull_aptamer_acceptance_kcal_range=powerfull_aptamer_acceptance_kcal_range,
-                                                                                           powerfull_aptamer_acceptance_kcals=powerfull_aptamer_acceptance_kcals)
+                                                                                good_aptamer_acceptance_kcal_ranges=good_aptamer_acceptance_kcal_range,
+                                                                                powerfull_aptamer_acceptance_kcal_ranges=powerfull_aptamer_acceptance_kcal_range,
+                                                                                powerfull_aptamer_acceptance_kcals=powerfull_aptamer_acceptance_kcals,
+                                                                                good_aptamer_acceptance_groups=switchability_result.switchable_groups_list,
+                                                                                powerfull_aptamer_acceptance_groups=switchability_result.powerfull_groups_list)
 
         return aptamer_acceptance_result
 
-
-    def evaluate_aptamer_bond(self, aptamer_info: AptamerBondInfo, ensemble_groups: MultipleEnsembleGroups):
-        aptamer_kcal_range:KcalRanges = KcalRanges()
-
-        groups_with_match:List[int] = []           
-    
     @dataclass
     class IdealRangeSettings():
         bound_kcal_span_plus:float = 3
         bound_kcal_span_minus:float = 3
         mfe_effect_range_plus:float = 2
+
+    def evaluate_aptamber_bond(self, aptamer_kcal_mfe:float, aptamer_settings:IdealRangeSettings, ensemble_groups: MultipleEnsembleGroups):
+
+
+    def predict_aptamer_bonding(self, aptamer_acceptance: AptamerAcceptanceInfo, aptamer_bond: AptamerBondInfo, ensemble_groups: MultipleEnsembleGroups):
+        good_aptamer_bonding_kcal_ranges:List[KcalRanges] = []
+        good_aptamer_bonding_group_kcals: List[float] = []
+        good_groups_with_match:List[int] = []
+
+        powerfull_aptamer_bonding_kcal_ranges:List[KcalRanges] = []
+        powerfull_aptamer_bonding_group_kcals: List[float] = []
+        powerfull_groups_with_match:List[int] = []
+
+        aptamer_start: float = aptamer_bond.aptamer_bond_kcal_range.start
+        aptamer_stop: float = aptamer_bond.aptamer_bond_kcal_range.stop
+        
+        for kcal_index in range(len(aptamer_acceptance.good_aptamer_acceptance_kcal_ranges)):
+            good_kcal_range = aptamer_acceptance.good_aptamer_acceptance_kcal_ranges[kcal_index]
+            good_kcal = aptamer_acceptance.good_aptamer_acceptance_kcals[kcal_index]
+            good_start: float = good_kcal_range.start
+            good_stop: float = good_kcal_range.stop
+           
+            if good_start >= aptamer_start and good_start <= aptamer_stop and good_stop >= aptamer_start and good_stop <= aptamer_stop:
+                #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
+                good_aptamer_bonding_kcal_ranges.append(good_kcal_range)
+                good_aptamer_bonding_group_kcals.append(good_kcal)
+
+
+
+    
+   
 
     def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults, settings: IdealRangeSettings):
         ensemble: MultipleEnsembleGroups = raw_results.ensemble_groups
