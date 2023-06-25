@@ -20,6 +20,7 @@ from serena.ensemble_variation import LMV_Token, LMV_ThreadProcessor, LMV_Shuttl
 
 @dataclass
 class AptamerBondInfo():
+    aptamer_bond_kcal_groups:List[int]
     aptamer_bond_kcal: float
     aptamer_bond_kcal_range: KcalRanges
     
@@ -725,6 +726,25 @@ class WeightedStructures():
 
     def evaluate_aptamber_bond(self, aptamer_kcal_mfe:float, aptamer_settings:IdealRangeSettings, ensemble_groups: MultipleEnsembleGroups):
 
+        
+        aptamer_start:float = aptamer_kcal_mfe - aptamer_settings.bound_kcal_span_minus
+        aptamer_stop : float = aptamer_kcal_mfe + aptamer_settings.bound_kcal_span_plus
+        aptamer_range:KcalRanges = KcalRanges(start=aptamer_start, stop=aptamer_stop)
+        aptamer_groups:List[int] = []
+        
+        #will only be a range and not a spreed out points
+        for group_index in range(len(ensemble_groups.group_kcal_ranges)):
+            group_value: float = ensemble_groups.group_values[group_index]
+            group_kcal_start: KcalRanges = ensemble_groups.group_kcal_ranges[group_index].start
+            group_kcal_stop: KcalRanges = ensemble_groups.group_kcal_ranges[group_index].stop
+
+            if (aptamer_start >= group_kcal_start and aptamer_start <=group_kcal_stop) or (aptamer_stop >= group_kcal_start and aptamer_stop <=group_kcal_stop):
+                aptamer_groups.append(group_index)
+
+        aptamer_bond: AptamerBondInfo = AptamerBondInfo(aptamer_bond_kcal=aptamer_kcal_mfe,
+                                                        aptamer_bond_kcal_range=aptamer_range,
+                                                        aptamer_bond_kcal_groups=aptamer_groups)
+
 
     def predict_aptamer_bonding(self, aptamer_acceptance: AptamerAcceptanceInfo, aptamer_bond: AptamerBondInfo, ensemble_groups: MultipleEnsembleGroups):
         good_aptamer_bonding_kcal_ranges:List[KcalRanges] = []
@@ -744,7 +764,7 @@ class WeightedStructures():
             good_start: float = good_kcal_range.start
             good_stop: float = good_kcal_range.stop
            
-            if good_start >= aptamer_start and good_start <= aptamer_stop and good_stop >= aptamer_start and good_stop <= aptamer_stop:
+            if (good_start >= aptamer_start and good_start <= aptamer_stop) or (good_stop >= aptamer_start and good_stop <= aptamer_stop):
                 #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
                 good_aptamer_bonding_kcal_ranges.append(good_kcal_range)
                 good_aptamer_bonding_group_kcals.append(good_kcal)
