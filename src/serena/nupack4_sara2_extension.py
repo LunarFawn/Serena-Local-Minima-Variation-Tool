@@ -41,6 +41,7 @@ class NupackSettings():
     sequence:str = ''
     folded_2nd_state_structure:str=''
     folded_2nd_state_kcal:float = 0
+    comp_structures:Sara2StructureList = Sara2StructureList()
 
 class NUPACK4Interface():
     """

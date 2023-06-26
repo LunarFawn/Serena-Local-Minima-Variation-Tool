@@ -3,7 +3,7 @@ Sara2 api for accessing and manipulating secondary structures
 in dot parenthisis form
 copyright 2023 GrizzlyEngineer
 """
-from typing import List, Dict
+from typing import List, Dict, NamedTuple
 import struct
 import pandas as pd
 import sys
@@ -13,6 +13,12 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 import threading
 import time
+from collections import namedtuple
+
+@dataclass
+class KcalRanges():
+    start: float = 0
+    stop: float = 0
 
 class Sara2SecondaryStructure(object):
 
@@ -59,7 +65,48 @@ class Sara2SecondaryStructure(object):
     def nuc_count(self):
         return len(self._sequence)
 
+class ComparisonStructures():
 
+    def __init__(self) -> None:
+        self._structures: Sara2StructureList = Sara2StructureList()
+        self._names: List[str] = []
+        self._structures_dict: Dict[str, Sara2SecondaryStructure]
+
+    def add_structure(self, structure:Sara2SecondaryStructure, name: str):
+        self._structures.add_structure(structure)
+        self._names.append(name)
+        self._structures_dict[name] = structure
+    
+    @property
+    def structures(self):
+        return self._structures
+    
+    @property
+    def names(self):
+        return self._names
+    
+    @property
+    def structures_dict(self):
+        return self._structures_dict
+    
+    def get_structure_by_name(self, name:str):
+        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
+        if name in self._structures_dict:
+            structure = self._structures_dict[name]
+        else:
+            raise Exception("name does not exist")       
+        return structure
+    
+    def get_structure_by_index(self, index:int):
+        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
+        
+        if index <= len(self._structures)-1:
+            structure = self._structures[index]
+        else:
+            raise Exception("wrong index")
+                
+        return structure
+    
 
 class Sara2StructureList(object):
     
@@ -211,6 +258,7 @@ class EVResult():
     group_ev_dict: Dict[int,EV]
 
 
+
 class LMV_Token():
     def __init__(self, num_groups: int) -> None:
         self._group_results: List[EV] = num_groups * [EV()]
@@ -302,6 +350,9 @@ class SingleEnsembleGroup():
     def __init__(self) -> None:
         self._group: Sara2StructureList = Sara2StructureList()
         self._multi_state_mfe_struct: List[str] = []
+        """
+        0 is mfe for unbound and 1 is mfe for bound
+        """
         self._multi_state_mfe_kcal: List[float] = [] 
         self._kcal_span: float = 0
         self._kcal_start: float = 0
@@ -376,6 +427,7 @@ class MultipleEnsembleGroups():
         self._groups_dict: Dict[int, Sara2StructureList] = {}
         self._group_values: List[float] = []
         self._num_groups: int = 0
+        self._group_kcal_ranges: List[KcalRanges] =  []
     
     @property
     def num_groups(self):
@@ -385,20 +437,24 @@ class MultipleEnsembleGroups():
     def num_groups(self, num: int):
         self._num_groups = num
 
-    def add_group(self, group:SingleEnsembleGroup, group_index:int, value_of_group:float):
+    def add_group(self, group:SingleEnsembleGroup, group_index:int, value_of_group:float, start_kcal:float = 0, end_kcal:float=0):
         if self._switched_state_mfe_kcal >= group.kcal_start and self._switched_state_mfe_kcal < group.kcal_end:
             group.has_bound_mfe_kcal = True
         self._groups.append(group)
         self._raw_groups.append(group.group)
         self._groups_dict[group_index]= group.group
         self._group_values.append(value_of_group)
+        kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
+        self._group_kcal_ranges.append(kcal_range)
     
-    def append_group(self, group:SingleEnsembleGroup, group_value: float):
+    def append_group(self, group:SingleEnsembleGroup, group_value: float, start_kcal:float = 0, end_kcal:float=0):
         self._num_groups = self._num_groups + 1
         self._groups.append(group)
         self._raw_groups.append(group.group)
         self._groups_dict[self._num_groups-1]= group.group
         self._group_values.append(group_value)
+        kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
+        self._group_kcal_ranges.append(kcal_range)
 
     @property
     def groups(self):
@@ -447,22 +503,19 @@ class MultipleEnsembleGroups():
     @group_values.setter
     def group_values(self, values :List[float]):
         self._group_values = values
-
+    
+    @property
+    def group_kcal_ranges(self):
+        return self._group_kcal_ranges
+    
+    @group_kcal_ranges.setter
+    def group_kcal_ranges(self, values :List[KcalRanges]):
+        self._group_kcal_ranges = values
+    
 @dataclass
-class WeightedStructureData():
-    raw_group: Sara2StructureList = Sara2StructureList()
-    weighted_dot_paren_structure: str = ''
-    weighted_compared_line:str = ''
-    unbound_mfe_dot_paren_struct: str = ''
-    unbound_mfe_kcal:float = 0
-    bound_mfe_dot_paren_struct: str = ''
-    bound_mfe_kcal:float = 0
-    BURatio: float = -1
-    BRaise: float = -1
-    UDrop: float = -1
-    UTotal: float = -1
-    bound_num:float = -1
-    unbound_num: float = -1
-    switch_score:float = -1
-    kcal_start:float = -1
-    kcal_stop:float = -1
+class LocalMinimaVariation():
+    reference_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+    group:SingleEnsembleGroup = SingleEnsembleGroup()
+    local_minima_variation: EV = EV()   
+
+
