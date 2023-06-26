@@ -19,6 +19,21 @@ from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2
 from serena.ensemble_variation import LMV_Token, LMV_ThreadProcessor, LMV_Shuttle
 
 @dataclass
+class PredictionResult():
+    good_aptamer_bonding_kcal_ranges:List[KcalRanges] 
+    good_aptamer_bonding_group_kcals: List[float] 
+    good_groups_with_match:List[int]
+    powerfull_aptamer_bonding_kcal_ranges:List[KcalRanges] 
+    powerfull_aptamer_bonding_group_kcals: List[float]
+    powerfull_groups_with_match:List[int]
+
+@dataclass
+class IdealRangeSettings():
+    bound_kcal_span_plus:float = 3
+    bound_kcal_span_minus:float = 3
+    mfe_effect_range_plus:float = 2
+
+@dataclass
 class AptamerBondInfo():
     aptamer_bond_kcal_groups:List[int]
     aptamer_bond_kcal: float
@@ -74,6 +89,7 @@ class WeightedComparisonResult():
     num_unbound:float = -1
     num_both:float = -1
     num_dot:float = -1
+    num_nucs:int = -1
 
 @dataclass
 class WeightedValueRatios():
@@ -312,7 +328,8 @@ class WeightedStructures():
                                                                            num_bound=num_bound,
                                                                            num_unbound=num_unbound,
                                                                            num_both=num_both,
-                                                                           num_dot=num_dot)
+                                                                           num_dot=num_dot,
+                                                                           num_nucs=nuc_count)
         
         return compared_data
     
@@ -502,9 +519,11 @@ class WeightedStructures():
                 current_group: SingleEnsembleGroup =  ensemble_groups.groups[group_index]
                 current_weight_struct: WeightedStructureResult = self.make_weighted_struct(current_group)
                 temperature_weighted_structures.append(current_weight_struct)
+                nuc_count: int = current_weight_struct.weighted_struct.nuc_count
                 current_comp_struct: WeightedComparisonResult = self.compair_weighted_structure(unbound_mfe_struct=unbound_mfe_stuct,
                                                                                                 bound_mfe_struct=bound_mfe_stuct,
-                                                                                                weighted_result=current_weight_struct)
+                                                                                                weighted_result=current_weight_struct,
+                                                                                                nuc_count=nuc_count)
                 temperature_comp_structures.append(current_comp_struct)
             
             #now process LMV
@@ -718,11 +737,6 @@ class WeightedStructures():
 
         return aptamer_acceptance_result
 
-    @dataclass
-    class IdealRangeSettings():
-        bound_kcal_span_plus:float = 3
-        bound_kcal_span_minus:float = 3
-        mfe_effect_range_plus:float = 2
 
     def evaluate_aptamber_bond(self, aptamer_kcal_mfe:float, aptamer_settings:IdealRangeSettings, ensemble_groups: MultipleEnsembleGroups):
 
@@ -746,14 +760,7 @@ class WeightedStructures():
                                                         aptamer_bond_kcal_groups=aptamer_groups)
         return aptamer_bond
 
-    @dataclass
-    class PredictionResult():
-        good_aptamer_bonding_kcal_ranges:List[KcalRanges] 
-        good_aptamer_bonding_group_kcals: List[float] 
-        good_groups_with_match:List[int]
-        powerfull_aptamer_bonding_kcal_ranges:List[KcalRanges] 
-        powerfull_aptamer_bonding_group_kcals: List[float]
-        powerfull_groups_with_match:List[int]
+
 
     def predict_aptamer_bonding(self, aptamer_acceptance: AptamerAcceptanceInfo, aptamer_bond: AptamerBondInfo, ensemble_groups: MultipleEnsembleGroups):
         good_aptamer_bonding_kcal_ranges:List[KcalRanges] = []
@@ -798,19 +805,19 @@ class WeightedStructures():
                 powerfull_groups_with_match.append(group_index)
 
 
-        result: self.PredictionResult = self.PredictionResult(good_aptamer_bonding_kcal_ranges=good_aptamer_bonding_kcal_ranges,
+        result: PredictionResult = PredictionResult(good_aptamer_bonding_kcal_ranges=good_aptamer_bonding_kcal_ranges,
                                                               good_aptamer_bonding_group_kcals=good_aptamer_bonding_group_kcals,
                                                               good_groups_with_match=good_groups_with_match,
                                                               powerfull_aptamer_bonding_group_kcals=powerfull_aptamer_bonding_group_kcals,
                                                               powerfull_aptamer_bonding_kcal_ranges=powerfull_aptamer_bonding_kcal_ranges,
                                                               powerfull_groups_with_match=powerfull_groups_with_match)
-
         return result
     
    
 
-    def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults, settings: IdealRangeSettings):
+    def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults, settings: IdealRangeSettings) -> List[PredictionResult]:
         ensemble: MultipleEnsembleGroups = raw_results.ensemble_groups
+        predictions_temperatures:List[PredictionResult] = []
         for temp_index in range(len(raw_results.temperatures)):
             current_temp: int = raw_results.temperatures[temp_index]
             current_group: SingleGroupRawResults = raw_results.single_group_results[temp_index]
@@ -849,7 +856,6 @@ class WeightedStructures():
             bound_ratio: float = -1
             last_unbound_ratio = -1
             last_bound_ratio = -1
-
             for kcal_group_index in range(current_group.num_kcal_groups):
                 groups_unbound_only_nucs.append(current_group.comp_structures[kcal_group_index].num_unbound)
                 groups_bound_only_nucs.append(current_group.comp_structures[kcal_group_index].num_bound)
@@ -866,70 +872,32 @@ class WeightedStructures():
             #check for number of bound vrs unbound nucs indicating a switch 
             #and the kcal group associated with the strongest signal as well
             #as the range of the signal if applicable. should be a new function to call
+            nuc_lists_container:self.NucleotideLists = self.NucleotideLists(bound_nucs=groups_bound_only_nucs,
+                                                                            unbound_nucs=groups_unbound_only_nucs,
+                                                                            both_nucs=groups_both_only_nucs,
+                                                                            neithernucs=groups_neither_only_nucs,
+                                                                            lmv_assertions=current_group.lmv_assertions,
+                                                                            lmv_values=current_group.lmv,
+                                                                            total_nucs=current_group.comp_structures[0].num_nucs,
+                                                                            total_groups=ensemble.num_groups)
+            
+            switch_settings:SwitchabilitySettings = SwitchabilitySettings(limit=1.5)
+            switchyness_result:SwitchynessResult =  self.evaluate_switchability_ensemble(nucs_list=nuc_lists_container, settings=switch_settings)
 
+            aptamer_acceptance:AptamerAcceptanceInfo = self.evaluate_aptamer_acceptance(switchability_result=switchyness_result,
+                                                                                        ensemble_groups=ensemble)
+            
+            aptamer_bond_settings: IdealRangeSettings = IdealRangeSettings(bound_kcal_span_minus=3,
+                                                                           bound_kcal_span_plus=3,
+                                                                           mfe_effect_range_plus=2)
 
-            #do each group 1 at a time
-            for kcal_group_index in range(current_group.num_kcal_groups):
+            aptemer_bond :AptamerBondInfo =  self.evaluate_aptamber_bond(aptamer_settings=aptamer_bond_settings,
+                                        ensemble_groups=ensemble,
+                                        aptamer_kcal_mfe=ensemble.switched_state_mfe_kcal)
+            
+            prediction:PredictionResult = self.predict_aptamer_bonding(aptamer_acceptance=aptamer_acceptance,
+                                         aptamer_bond=aptemer_bond,
+                                         ensemble_groups=ensemble)
+            predictions_temperatures.append(prediction)
 
-                
-                #variables for tracking strcuture stuff
-                current_unbound_only_nucs:int = groups_unbound_only_nucs[kcal_group_index]
-                current_bound_only_nucs: int = groups_bound_only_nucs[kcal_group_index]
-                current_both_only_nucs: int = groups_both_only_nucs[kcal_group_index]
-                current_neither_only_nucs: int = groups_neither_only_nucs[kcal_group_index]
-
-
-                #now get the kcal ranges for bound and unbound effect ranges
-
-
-         
-                modifier= ''
-        
-                last_unbound:float=last_compared_data.num_unbound
-                last_bound:float=last_compared_data.num_bound
-                is_functional_switch = False
-                is_powerful_switch = False
-                is_good_switch = False
-                
-                unbound = current_compared_data.num_unbound
-                bound = current_compared_data.num_bound
-                if unbound != 0:
-                    last_unbound_ratio = last_unbound/unbound 
-                    bound_ratio = bound/unbound
-                if last_bound != 0:
-                    last_bound_ratio = bound/last_bound 
-                unbound_to_total_ratio = unbound/raw_current_goup.group.nuc_count
-
-                score:int = 0
-                bonus:int = 0
-
-                if start_group_mfe >= bond_range_start and start_group_mfe <= bond_range_end and end_group_mfe >= bond_range_start and end_group_mfe <= bond_range_end:
-                            #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
-                                is_in_bound_range = True
-                                modifier = '***'
-
-                bound_stats: str = f'BURatio:{round(bound_ratio,1)}, BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)} B:{bound}, U:{unbound}'
-                            
-                limit: float = 1.5 
-
-                if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.25 and is_in_bound_range is True:
-                    is_good_switch = True
-                    score = score +1
-                
-                if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and is_in_bound_range is True:
-                    is_powerful_switch = True
-                    bonus = bonus +1
-
-                if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.2 and is_in_bound_range is True:
-                    is_powerful_switch = True
-                    bonus = bonus +1
-
-                if bound_ratio >=  limit and unbound_to_total_ratio <=.15 and is_in_bound_range is True:
-                    is_powerful_switch = True
-                    bonus = bonus +1
-
-
-    def asses_lab_switch_design(self):
-        pass
-
- 
+            return predictions_temperatures
