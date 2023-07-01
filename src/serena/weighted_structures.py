@@ -430,67 +430,7 @@ class WeightedStructures():
 
     
 
-    def do_calculations_group(self, current_compared_data: WeightedComparisonResult, last_compared_data: WeightedComparisonResult, weighted_lmv:WeightedLocalMinimaVariation, raw_current_goup:SingleEnsembleGroup):
-        start_group_mfe:float = raw_current_goup.kcal_start
-        modifier= ''
-        end_group_mfe:float = raw_current_goup.kcal_end
-        folded_kcal:float = raw_current_goup.multi_state_mfe_kcal[1]
-        bond_range_start:float = folded_kcal - 3
-        bond_range_end:float = folded_kcal + 3
-        last_unbound:float=last_compared_data.num_unbound
-        last_bound:float=last_compared_data.num_bound
-        is_functional_switch = False
-        is_powerful_switch = False
-        is_good_switch = False
-        unbound_to_total_ratio:float = 0
-        bound_ratio: float = 0
-        last_unbound_ratio = 0
-        last_bound_ratio = 0
-        unbound = current_compared_data.num_unbound
-        bound = current_compared_data.num_bound
-        if unbound != 0:
-            last_unbound_ratio = last_unbound/unbound 
-            bound_ratio = bound/unbound
-        if last_bound != 0:
-            last_bound_ratio = bound/last_bound 
-        unbound_to_total_ratio = unbound/raw_current_goup.group.nuc_count
-
-        score:int = 0
-        bonus:int = 0
-
-        if start_group_mfe >= bond_range_start and start_group_mfe <= bond_range_end and end_group_mfe >= bond_range_start and end_group_mfe <= bond_range_end:
-                    #if folded_kcal >=start_group_mfe and folded_kcal <= end_group_mfe:
-                        is_in_bound_range = True
-                        modifier = '***'
-
-        bound_stats: str = f'BURatio:{round(bound_ratio,1)}, BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)} B:{bound}, U:{unbound}'
-                    
-        limit: float = 1.5 
-
-        if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.25 and is_in_bound_range is True:
-            is_good_switch = True
-            score = score +1
-        
-        if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and is_in_bound_range is True:
-            is_powerful_switch = True
-            bonus = bonus +1
-
-        if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.2 and is_in_bound_range is True:
-            is_powerful_switch = True
-            bonus = bonus +1
-
-        if bound_ratio >=  limit and unbound_to_total_ratio <=.15 and is_in_bound_range is True:
-            is_powerful_switch = True
-            bonus = bonus +1
-
-        total_score = score+ bonus
-        weighted_scores: WeightedScores = WeightedScores(is_functional_switch=is_good_switch,
-                                                         is_high_foldchange=is_powerful_switch,
-                                                         base_switch_score=score,
-                                                         bonuses=bonus,
-                                                         total_switch_score=total_score
-                                                         )
- 
+     
     def get_multi_temp_full_raw_data(self, temperature_list:List[int], ensemble_groups: MultipleEnsembleGroups) -> MultipleGroupRawResults:
         """
         This is the function that gives you the info for how
@@ -816,6 +756,9 @@ class WeightedStructures():
    
 
     def find_ideal_switch_range_ensemble(self, raw_results: MultipleGroupRawResults, settings: IdealRangeSettings) -> List[PredictionResult]:
+        """
+        second one ran
+        """
         ensemble: MultipleEnsembleGroups = raw_results.ensemble_groups
         predictions_temperatures:List[PredictionResult] = []
         for temp_index in range(len(raw_results.temperatures)):
