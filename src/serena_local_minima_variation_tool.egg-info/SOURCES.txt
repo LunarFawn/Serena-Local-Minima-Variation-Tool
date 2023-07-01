@@ -1,9 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-setup.cfg
-src/serena_local_minima_variation_tool.egg-info/PKG-INFO
-src/serena_local_minima_variation_tool.egg-info/SOURCES.txt
-src/serena_local_minima_variation_tool.egg-info/dependency_links.txt
-src/serena_local_minima_variation_tool.egg-info/requires.txt
-src/serena_local_minima_variation_tool.egg-info/top_level.txt
