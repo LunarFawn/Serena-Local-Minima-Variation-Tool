@@ -11,7 +11,7 @@ import serena.structures as ser_structs
 from serena.structures import MultipleEnsembleGroups, Sara2StructureList, Sara2SecondaryStructure, ComparisonStructures
 import serena.nupack4_sara2_extension as nupack_extension
 from serena.nupack4_sara2_extension import NUPACK4Interface, NupackSettings, MaterialParameter
-from serena.weighted_structures import WeightedResult, WeightedStructureData, WeightedStructures, WeightedGroupResult, MultipleGroupRawResults, IdealRangeSettings, PredictionResult
+from serena.weighted_structures import WeightedStructures, WeightedGroupResult, MultipleGroupRawResults, IdealRangeSettings, PredictionResult
 
 
 
@@ -36,7 +36,7 @@ number_of_clusters:int = 1000
 temp_C: int = 37
 
 
-rna_model: MaterialParameter = MaterialParameter.rna95_nupack3
+rna_model: MaterialParameter = MaterialParameter.rna95_nupack4
 
 
 
@@ -47,29 +47,9 @@ settings: NupackSettings = NupackSettings(material_param=rna_model, kcal_delta_s
                                           folded_2nd_state_structure=folded, folded_2nd_state_kcal=folded_energy_ligoligo,
                                           sequence=sequence)
 
-ensemble_groups: MultipleEnsembleGroups = nupack.get_ensemble_groups(settings)
+ensemble_groups: MultipleEnsembleGroups = MultipleEnsembleGroups()
 
-comparison_structures:ComparisonStructures = ComparisonStructures()
-
-#add unbound mfe
-unbound_mfe_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence, 
-                                                                    structure=ensemble_groups.groups[0].group.mfe_structure, 
-                                                                    freeEnergy=ensemble_groups.groups[0].group.mfe_freeEnergy)
-mfe_struct_name:str = 'unbound'
-comparison_structures.add_structure(unbound_mfe_structure, mfe_struct_name)
-
-
-#add bound folded structures
-folded_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence, 
-                                                                    structure=folded, 
-                                                                    freeEnergy=folded_energy_ligoligo)
-folded_struct_name:str = 'bound'
-comparison_structures.add_structure(folded_structure, folded_struct_name)
-
-ensemble_variation: EnsembleVariation = EnsembleVariation()
-local_minima_variations_unbound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, comparison_structure=comparison_structures.get_structure_by_name[mfe_struct_name])
-local_minima_variations_bound: EVResult = ensemble_variation.get_ensemble_variation(ensemble=ensemble_groups, comparison_structure=comparison_structures.get_structure_by_name[folded_struct_name])
-
+ensemble_groups = nupack.get_ensemble_groups(settings)
 
 #now get weighted structure data
 
@@ -86,7 +66,4 @@ ideal_ranges:IdealRangeSettings = IdealRangeSettings(bound_kcal_span_plus=3,
 
 prediciton_results: List[PredictionResult] = weighted.find_ideal_switch_range_ensemble(raw_results=weighted_raw_result, settings=ideal_ranges)
 
-
-print (local_minima_variations_bound)
-
-print (local_minima_variations_bound)
+print(prediciton_results)
