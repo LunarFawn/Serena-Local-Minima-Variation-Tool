@@ -65,48 +65,6 @@ class Sara2SecondaryStructure(object):
     def nuc_count(self):
         return len(self._sequence)
 
-class ComparisonStructures():
-
-    def __init__(self) -> None:
-        self._structures: Sara2StructureList = Sara2StructureList()
-        self._names: List[str] = []
-        self._structures_dict: Dict[str, Sara2SecondaryStructure]
-
-    def add_structure(self, structure:Sara2SecondaryStructure, name: str):
-        self._structures.add_structure(structure)
-        self._names.append(name)
-        self._structures_dict[name] = structure
-    
-    @property
-    def structures(self):
-        return self._structures
-    
-    @property
-    def names(self):
-        return self._names
-    
-    @property
-    def structures_dict(self):
-        return self._structures_dict
-    
-    def get_structure_by_name(self, name:str):
-        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
-        if name in self._structures_dict:
-            structure = self._structures_dict[name]
-        else:
-            raise Exception("name does not exist")       
-        return structure
-    
-    def get_structure_by_index(self, index:int):
-        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
-        
-        if index <= len(self._structures)-1:
-            structure = self._structures[index]
-        else:
-            raise Exception("wrong index")
-                
-        return structure
-    
 
 class Sara2StructureList(object):
     
@@ -240,3 +198,47 @@ class Sara2StructureList(object):
     @weighted_structure.setter
     def weighted_structure(self, structure: str):
         self._weighted_structure = structure
+
+
+class ComparisonStructures():
+
+    def __init__(self) -> None:
+        self._structures: Sara2StructureList = Sara2StructureList()
+        self._names: List[str] = []
+        self._structures_dict: Dict[str, Sara2SecondaryStructure]
+
+    def add_structure(self, structure:Sara2SecondaryStructure, name: str):
+        self._structures.add_structure(structure)
+        self._names.append(name)
+        self._structures_dict[name] = structure
+    
+    @property
+    def structures(self):
+        return self._structures
+    
+    @property
+    def names(self):
+        return self._names
+    
+    @property
+    def structures_dict(self):
+        return self._structures_dict
+    
+    def get_structure_by_name(self, name:str):
+        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
+        if name in self._structures_dict:
+            structure = self._structures_dict[name]
+        else:
+            raise Exception("name does not exist")       
+        return structure
+    
+    def get_structure_by_index(self, index:int):
+        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
+        
+        if index <= len(self._structures)-1:
+            structure = self._structures[index]
+        else:
+            raise Exception("wrong index")
+                
+        return structure
+    
