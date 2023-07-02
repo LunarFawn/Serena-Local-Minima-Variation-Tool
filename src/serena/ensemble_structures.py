@@ -169,7 +169,6 @@ class Sara2StructureList(object):
         del self._stackEnergy_list[index]
         #self.process_energy()            
 
-
     @property
     def mfe_structure(self):
         return self.sara_stuctures[0].sequence
