@@ -78,12 +78,13 @@ class Sara2StructureList(object):
         self._min_stackEnergy: float = 0
         self._max_stackEnergy: float = 0
         self._num_structures: int = 0
-        self._nuc_count: int = 0
-        self._mfe_structure: str = ''
-        self._mfe_freeEnergy: float = 0
-        self._mfe_stackEnergy: float = 0
+        #self._nuc_count: int = 0
+        #self._mfe_structure: str = ''
+        #self._mfe_freeEnergy: float = 0
+        #self._mfe_stackEnergy: float = 0
         self._freeEnergy_span:float = 0
         self._stackEnergy_span:float = 0
+        self._weighted_structure:str = ''
     
 
     def process_energy(self):
@@ -108,14 +109,12 @@ class Sara2StructureList(object):
         self._stackEnergy_span = self._max_stackEnergy - self._min_stackEnergy
 
         #now count
-        if len(self._structures) == 0:
-            self._num_structures = 0
-        else:
-            self._num_structures = len(self._structures)
+        self._num_structures = len(self._sara_structures_list)
+
 
     def add_structure(self, structure: Sara2SecondaryStructure):
         self._sara_structures_list.append(structure)
-        self._structures.append(structure.structure)
+        #self._structures.append(structure.structure)
         self._freeEnergy_list.append(structure.freeEnergy)
         self._stackEnergy_list.append(structure.stackEnergy)
         #self.process_energy()
@@ -129,19 +128,31 @@ class Sara2StructureList(object):
 
     @property
     def mfe_structure(self):
-        return self.sara_stuctures[0].sequence
+        structure:str = ''
+        if len(self.sara_stuctures) > 0:
+           structure = self.sara_stuctures[0].structure
+        return structure 
 
     @property
     def mfe_freeEnergy(self):
-        return self.sara_stuctures[0].freeEnergy
+        energy: float = 0
+        if len(self.sara_stuctures) > 0:
+            energy = self.sara_stuctures[0].freeEnergy
+        return energy
     
     @property
     def mfe_stackEnergy(self):
-        return self.sara_stuctures[0].stackEnergy
+        energy: float = 0
+        if len(self.sara_stuctures) > 0:
+            energy = self.sara_stuctures[0].stackEnergy
+        return energy
     
     @property
     def nuc_count(self):
-        return self.sara_stuctures[0].nuc_count 
+        count: int = 0
+        if len(self.sara_stuctures) > 0:
+            count = self.sara_stuctures[0].nuc_count  
+        return count
 
     @property
     def sara_stuctures(self):
