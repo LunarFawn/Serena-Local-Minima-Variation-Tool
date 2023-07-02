@@ -7,6 +7,10 @@ from serena.ensemble_structures import (Sara2SecondaryStructure,
                                         KcalRanges)
 
 
+"""
+Test sara2 secondary structure
+"""
+
 @pytest.fixture
 def empty_secondary_structure():
     """
@@ -28,6 +32,46 @@ def secondary_structure():
                                    freeEnergy=free_energy,
                                    stackEnergy=stack_energgy)
 
+def test_default_new_secondary_struct_list(empty_secondary_structure:Sara2SecondaryStructure):
+    assert empty_secondary_structure.sequence == ''
+    assert empty_secondary_structure.structure == ''
+    assert empty_secondary_structure.freeEnergy == 0
+    assert empty_secondary_structure.stackEnergy == 0
+    assert empty_secondary_structure.nuc_count == 0
+
+def test_setting_initial_secondary_struct(secondary_structure:Sara2SecondaryStructure):
+    assert secondary_structure.sequence == 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA'
+    assert secondary_structure.structure == '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
+    assert secondary_structure.freeEnergy == -30
+    assert secondary_structure.stackEnergy == -20
+    assert secondary_structure.nuc_count == 84
+
+def test_setting_secondary_stuct_sequence(empty_secondary_structure:Sara2SecondaryStructure):
+    empty_secondary_structure.sequence = 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA'
+    assert empty_secondary_structure.sequence == 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA'
+
+def test_setting_secondary_stuct_structure(empty_secondary_structure:Sara2SecondaryStructure):
+    empty_secondary_structure.structure = '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
+    assert empty_secondary_structure.structure == '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
+
+def test_setting_secondary_stuct_free_energy(empty_secondary_structure:Sara2SecondaryStructure):
+    empty_secondary_structure.freeEnergy = -10
+    assert empty_secondary_structure.structure == -10
+
+def test_setting_secondary_stuct_stack_energy(empty_secondary_structure:Sara2SecondaryStructure):
+    empty_secondary_structure.stackEnergy = -20
+    assert empty_secondary_structure.stackEnergy == -20
+
+def test_setting_secondary_stuct_nuc_count(empty_secondary_structure:Sara2SecondaryStructure):
+    empty_secondary_structure.sequence = 'GCC'
+    assert empty_secondary_structure.nuc_count == 3
+
+
+
+"""
+Test sara2 secondary structure lists
+"""
+
 @pytest.fixture
 def empty_secondary_structure_list():
     """
@@ -35,11 +79,24 @@ def empty_secondary_structure_list():
     """
     return Sara2StructureList()
 
+@pytest.fixture
+def secondary_structure_list():
+    """
+    Returns a initialed secondary structure object
+    """
+    sequence:str = 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA'
+    structure: str = '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
+    free_energy:float = -30
+    stack_energgy:float - -20
+    return Sara2SecondaryStructure(sequence=sequence,
+                                   structure=structure,
+                                   freeEnergy=free_energy,
+                                   stackEnergy=stack_energgy)
+
 
 def test_default_new_secondary_struct_list(empty_secondary_structure_list:Sara2StructureList):
     assert empty_secondary_structure_list.mfe_structure == ''
     
-
 
 
 
