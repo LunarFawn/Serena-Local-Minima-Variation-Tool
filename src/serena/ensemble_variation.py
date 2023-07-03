@@ -329,3 +329,8 @@ class LMV_ThreadProcessor():
                 time.sleep(dwell_time)
 
 
+    @dataclass
+    class LocalMinimaVariation():
+        reference_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+        group:SingleEnsembleGroup = SingleEnsembleGroup()
+        local_minima_variation: EV = EV()   
