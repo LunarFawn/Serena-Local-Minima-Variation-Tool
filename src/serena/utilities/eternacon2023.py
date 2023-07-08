@@ -9,6 +9,8 @@ import openpyxl
 import pandas as pd
 from pandas import DataFrame
 from typing import List, Dict
+import time
+
 
 from serena.utilities.Sara2_API_Python3 import Sara2API, puzzleData
 from serena.utilities.vienna2_fmn_hack_interface import Vienna2FMNInterface
@@ -34,6 +36,8 @@ class Eternacon2023():
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        save_path:str = f'/mnt/g/serena/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
         pnas_round101_sheet:str = 'Round 7 (R101) (2)'
         sublab_name:str = 'Same State NG 1'
         
@@ -75,7 +79,7 @@ class Eternacon2023():
             switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
 
             analysis:PredictionReponse = switch.do_switch_analysis(sequence=sequence,
-                                                        fmn_struct=fmn_struct,
+                                                        fmn_struct=fmn_struct.structure,
                                                         fmn_struct_free_energy=0,
                                                         span=7,
                                                         units=1,
@@ -107,6 +111,11 @@ class Eternacon2023():
         pandas_sheet['36Deg_NumStructs'] = num_structures_36_list
         pandas_sheet['37Deg_NumStructs'] = num_structures_37_list
         pandas_sheet['38Deg_NumStructs'] = num_structures_38_list
+
+        logging: PNASAnalysisLogging = PNASAnalysisLogging()
+        logging.save_dataframe_to_excel(src_dataframe=pandas_sheet,
+                                        dst_path=save_path,
+                                        dst_sheet_name=sublab_name)
      
         print("Its done!!!")
 
