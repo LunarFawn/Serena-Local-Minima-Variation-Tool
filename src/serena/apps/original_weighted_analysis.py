@@ -22,6 +22,15 @@ my_model = Model
 rna_model='rna95'    
 # Define physical model 
 
+@dataclass
+class DesignInfoData():
+    dst_folder:str
+
+    design_name:str
+    design_ID:int
+    labname:str 
+    
+
 class Sara2SecondaryStructure(object):
 
     def __init__(self, sequence:str = '', structure: str = '', freeEnergy: float = 0, stackEnergy: float = 0) -> None:
