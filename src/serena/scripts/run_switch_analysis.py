@@ -37,7 +37,9 @@ class SwitchPrediction(Enum):
 class PredictionReponse():
     prediction:SwitchPrediction
     foldchange:float
-    message:str   
+    message:str
+    raw_scores:List[float]
+    num_structs:List[int]   
 
 class OriginalSwitchAnalysis():
 
@@ -62,7 +64,7 @@ class OriginalSwitchAnalysis():
         else:
             return before
         
-    def test_LMV(self, sequence, folded, folded_energy_ligoligo, span, units, manual:bool = False):
+    def do_switch_analysis(self, sequence, folded, folded_energy_ligoligo, span, units, manual:bool = False):
       
         target = '........(((......(((.............))).....)))........................................'
       
@@ -90,13 +92,18 @@ class OriginalSwitchAnalysis():
         EV_test: EnsembleVariation = EnsembleVariation()
         temp_list: List[int] = [36, 37, 38]
         score_list:List[float] = []
+        raw_scores:List[float] = []
+        num_structs:List[int] = []
 
         score: float = 0
         for temp in temp_list: 
             
-            value = EV_test.process_ensemble_variation(sequence, int(span), float(units), folded, target, folded_energy_ligoligo, temp)
+            value, num_structs = EV_test.process_ensemble_variation(sequence, int(span), float(units), folded, target, folded_energy_ligoligo, temp)
             score = score + value
             score_list.append(value)
+            raw_scores.append(value)
+            num_structs.append(value)
+
         
         num_scores: int = len(temp_list)
         print(f'Raw score is {score} of {len(temp_list)}')
@@ -137,7 +144,9 @@ class OriginalSwitchAnalysis():
 
         response: PredictionReponse = PredictionReponse(prediction=prediction,
                                                         foldchange=predicted_foldchange,
-                                                        message=predicted_foldchange_message)
+                                                        message=predicted_foldchange_message,
+                                                        raw_scores=raw_scores,
+                                                        num_structs=num_structs)
         return response
 
 

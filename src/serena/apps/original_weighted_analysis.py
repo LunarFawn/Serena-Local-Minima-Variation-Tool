@@ -875,7 +875,7 @@ class EnsembleVariation:
         print(f'Score for group is {score}')
         print(f'End of temperature')
         print(f'*******************')
-        return score
+        return score, span_structures.num_structures
 
     def get_subopt_energy_gap(self, sequence_string, energy_delta_from_MFE: int, temp:int):
         #run through subopt 
