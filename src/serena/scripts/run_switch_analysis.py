@@ -19,7 +19,7 @@ from datetime import datetime
 import numpy as np
 
 
-from serena.original import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
+from serena.apps.original_weighted_analysis import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
 
 debug:bool = False
 
