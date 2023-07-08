@@ -64,7 +64,7 @@ class OriginalSwitchAnalysis():
         else:
             return before
         
-    def do_switch_analysis(self, sequence, folded, folded_energy_ligoligo, span, units, manual:bool = False):
+    def do_switch_analysis(self, sequence, fmn_struct, fmn_struct_free_energy, span, units, manual:bool = False):
       
         target = '........(((......(((.............))).....)))........................................'
       
@@ -76,10 +76,10 @@ class OriginalSwitchAnalysis():
             target = '........(((......(((.............))).....)))........................................' #input()
 
             print("Enter predicted 2nd state folded structure")
-            folded = input()
+            fmn_struct = input()
 
             print("Enter Energy of folded structure with ligand/oligo bound")
-            folded_energy_ligoligo = float(input())
+            fmn_struct_free_energy = float(input())
 
             print("Enter Kcal delta span to look at")        
             span = input()
@@ -98,7 +98,7 @@ class OriginalSwitchAnalysis():
         score: float = 0
         for temp in temp_list: 
             
-            value, num_structs = EV_test.process_ensemble_variation(sequence, int(span), float(units), folded, target, folded_energy_ligoligo, temp)
+            value, num_structs = EV_test.process_ensemble_variation(sequence, int(span), float(units), fmn_struct, target, fmn_struct_free_energy, temp)
             score = score + value
             score_list.append(value)
             raw_scores.append(value)
