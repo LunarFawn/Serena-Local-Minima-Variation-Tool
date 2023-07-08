@@ -21,7 +21,7 @@ from serena.utilities.logging import PNASAnalysisLogging
 class PNASWetLab():
     pass
 
-class run_eternacon():
+class Eternacon2023():
 
     def __init__(self) -> None:
         pass
@@ -109,4 +109,7 @@ class run_eternacon():
         pandas_sheet['38Deg_NumStructs'] = num_structures_38_list
      
         print("Its done!!!")
+
+eternacon_stuff:Eternacon2023 = Eternacon2023()
+eternacon_stuff.run_nupack_vienna()
 
