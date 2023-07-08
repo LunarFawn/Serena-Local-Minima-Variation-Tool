@@ -5,23 +5,18 @@ from dataclasses import dataclass
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 
-@dataclass
-class CommandResponse():
-    stdout:str
-    stderr:str
-    return_code:int
 
-@dataclass
-class RNAFoldResponse():
-    sequence:str
-    structure:str
-    energy:float
 
 class Vienna2FMNInterface():
     """
     class to interface with vienna2_fmn hack by Elnando888
     """
-    
+    @dataclass
+    class CommandResponse():
+        stdout:str
+        stderr:str
+        return_code:int
+
     def __init__(self) -> None:
         pass
 
@@ -87,7 +82,7 @@ class Vienna2FMNInterface():
 
     def run_command_locally(self, command:str, extra_input:str ='/n')-> CommandResponse:
         process = subprocess.run(command, input=extra_input, encoding="utf-8", capture_output=True)
-        response: CommandResponse = CommandResponse(stdout=process.stdout,
+        response: self.CommandResponse = self.CommandResponse(stdout=process.stdout,
                                                     stderr=process.stderr,
                                                     return_code=process.returncode)
         return response
