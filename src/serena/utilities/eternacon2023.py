@@ -33,9 +33,9 @@ class run_eternacon():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        pnas_path:str = ''
-        pnas_round101_sheet:str = ''
-        sublab_name:str = ''
+        pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
+        pnas_round101_sheet:str = 'Round 7 (R101) (2)'
+        sublab_name:str = 'Same State NG 1'
         
         new_sara:Sara2API = Sara2API()
         puzzle_data: puzzleData
