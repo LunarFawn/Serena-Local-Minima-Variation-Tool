@@ -8,7 +8,7 @@ import openpyxl
 
 from serena.utilities.Sara2_API_Python3 import Sara2API, puzzleData
 from serena.utilities.vienna2_fmn_hack_interface import Vienna2FMNInterface
-from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, ComparisonStructures,
+from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, ComparisonStructures
 from serena.utilities.weighted_structures import WeightedStructure
 from serena.scripts.run_switch_analysis import OriginalSwitchAnalysis, PredictionReponse
 
@@ -58,8 +58,6 @@ class run_eternacon():
                                                         units=1,
                                                         manual=False)
 
-            wb = openpyxl.Workbook()
-            ws_write = wb.create_sheet(0)
-            ws_write.append(desing_header)
+    
         #should be able to for loop through all the designs now
 
