@@ -150,12 +150,12 @@ class Sara2API():
         return designInfo
         
 
-    def ProcessLab(self, path, designRound_sheet):
+    def ProcessLab(self, path, designRound_sheet) -> puzzleData:
         sheet = self.openExcelWetlab(path, designRound_sheet)
         #first do the Design entry stuff  
 
         designs: List[DesignPerformanceData] = []
-        designsDict: Dict[str, DesignInformation] = {}
+        designsDict: Dict[str, DesignPerformanceData] = {}
         
         for row in sheet:
             wetlabResults: WetlabData
