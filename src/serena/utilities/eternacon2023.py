@@ -39,7 +39,7 @@ class Eternacon2023():
         timestr = time.strftime("%Y%m%d-%H%M%S")
         save_path:str = f'/mnt/g/serena/test/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
         pnas_round101_sheet:str = 'Round 7 (R101) (2)'
-        sublab_name:str = 'Same State NG 1'
+        sublab_name:str = 'Same State NG 2'
         
         new_sara:Sara2API = Sara2API()
         puzzle_data: puzzleData
@@ -94,13 +94,13 @@ class Eternacon2023():
             avg_raw_score_list.append(statistics.fmean(analysis.raw_scores))
             avg_num_structures_list.append(statistics.fmean(analysis.num_structs))
             
-            raw_score_36_list.append(design_id)
-            raw_score_37_list.append(design_id)
-            raw_score_38_list.append(design_id)
+            raw_score_36_list.append(analysis.raw_scores[0])
+            raw_score_37_list.append(analysis.raw_scores[1])
+            raw_score_38_list.append(analysis.raw_scores[2])
             
-            num_structures_36_list.append(design_id)
-            num_structures_37_list.append(design_id)
-            num_structures_38_list.append(design_id)
+            num_structures_36_list.append(analysis.num_structs[0])
+            num_structures_37_list.append(analysis.num_structs[1])
+            num_structures_38_list.append(analysis.num_structs[2])
             
         pandas_sheet['PredictedFoldChange'] = predicted_foldchange_list
         
