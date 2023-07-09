@@ -63,13 +63,13 @@ class Eternacon2023():
 
 
         for design in puzzle_data.designsList:
-            design_id= design.DesignInfo.DesignID
-            sequence = design.DesignInfo.Sequence
-            fold_change = design.wetlabResults.FoldChange
-            eterna_score = design.wetlabResults.Eterna_Score
-            folding_subscore = design.wetlabResults.Folding_Subscore
-            switch_subscore = design.wetlabResults.Switch_Subscore
-            baseline_subscore = design.wetlabResults.Baseline_Subscore
+            design_id= design.design_info.DesignID
+            sequence = design.design_info.Sequence
+            fold_change = design.wetlab_results.FoldChange
+            eterna_score = design.wetlab_results.Eterna_Score
+            folding_subscore = design.wetlab_results.Folding_Subscore
+            switch_subscore = design.wetlab_results.Switch_Subscore
+            baseline_subscore = design.wetlab_results.Baseline_Subscore
 
             #this is the fmn bound mfe struct, subopt list and weighted struck
             fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence)

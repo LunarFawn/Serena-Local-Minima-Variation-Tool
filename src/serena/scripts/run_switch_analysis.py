@@ -111,7 +111,7 @@ class OriginalSwitchAnalysis():
         temp_list: List[int] = [36, 37, 38]
         score_list:List[float] = []
         raw_scores:List[float] = []
-        num_structs:List[int] = []
+        num_structs_list:List[int] = []
         response_messages:List[str] =[]
 
         score: float = 0
@@ -121,7 +121,7 @@ class OriginalSwitchAnalysis():
             score = score + value
             score_list.append(value)
             raw_scores.append(value)
-            num_structs.append(value)
+            num_structs_list.append(num_structs)
             response_messages = response_messages + result_messages
 
         
@@ -172,7 +172,7 @@ class OriginalSwitchAnalysis():
                                                         foldchange=predicted_foldchange,
                                                         message=predicted_foldchange_message,
                                                         raw_scores=raw_scores,
-                                                        num_structs=num_structs)
+                                                        num_structs=num_structs_list)
         return response
 
 
