@@ -77,12 +77,15 @@ class Eternacon2023():
             fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
 
             switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
+            switch.save_folder_path = '/mnt/g/serena/test'
+            switch.sublab_name = "SSNG1"
 
             analysis:PredictionReponse = switch.do_switch_analysis(sequence=sequence,
                                                         fmn_struct=fmn_struct.structure,
                                                         fmn_struct_free_energy=0,
                                                         span=7,
                                                         units=1,
+                                                        run_name=str(design_id),
                                                         manual=False)
             
             predicted_foldchange_list[design_id] = analysis.foldchange

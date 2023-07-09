@@ -39,12 +39,30 @@ class PredictionReponse():
     foldchange:float
     message:str
     raw_scores:List[float]
-    num_structs:List[int]   
+    num_structs:List[int] 
+
 
 class OriginalSwitchAnalysis():
 
     def __init__(self) -> None:
-        pass
+        self._save_folder_path:str
+        self._sublab_name:str
+
+    @property
+    def save_folder_path(self):
+        return self._save_folder_path
+    
+    @save_folder_path.setter
+    def save_folder_path(self, path:str):
+        self._save_folder_path = path
+    
+    @property
+    def sublab_name(self):
+        return self._sublab_name
+    
+    @sublab_name.setter
+    def sublab_name(self, name:str):
+        self._sublab_name = name
 
     def take_closest(self, myList, myNumber):
         """
@@ -64,7 +82,7 @@ class OriginalSwitchAnalysis():
         else:
             return before
         
-    def do_switch_analysis(self, sequence, fmn_struct, fmn_struct_free_energy, span, units, manual:bool = False):
+    def do_switch_analysis(self, sequence, fmn_struct, fmn_struct_free_energy, span, units, run_name:str, manual:bool = False):
       
         target = '........(((......(((.............))).....)))........................................'
       
@@ -94,15 +112,17 @@ class OriginalSwitchAnalysis():
         score_list:List[float] = []
         raw_scores:List[float] = []
         num_structs:List[int] = []
+        response_messages:List[str] =[]
 
         score: float = 0
         for temp in temp_list: 
             
-            value, num_structs = EV_test.process_ensemble_variation(sequence, int(span), float(units), fmn_struct, target, fmn_struct_free_energy, temp)
+            value, num_structs, result_messages = EV_test.process_ensemble_variation(sequence, int(span), float(units), fmn_struct, target, fmn_struct_free_energy, temp)
             score = score + value
             score_list.append(value)
             raw_scores.append(value)
             num_structs.append(value)
+            response_messages = response_messages + result_messages
 
         
         num_scores: int = len(temp_list)
@@ -141,6 +161,12 @@ class OriginalSwitchAnalysis():
             predicted_foldchange_message = f'Underperforming Switch Predicted. Fold change predicterd to be {predicted_foldchange} +/-6'
             prediction = SwitchPrediction.FUNCTIONAL
         print(predicted_foldchange_message)
+
+        import time
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        this_save_path:str = f'{self.save_folder_path}/{self.sublab_name}_{run_name}_{timestr}.txt'
+        with open(this_save_path, 'w') as file:
+            file.write('\n'.join(response_messages))
 
         response: PredictionReponse = PredictionReponse(prediction=prediction,
                                                         foldchange=predicted_foldchange,

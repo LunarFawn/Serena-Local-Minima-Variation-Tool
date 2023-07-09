@@ -429,26 +429,43 @@ class EnsembleVariation:
         
         return compared_struct, num_bound, num_unbound, num_both, num_dot
             
+    def log_message(self, message:str, log:List[str]):
+        
+        if message == '':
+            print()
+        else:
+            print(message)
 
+        log.append(message)
+        return log
 
     def process_ensemble_variation(self, sequence:str, kcal_delta_span_from_mfe:int, Kcal_unit_increments: float, folded_2nd_state_structure:str='', target_2nd_state_structure:str='', folded_kcal:float=0, temp:int=37):
-        print(f'*******************')
-        print(f'Start of Temperature')
-        print(f'Temp = {temp}')
+        result_messages:List[str] = []
+        
+        result_messages = self.log_message(f'*******************', result_messages)
+        result_messages = self.log_message(f'Start of Temperature', result_messages)
+        message:str = ''
+        result_messages = self.log_message(message, result_messages)
+        result_messages = self.log_message(f'Temp = {temp}', result_messages)
+
+
         start_time=datetime.now()
-        print(f'Starting test at {start_time}')
-        print("Getting subopt\n")
+        result_messages = self.log_message(f'Starting test at {start_time}', result_messages)
+        result_messages = self.log_message("Getting subopt\n", result_messages)
+
         nucs_lists:List[List[str]]
         span_structures: Sara2StructureList
         span_structures = self.get_subopt_energy_gap(sequence_string=sequence, energy_delta_from_MFE=kcal_delta_span_from_mfe, temp=temp)       
         mfe_energy:float =  span_structures.mfe_freeEnergy
         score:float = 0
         
-        print(f'Done with subopt gathering. {span_structures.num_structures} structures found\n')
+        result_messages = self.log_message(f'Done with subopt gathering. {span_structures.num_structures} structures found\n', result_messages)
+  
 
         bail_num_structures: int = 100000
         if span_structures.num_structures > bail_num_structures:
-            print(f'Found wayayayay to many structures. Bailing and calling it a 60. Assigning score of 0')
+            result_messages = self.log_message(f'Found wayayayay to many structures. Bailing and calling it a 60. Assigning score of 0', result_messages)
+
         else:
 
             #this is for increments of 1 kcal need to do fraction
@@ -472,7 +489,8 @@ class EnsembleVariation:
             #if remainder > 0:
             #    current_energy = current_energy + kcal_delta_span_from_mfe
             #    group_values.append(current_energy)
-            print(f'Processing group values {group_values} to \n')
+            message:str = f'Processing group values {group_values} to \n'
+            result_messages = self.log_message(message, result_messages)
             #now initialize the groups_list
             for index in range(len(group_values)-1):
                 group: Sara2StructureList = Sara2StructureList()
@@ -507,15 +525,31 @@ class EnsembleVariation:
             unbound: int= 0
             both_nuc:int = 0
             dot_nuc:int = 0 
-            print("whole span")
+
+            message:str = "whole span"
+            result_messages = self.log_message(message, result_messages)
+
             new_struct = self.make_weighted_struct(span_structures)
             comp_struct, bound, unbound, both_nuc, dot_nuc = self.compair_weighted_structure(span_structures.sara_stuctures[0].structure, folded_2nd_state_structure, new_struct, span_structures.nuc_count)
-            print(comp_struct)
-            print("mfe")
-            print(span_structures.sara_stuctures[0].structure)
-            print("folded")
-            print(folded_2nd_state_structure)
-            print("weighted structs per group")
+
+            message:str = comp_struct
+            result_messages = self.log_message(message, result_messages)
+
+            message:str = "mfe"
+            result_messages = self.log_message(message, result_messages)
+
+            message:str = span_structures.sara_stuctures[0].structure
+            result_messages = self.log_message(message, result_messages)
+
+            message:str = "folded"
+            result_messages = self.log_message(message, result_messages)
+         
+            message:str = folded_2nd_state_structure
+            result_messages = self.log_message(message, result_messages)
+       
+            message:str = "weighted structs per group"
+            result_messages = self.log_message(message, result_messages)
+          
             start_group_mfe:float = mfe_energy + 0.5
             end_group_mfe:float = start_group_mfe + Kcal_unit_increments
             bond_range_start:float = folded_kcal - 3
@@ -766,10 +800,13 @@ class EnsembleVariation:
                 group_index = group_index +1
             
             for thing in analysis_list:
-                print(thing)
+                message:str = thing
+                result_messages = self.log_message(message, result_messages)
+              
             
             for thing in struct_list:
-                print(thing)
+                message:str = thing
+                result_messages = self.log_message(message, result_messages)
 
             bound_range_min_minus_1: int = 0
             bound_range_max_plus: int = 0
@@ -780,82 +817,103 @@ class EnsembleVariation:
                 bound_range_max_plus: int = max(bound_range_index_plus_one) + bound_good_range_modifier            
     
             if is_powerful_switch is True:
-                print('Potential High Fold Change')  
+                message:str = 'Potential High Fold Change'
+                result_messages = self.log_message(message, result_messages) 
                 score = score + .5
             
             if is_good_switch is True: 
-                print("Potential  Functional Switch")
+                message:str = "Potential  Functional Switch"
+                result_messages = self.log_message(message, result_messages)
                 score = score + (len(found_bound_ratio_list)*.5)
             
             if is_off_on_switch is True:
-                print("Potential  off/on leaning design via LMV")
+                message:str = "Potential  off/on leaning design via LMV"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
             
             if found_bound_index >= bound_range_min_minus_1 and found_bound_index <= bound_range_max_plus and found_bound_index != -1 and is_off_on_switch is True:
-                print("Confirmned good. Add bonus point for on/off via LMV being in range for folding")
+                message:str = "Confirmned good. Add bonus point for on/off via LMV being in range for folding"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
             elif found_bound_index <= 2 and found_bound_index != -1 and is_in_bound_range is True:
-                print("Confirmned good. Add bonus point for on/off via LMV being in first three groups")
+                message:str = "Confirmned good. Add bonus point for on/off via LMV being in first three groups"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
             for value in found_bound_ratio_list:
                 if value >= bound_range_min_minus_1 and value <= bound_range_max_plus and found_bound_ratio_index != -1:
-                    print("Confirmned good. Add bonus point for functional being in range for folding")
+                    message:str = "Confirmned good. Add bonus point for functional being in range for folding"
+                    result_messages = self.log_message(message, result_messages)
                     score= score + .5
                 elif value >= 0 and value <= 1 and value != -1:
-                    print("Confirmned good. Add bonus point for point for functional being in first two groups")
+                    message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
+                    result_messages = self.log_message(message, result_messages)
                     score= score + .5
 
             if found_bound_ratio_high_index >= bound_range_min_minus_1 and found_bound_ratio_high_index <= bound_range_max_plus and found_bound_ratio_high_index != -1 :
-                print("Confirmned good. Add bonus point for high performing being in range for folding")
+                message:str = "Confirmned good. Add bonus point for high performing being in range for folding"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
             elif found_bound_ratio_high_index >= 0 and found_bound_ratio_high_index <= 1 and found_bound_ratio_high_index != -1:
-                print("Confirmned good. Add bonus point for high performing being in first two groups")
+                message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
 
             if found_bound_ratio_high_index in found_bound_list:
-                print("Add bonus for high performing being in range of on/off prediction")
+                message:str = "Add bonus for high performing being in range of on/off prediction"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
             
             if found_bound_ratio_index in found_bound_list:
-                print("Add bonus for functional being in range of on/off prediction")
+                message:str = "Add bonus for functional being in range of on/off prediction"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
 
             excess_limit:float = 7500
             if span_structures.num_structures > excess_limit:#15000:
                 excess_divisor:float = 2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
-                print(f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points ')
+                message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
+                result_messages = self.log_message(message, result_messages)
                 sixty_range_num:float = 15000
                 #penalize for too many structs
                 score = score - factor
                 if span_structures.num_structures > sixty_range_num:
-                    print(f'Significant excess structures found: found {span_structures.num_structures - sixty_range_num} structures over limit of {sixty_range_num}')
-                    print(f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty')
+                    message:str = f'Significant excess structures found: found {span_structures.num_structures - sixty_range_num} structures over limit of {sixty_range_num}'
+                    result_messages = self.log_message(message, result_messages)
+                    message:str = f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty'
+                    result_messages = self.log_message(message, result_messages)
                     score = score - .5
             
             if is_good_switch is True and bound_to_both_ratio >= 0.08:
-                print("Low number of both and mfe nucs in relation to bound. Add bonus point")
+                message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
 
             comp_less_ratio: float = ev_comp_to_mfe.count('<') / num_groups
             com_great_ratio: float = ev_comp_to_mfe.count('>')  / num_groups
-            print(f'ev comp great:{com_great_ratio}, ev comp less:{comp_less_ratio}')
+            message:str = f'ev comp great:{com_great_ratio}, ev comp less:{comp_less_ratio}'
+            result_messages = self.log_message(message, result_messages)
             if com_great_ratio < comp_less_ratio and comp_less_ratio >= .7:
-                print("EV for comparison struct is LESS MORE OFTEN than unbound mfe so add bonus")
+                message:str = "EV for comparison struct is LESS MORE OFTEN than unbound mfe so add bonus"
+                result_messages = self.log_message(message, result_messages)
                 score= score + .5
             elif com_great_ratio > comp_less_ratio and com_great_ratio >= .5:
-                print("EV for comparison struct is GREATER MORE OFTEN than unbound mfe so penatly")
+                message:str = "EV for comparison struct is GREATER MORE OFTEN than unbound mfe so penatly"
+                result_messages = self.log_message(message, result_messages)
                 score= score - .5
                 if com_great_ratio >= .8:
-                    print("EV for comp is GREATER EXTRA MORE OFTEN then mfe so minus penalty point")
+                    message:str = "EV for comp is GREATER EXTRA MORE OFTEN then mfe so minus penalty point"
+                    result_messages = self.log_message(message, result_messages)
                     score= score - .5
             
             if bound_total_list[0] > unbound_total_list[0]:
                 penatly: float = .5
-                print(f'Bound in mfe goup more pronounced than mfe. May not fold unbound state properly as too much 2nd state found in 1st kcal goup ensemble. Penalatly points={penatly}')
+                message:str = f'Bound in mfe goup more pronounced than mfe. May not fold unbound state properly as too much 2nd state found in 1st kcal goup ensemble. Penalatly points={penatly}'
+                result_messages = self.log_message(message, result_messages)
                 score = score - penatly
                 if bound_total_list[0] > .20:
-                    print(f'Bound in mfe goup makes up over 20% of design. Penalatly points=2')
+                    message:str = f'Bound in mfe goup makes up over 20% of design. Penalatly points=2'
+                    result_messages = self.log_message(message, result_messages)
                     score = score - .5
           
             """
@@ -870,12 +928,16 @@ class EnsembleVariation:
             """
 
         if score == 0:
-            print("Bad Switch")
+            message:str = "Bad Switch"
+            result_messages = self.log_message(message, result_messages)
 
-        print(f'Score for group is {score}')
-        print(f'End of temperature')
-        print(f'*******************')
-        return score, span_structures.num_structures
+        message:str = f'Score for group is {score}'
+        result_messages = self.log_message(message, result_messages)
+        message:str = f'End of temperature'
+        result_messages = self.log_message(message, result_messages)
+        message:str = f'*******************'
+        result_messages = self.log_message(message, result_messages)
+        return score, span_structures.num_structures, result_messages
 
     def get_subopt_energy_gap(self, sequence_string, energy_delta_from_MFE: int, temp:int):
         #run through subopt 
