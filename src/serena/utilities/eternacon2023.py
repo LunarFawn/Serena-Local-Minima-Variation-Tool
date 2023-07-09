@@ -37,7 +37,7 @@ class Eternacon2023():
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        save_path:str = f'/mnt/g/serena/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
+        save_path:str = f'/mnt/g/serena/test/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
         pnas_round101_sheet:str = 'Round 7 (R101) (2)'
         sublab_name:str = 'Same State NG 1'
         
@@ -49,21 +49,21 @@ class Eternacon2023():
                                                       sublab_name=sublab_name)
 
 
-        predicted_foldchange_list: Dict[int,float] = {}
-        avg_raw_score_list: Dict[int,float] = {}
-        avg_num_structures_list: Dict[int,float] = {}
+        predicted_foldchange_list: List[float] = []
+        avg_raw_score_list: List[float] = []
+        avg_num_structures_list: List[float] = []
 
-        raw_score_36_list: Dict[int,float] = {}
-        raw_score_37_list: Dict[int,float] = {}
-        raw_score_38_list: Dict[int,float] = {}
+        raw_score_36_list: List[float] = []
+        raw_score_37_list: List[float] = []
+        raw_score_38_list: List[float] = []
 
-        num_structures_36_list: Dict[int,float] = {}
-        num_structures_37_list: Dict[int,float] = {}
-        num_structures_38_list: Dict[int,float] = {}
+        num_structures_36_list: List[float] = []
+        num_structures_37_list: List[float] = []
+        num_structures_38_list: List[float] = []
 
-
+        flag:int =0
         for design in puzzle_data.designsList:
-            design_id= design.design_info.DesignID
+            design_id= str(design.design_info.DesignID)
             sequence = design.design_info.Sequence
             fold_change = design.wetlab_results.FoldChange
             eterna_score = design.wetlab_results.Eterna_Score
@@ -85,22 +85,22 @@ class Eternacon2023():
                                                         fmn_struct_free_energy=0,
                                                         span=7,
                                                         units=1,
-                                                        run_name=str(design_id),
+                                                        run_name=design_id,
                                                         manual=False)
             
-            predicted_foldchange_list[design_id] = analysis.foldchange
+            predicted_foldchange_list.append(analysis.foldchange)
             
             
-            avg_raw_score_list[design_id] = statistics.fmean(analysis.raw_scores)
-            avg_num_structures_list[design_id] = statistics.fmean(analysis.num_structs)
+            avg_raw_score_list.append(statistics.fmean(analysis.raw_scores))
+            avg_num_structures_list.append(statistics.fmean(analysis.num_structs))
             
-            raw_score_36_list[design_id] = analysis.raw_scores[0]
-            raw_score_37_list[design_id] = analysis.raw_scores[1]
-            raw_score_38_list[design_id] = analysis.raw_scores[2]
+            raw_score_36_list.append(design_id)
+            raw_score_37_list.append(design_id)
+            raw_score_38_list.append(design_id)
             
-            num_structures_36_list[design_id] = analysis.num_structs[0]
-            num_structures_37_list[design_id] = analysis.num_structs[1]
-            num_structures_38_list[design_id] = analysis.num_structs[2]
+            num_structures_36_list.append(design_id)
+            num_structures_37_list.append(design_id)
+            num_structures_38_list.append(design_id)
             
         pandas_sheet['PredictedFoldChange'] = predicted_foldchange_list
         
