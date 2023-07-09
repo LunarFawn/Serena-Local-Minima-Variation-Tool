@@ -37,9 +37,12 @@ class Eternacon2023():
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        save_path:str = f'/mnt/g/serena/test/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
+        save_path:str = f'/mnt/g/serena/SSNG1_rerun/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
         pnas_round101_sheet:str = 'Round 7 (R101) (2)'
-        sublab_name:str = 'Same State NG 2'
+        sublab_name:str = 'Same State NG 1'
+        switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
+        switch.save_folder_path = '/mnt/g/serena/SSNG1_rerun'
+        switch.sublab_name = "SSNG1"
         
         new_sara:Sara2API = Sara2API()
         puzzle_data: puzzleData
@@ -76,9 +79,7 @@ class Eternacon2023():
             fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(sequence)
             fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
 
-            switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
-            switch.save_folder_path = '/mnt/g/serena/test'
-            switch.sublab_name = "SSNG1"
+            
 
             analysis:PredictionReponse = switch.do_switch_analysis(sequence=sequence,
                                                         fmn_struct=fmn_struct.structure,
