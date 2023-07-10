@@ -36,13 +36,13 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        run_name:str = 'SSNG3_30K_run1'
+        run_name:str = 'SSNG1_30K_run1'
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")
         save_path:str = f'/mnt/g/serena/{run_name}/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
         pnas_round101_sheet:str = 'Round 7 (R101) (2)'
-        sublab_name:str = 'Same State NG 3'
+        sublab_name:str = 'Same State NG 1'
         switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
         switch.save_folder_path = f'/mnt/g/serena/{run_name}'
         switch.sublab_name = "SSNG1"
