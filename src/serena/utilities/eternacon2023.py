@@ -36,7 +36,7 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        run_name:str = 'SSNG3_run2'
+        run_name:str = 'SSNG3_run3'
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")

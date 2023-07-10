@@ -39,7 +39,7 @@ class Vienna2FMNInterface():
                     energy = float(energy_str)
                     energy = energy - fmn_delta
                 except ValueError as error:
-                        raise Exception(f'NOT A NUMBER, Error:{error}') 
+                        energy = 0
         
         sara_struct: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence,
                                                                        structure=structure,
@@ -73,7 +73,7 @@ class Vienna2FMNInterface():
                         energy = float(raw_struct[1])
                         sara_struct.freeEnergy = energy
                     except ValueError as error:
-                        raise Exception(f'NOT A NUMBER, Error:{error}')
+                        energy = 0
                     struct_list_response.add_structure(sara_struct)
         
         return struct_list_response
