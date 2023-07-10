@@ -5,6 +5,7 @@ pandas baesd log reporting
 from typing import List
 import pandas as pd
 from pandas import DataFrame
+import os
 
 class PNASAnalysisLogging():
 
@@ -16,6 +17,13 @@ class PNASAnalysisLogging():
         sublab_sheet:DataFrame  = sheet[sheet['Puzzle_Name'] == sublab]
         return sublab_sheet
     
+    def save_excel_sheet(self, df:DataFrame, excel_path:str, sheet_name:str):
+        if not os.path.exists(excel_path):
+            df.to_excel(excel_path, sheet_name=sheet_name, index=False)
+        else:
+            with pd.ExcelWriter(excel_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
+                df.to_excel(writer, sheet_name=sheet_name, startrow=writer.sheets[sheet_name].max_row, header=None, index=False)
+
     def save_dataframe_to_excel(self, src_dataframe:DataFrame, dst_path:str, dst_sheet_name:str):
         with pd.ExcelWriter(dst_path) as writer:
             src_dataframe.to_excel(writer, sheet_name=dst_sheet_name)

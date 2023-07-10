@@ -36,7 +36,7 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        run_name:str = 'SSNG3_run3'
+        run_name:str = 'SSNG3_30K_run1'
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -83,7 +83,7 @@ class Eternacon2023():
             baseline_subscore = design.wetlab_results.Baseline_Subscore
 
             #make a new line of just this designs row
-            design_data_df:DataFrame = pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID]
+            
             
             #this is the fmn bound mfe struct, subopt list and weighted struck
             fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence)
@@ -99,21 +99,30 @@ class Eternacon2023():
                                                         units=1,
                                                         run_name=design_id,
                                                         manual=False)
-            
 
-            design_data_df['PredictedFoldChange'] = analysis.foldchange
-            
-            design_data_df['AvgSwitchScore'] = statistics.fmean(analysis.raw_scores)
-            design_data_df['AvgNumSstruct'] = statistics.fmean(analysis.num_structs)
-            
-            design_data_df['36Deg_SwitchScore'] = analysis.raw_scores[0]
-            design_data_df['37Deg_SwitchScore'] = analysis.raw_scores[1]
-            design_data_df['38Deg_SwitchScore'] = analysis.raw_scores[2]
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'PredictedFoldChange'] = analysis.foldchange
+            #design_data_df['PredictedFoldChange'] = analysis.foldchange
 
-            design_data_df['36Deg_NumStructs'] = analysis.num_structs[0]
-            design_data_df['37Deg_NumStructs'] = analysis.num_structs[1]
-            design_data_df['38Deg_NumStructs'] = analysis.num_structs[2]
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'AvgSwitchScore'] = statistics.fmean(analysis.raw_scores)
+            #design_data_df['AvgSwitchScore'] = statistics.fmean(analysis.raw_scores)
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'AvgNumSstruct'] = statistics.fmean(analysis.num_structs)
+            #design_data_df['AvgNumSstruct'] = statistics.fmean(analysis.num_structs)
             
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '36Deg_SwitchScore'] = analysis.raw_scores[0]
+            #design_data_df['36Deg_SwitchScore'] = analysis.raw_scores[0]
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '37Deg_SwitchScore'] = analysis.raw_scores[1]
+            #design_data_df['37Deg_SwitchScore'] = analysis.raw_scores[1]
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '38Deg_SwitchScore'] = analysis.raw_scores[2]
+            #design_data_df['38Deg_SwitchScore'] = analysis.raw_scores[2]
+
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '36Deg_NumStructs'] =  analysis.num_structs[0]
+            #design_data_df['36Deg_NumStructs'] = analysis.num_structs[0]
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '37Deg_NumStructs'] =  analysis.num_structs[1]
+            #design_data_df['37Deg_NumStructs'] = analysis.num_structs[1]
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '38Deg_NumStructs'] =  analysis.num_structs[2]
+            #design_data_df['38Deg_NumStructs'] = analysis.num_structs[2]
+            
+            design_data_df:DataFrame = pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID]
             logging: PNASAnalysisLogging = PNASAnalysisLogging()
             logging.save_excel_sheet(design_data_df, save_path, sublab_name)
            
