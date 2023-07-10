@@ -868,13 +868,13 @@ class EnsembleVariation:
                 result_messages = self.log_message(message, result_messages)
                 score= score + .5
 
-            excess_limit:float = 12435#this is based on new data  7500
+            excess_limit:float = 10000#this is based on new data  7500
             if span_structures.num_structures > excess_limit:#15000:
                 excess_divisor:float = 2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
                 message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
                 result_messages = self.log_message(message, result_messages)
-                sixty_range_num:float = 20000#15000
+                sixty_range_num:float = 15000
                 #penalize for too many structs
                 score = score - factor
                 if span_structures.num_structures > sixty_range_num:
