@@ -36,16 +36,20 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        run_name:str = 'SSNG1_30K_run1'
+        same_state:str='1'
+        details:str= f'weighted_200K_excess_run_1'
+        run_name:str = f'SSNG{same_state}_{details}'
+        switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
+        switch.save_folder_path = f'/mnt/g/serena/{run_name}'
+        switch.sublab_name = f'SSNG{same_state}'
+        sublab_name:str = f'Same State NG {same_state}'
 
         pnas_path:str = '/mnt/g/serena/pnas.2112979119.sd01_eternacon.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")
         save_path:str = f'/mnt/g/serena/{run_name}/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
         pnas_round101_sheet:str = 'Round 7 (R101) (2)'
-        sublab_name:str = 'Same State NG 1'
-        switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
-        switch.save_folder_path = f'/mnt/g/serena/{run_name}'
-        switch.sublab_name = "SSNG1"
+        
+        
 
         if os.path.exists(switch.save_folder_path) is False:
             os.mkdir(switch.save_folder_path)
@@ -86,14 +90,14 @@ class Eternacon2023():
             
             
             #this is the fmn bound mfe struct, subopt list and weighted struck
-            fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence)
-            #fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(sequence)
-            #fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
+            #fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence)
+            fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(sequence)
+            fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
             
             
 
             analysis:PredictionReponse = switch.do_switch_analysis(sequence=sequence,
-                                                        fmn_struct=fmn_struct.structure,
+                                                        fmn_struct=fmn_weighted_struct.weighted_structure.structure,
                                                         fmn_struct_free_energy=0,
                                                         span=7,
                                                         units=1,

@@ -462,9 +462,9 @@ class EnsembleVariation:
         result_messages = self.log_message(f'Done with subopt gathering. {span_structures.num_structures} structures found\n', result_messages)
   
 
-        bail_num_structures: int = 100000
+        bail_num_structures: int = 200000
         if span_structures.num_structures > bail_num_structures:
-            result_messages = self.log_message(f'Found wayayayay to many structures. Bailing and calling it a 60. Assigning score of 0', result_messages)
+            result_messages = self.log_message(f'Found wayayayay to many structures >200,000. Bailing and calling it a 60. Assigning score of 0', result_messages)
 
         else:
 
@@ -819,17 +819,17 @@ class EnsembleVariation:
             if is_powerful_switch is True:
                 message:str = 'Potential High Fold Change'
                 result_messages = self.log_message(message, result_messages) 
-                score = score + 1
+                score = score + .5
             
             if is_good_switch is True: 
                 message:str = "Potential  Functional Switch"
                 result_messages = self.log_message(message, result_messages)
-                score = score + (len(found_bound_ratio_list)*1)
+                score = score + (len(found_bound_ratio_list)*.5)
             
             if is_off_on_switch is True:
                 message:str = "Potential  off/on leaning design via LMV"
                 result_messages = self.log_message(message, result_messages)
-                score= score + 1
+                score= score + .5
             
             if found_bound_index >= bound_range_min_minus_1 and found_bound_index <= bound_range_max_plus and found_bound_index != -1 and is_off_on_switch is True:
                 message:str = "Confirmned good. Add bonus point for on/off via LMV being in range for folding"
@@ -838,7 +838,7 @@ class EnsembleVariation:
             elif found_bound_index <= 2 and found_bound_index != -1 and is_in_bound_range is True:
                 message:str = "Confirmned good. Add bonus point for on/off via LMV being in first three groups"
                 result_messages = self.log_message(message, result_messages)
-                score= score + 1
+                score= score + .5
             for value in found_bound_ratio_list:
                 if value >= bound_range_min_minus_1 and value <= bound_range_max_plus and found_bound_ratio_index != -1:
                     message:str = "Confirmned good. Add bonus point for functional being in range for folding"
@@ -847,7 +847,7 @@ class EnsembleVariation:
                 elif value >= 0 and value <= 1 and value != -1:
                     message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
                     result_messages = self.log_message(message, result_messages)
-                    score= score + 1
+                    score= score + .5
 
             if found_bound_ratio_high_index >= bound_range_min_minus_1 and found_bound_ratio_high_index <= bound_range_max_plus and found_bound_ratio_high_index != -1 :
                 message:str = "Confirmned good. Add bonus point for high performing being in range for folding"
@@ -856,25 +856,25 @@ class EnsembleVariation:
             elif found_bound_ratio_high_index >= 0 and found_bound_ratio_high_index <= 1 and found_bound_ratio_high_index != -1:
                 message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
                 result_messages = self.log_message(message, result_messages)
-                score= score + 1
+                score= score + .5
 
             if found_bound_ratio_high_index in found_bound_list:
                 message:str = "Add bonus for high performing being in range of on/off prediction"
                 result_messages = self.log_message(message, result_messages)
-                score= score + 1
+                score= score + .5
             
             if found_bound_ratio_index in found_bound_list:
                 message:str = "Add bonus for functional being in range of on/off prediction"
                 result_messages = self.log_message(message, result_messages)
-                score= score + 1
+                score= score + .5
 
-            excess_limit:float = 30000#10000#this is based on new data  7500
+            excess_limit:float = 20000#10000#this is based on new data  7500
             if span_structures.num_structures > excess_limit:#15000:
-                excess_divisor:float = 2500
+                excess_divisor:float = 1000#2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
                 message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
                 result_messages = self.log_message(message, result_messages)
-                sixty_range_num:float = 40000#15000
+                sixty_range_num:float = 50000#15000
                 #penalize for too many structs
                 score = score - factor
                 if span_structures.num_structures > sixty_range_num:
