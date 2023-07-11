@@ -467,7 +467,7 @@ class EnsembleVariation:
             result_messages = self.log_message(f'Found wayayayay to many structures >100,000. Bailing and calling it a 60. Assigning score of 0', result_messages)
             excess_limit:float = 20000#10000#this is based on new data  7500
             if span_structures.num_structures > excess_limit:#15000:
-                excess_divisor:float = 1000#2500
+                excess_divisor:float = 2000#2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
                 message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
                 result_messages = self.log_message(message, result_messages)
@@ -886,7 +886,7 @@ class EnsembleVariation:
 
             excess_limit:float = 20000#10000#this is based on new data  7500
             if span_structures.num_structures > excess_limit:#15000:
-                excess_divisor:float = 1000#2500
+                excess_divisor:float = 2000#2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
                 message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
                 result_messages = self.log_message(message, result_messages)
