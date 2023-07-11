@@ -461,10 +461,26 @@ class EnsembleVariation:
         
         result_messages = self.log_message(f'Done with subopt gathering. {span_structures.num_structures} structures found\n', result_messages)
   
-
-        bail_num_structures: int = 200000
+        #added penalty to bailed structures
+        bail_num_structures: int = 100000
         if span_structures.num_structures > bail_num_structures:
-            result_messages = self.log_message(f'Found wayayayay to many structures >200,000. Bailing and calling it a 60. Assigning score of 0', result_messages)
+            result_messages = self.log_message(f'Found wayayayay to many structures >100,000. Bailing and calling it a 60. Assigning score of 0', result_messages)
+            excess_limit:float = 20000#10000#this is based on new data  7500
+            if span_structures.num_structures > excess_limit:#15000:
+                excess_divisor:float = 1000#2500
+                factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
+                message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
+                result_messages = self.log_message(message, result_messages)
+                sixty_range_num:float = 50000#15000
+                #penalize for too many structs
+                score = score - factor
+                if span_structures.num_structures > sixty_range_num:
+                    message:str = f'Significant excess structures found: found {span_structures.num_structures - sixty_range_num} structures over limit of {sixty_range_num}'
+                    result_messages = self.log_message(message, result_messages)
+                    message:str = f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty'
+                    result_messages = self.log_message(message, result_messages)
+                    score = score - .5
+            
 
         else:
 
