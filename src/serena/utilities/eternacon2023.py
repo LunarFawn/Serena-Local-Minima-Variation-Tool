@@ -36,7 +36,7 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        same_state:str='1'
+        same_state:str='3'
         details:str= f'weighted_200K_excess_run_1'
         run_name:str = f'SSNG{same_state}_{details}'
         switch:OriginalSwitchAnalysis = OriginalSwitchAnalysis()
