@@ -59,7 +59,7 @@ class CPU_Token():
 
     @property
     def thread_dict(self):
-        return self._group_dict
+        return self._thread_dict
         
     def set_thread_dict(self, index:int, value:CPU_Result):
         self._thread_dict[index]=value
