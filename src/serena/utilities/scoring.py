@@ -25,3 +25,6 @@ class Penalties():
             score = score - .5
         
         return score
+    
+
+
