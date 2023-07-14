@@ -87,7 +87,7 @@ class CPU_Token():
         return is_completed
 
 
-class LMV_Shuttle():
+class CPU_Shuttle():
     """
     This is the class the transports the data to be processed to thefunction in the thread
     from the original caller of the threads
@@ -126,9 +126,9 @@ class CPU_ThreadProcessor():
     """
     This is the class that actuallt runs the threads and is called from the main caller
     """  
-    def __init__(self, data_to_process:CPU_Data, function_to_run, total_threads:int) -> None:
-        self._data_to_process:CPU_Data = data_to_process
-     
+    def __init__(self, data_to_process:List[CPU_Data], function_to_run) -> None:
+        self._data_to_process:List[CPU_Data] = data_to_process
+        total_threads:int = len(data_to_process)
         self._total_threads: int =  total_threads
         self._thread_token: CPU_Token = CPU_Token(total_threads)
         self._function_to_run = function_to_run
@@ -138,7 +138,7 @@ class CPU_ThreadProcessor():
         return self._data_to_process
 
     @data_to_process.setter
-    def data_to_process(self, data_to_process:CPU_Data):
+    def data_to_process(self, data_to_process:List[CPU_Data]):
         self._data_to_process = data_to_process
 
     @property
@@ -172,7 +172,7 @@ class CPU_ThreadProcessor():
 
     def start_functions(self):
         for thread_index in range(self.total_threads):
-            new_shuttle: LMV_Shuttle = LMV_Shuttle(data_to_process=self.data_to_process, thread_index=thread_index, token=self.thread_token) 
+            new_shuttle: CPU_Shuttle = CPU_Shuttle(data_to_process=self.data_to_process[thread_index], thread_index=thread_index, token=self.thread_token) 
             mew_thread = Thread(target=self.function_to_run, args=[new_shuttle])
             mew_thread.start()
 

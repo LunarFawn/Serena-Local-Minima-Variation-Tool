@@ -16,6 +16,8 @@ import time
 import numpy as np
 import collections
 
+from serena.utilities.cpu_thread_manager import CPU_Data, CPU_Result, CPU_ThreadProcessor, CPU_Token, CPU_Shuttle
+
 my_model = Model
 
 #rna_model='rna06'
@@ -439,7 +441,17 @@ class EnsembleVariation:
         log.append(message)
         return log
 
-    def process_ensemble_variation(self, sequence:str, kcal_delta_span_from_mfe:int, Kcal_unit_increments: float, folded_2nd_state_structure:str='', target_2nd_state_structure:str='', folded_kcal:float=0, temp:int=37):
+    def process_ensemble_variation(self, cpu_shuttle:CPU_Shuttle):
+                        
+        sequence:str = cpu_shuttle.data_to_process.temperature_data.sequence
+        kcal_delta_span_from_mfe:int = cpu_shuttle.data_to_process.temperature_data.span
+        Kcal_unit_increments: float = cpu_shuttle.data_to_process.temperature_data.units
+        folded_2nd_state_structure:str= cpu_shuttle.data_to_process.temperature_data.fmn_struct
+        folded_kcal:float= cpu_shuttle.data_to_process.temperature_data.fmn_struct_free_energy
+        temp:int = cpu_shuttle.data_to_process.temperature_data.temperature
+        thread_index: int = cpu_shuttle.thread_index
+        token:LMV_Token = cpu_shuttle.token 
+
         result_messages:List[str] = []
         
         result_messages = self.log_message(f'*******************', result_messages)
@@ -702,7 +714,7 @@ class EnsembleVariation:
                 unbound_total_list.append(unbound_to_total_ratio)  
 
                 bound_stats: str = f'BURatio:{round(bound_ratio,2)},both_Raise:{round(last_both_ratio,2)} BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)},BothTotal:{round(both_nuc_total,2)}, BoundTotal:{round(bound_to_total_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)}, bound_both:{round(bound_to_both_ratio,2)} B:{bound}, U:{unbound}. both:{both_nuc}'
-
+                token.group_results[]
                 #if bound < 4:
                     #disable ability to pass if bound is less than 4
                     #idea is that you need a quad for a good bond
