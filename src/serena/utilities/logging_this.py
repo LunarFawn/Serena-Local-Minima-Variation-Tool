@@ -7,6 +7,8 @@ import pandas as pd
 from pandas import DataFrame
 import os
 
+from results import SwitchAnalysisResults, ResultsToDataframe
+
 class PNASAnalysisLogging():
 
     def __init__(self) -> None:
@@ -31,4 +33,12 @@ class PNASAnalysisLogging():
     def add_new_named_collumn(self,src_datafrm:DataFrame, column_name:str, column_list:List[str]):
         src_datafrm[column_name]=column_list
         return src_datafrm
+    
+    def log_switch_results_excel(self, file_path:str, sheet_name:str, results:SwitchAnalysisResults):
+        results_converter:ResultsToDataframe = ResultsToDataframe()
+        new_df: DataFrame = results_converter.make_switch_analysis_dataframe(result=results)
+        self.save_excel_sheet(df=new_df,
+                              excel_path=file_path,
+                              sheet_name=sheet_name)
+
 

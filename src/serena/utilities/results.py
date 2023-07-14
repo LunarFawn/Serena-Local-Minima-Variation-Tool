@@ -1,6 +1,8 @@
 
-from dataclasses import dataclass
-
+from dataclasses import dataclass, fields, Field
+from typing import List
+import pandas as pd 
+from pandas import DataFrame
 
 @dataclass
 class SwitchAnalysisResults():
@@ -18,4 +20,20 @@ class SwitchAnalysisResults():
     ev_comparison: float = -1
     ev_relative: float = -1
     ev_unbound_mfe:float = -1
+
+class ResultsToDataframe():
+    
+    def __init__(self) -> None:
+        pass
+
+    def make_switch_analysis_dataframe(self, result: SwitchAnalysisResults):
+        header:List[str] = []
+        values:List[str] = []
+        for field in fields(result):
+            field_name = field.name
+            header.append(field_name)
+            filed_value = getattr(result, field_name)
+            values.append(str(filed_value))
+        df_result:DataFrame = pd.DataFrame(values, columns=header)
+        return df_result
 
