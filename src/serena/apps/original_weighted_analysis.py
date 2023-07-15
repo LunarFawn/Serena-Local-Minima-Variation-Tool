@@ -542,6 +542,10 @@ class EnsembleVariation:
             both_nuc:int = 0
             dot_nuc:int = 0 
 
+            nuc_penatly_count:int = 0
+            first_BUratio:float=0
+            BUratio_list:List[float] = []
+
             message:str = "whole span"
             result_messages = self.log_message(message, result_messages)
 
@@ -702,6 +706,14 @@ class EnsembleVariation:
                 unbound_total_list.append(unbound_to_total_ratio)  
 
                 bound_stats: str = f'BURatio:{round(bound_ratio,2)},both_Raise:{round(last_both_ratio,2)} BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)},BothTotal:{round(both_nuc_total,2)}, BoundTotal:{round(bound_to_total_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)}, bound_both:{round(bound_to_both_ratio,2)} B:{bound}, U:{unbound}. both:{both_nuc}'
+
+
+                
+                if group_index == 0:
+                    nuc_penatly_count = bound
+                    first_BUratio = round(bound_ratio,2)
+                
+                BUratio_list.append(round(bound_ratio,2))
 
                 #if bound < 4:
                     #disable ability to pass if bound is less than 4
@@ -884,7 +896,7 @@ class EnsembleVariation:
                 result_messages = self.log_message(message, result_messages)
                 score= score + .5
 
-            excess_limit:float = 20000#10000#this is based on new data  7500
+            excess_limit:float = 7500#20000this is based on new data 7500
             if span_structures.num_structures > excess_limit:#15000:
                 excess_divisor:float = 2000#2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
@@ -922,15 +934,28 @@ class EnsembleVariation:
                     result_messages = self.log_message(message, result_messages)
                     score= score - .5
             
-            if bound_total_list[0] > unbound_total_list[0]:
-                penatly: float = .5
-                message:str = f'Bound in mfe goup more pronounced than mfe. May not fold unbound state properly as too much 2nd state found in 1st kcal goup ensemble. Penalatly points={penatly}'
-                result_messages = self.log_message(message, result_messages)
-                score = score - penatly
-                if bound_total_list[0] > .20:
-                    message:str = f'Bound in mfe goup makes up over 20% of design. Penalatly points=2'
+            if nuc_penatly_count > 0:
+                if BUratio_list[0] >= .75:
+                    new_penalty: float = nuc_penatly_count * 1
+                    message:str = f'Bound unbound ratio higher than 75% so it will most likely just fold into what should have been a switch so minus {new_penalty} points'
                     result_messages = self.log_message(message, result_messages)
-                    score = score - .5
+                    score = score - new_penalty
+                elif BUratio_list[0] > .60 and BUratio_list[1] < .3:
+                    new_penalty: float = nuc_penatly_count * 1
+                    message:str = f'Bound unbound ratio higher than 50% and then the 2nd energy group less than 20% so it will likely be blocked from switching so minus {new_penalty} points'
+                    result_messages = self.log_message(message, result_messages)
+                    score = score - new_penalty
+                else: 
+                    if is_powerful_switch is False and is_good_switch is False and is_off_on_switch is False:
+                        new_penalty: float = nuc_penatly_count * .5                   
+                        message:str = f'Bound nucs found in first energy group but design has n. Design is primed to switch so add bonus of {new_penalty} points'
+                        result_messages = self.log_message(message, result_messages)
+                        score = score + new_penalty
+                    else:
+                        new_penalty: float = nuc_penatly_count * .5                   
+                        message:str = f'Bound nucs found in first energy group. Design is primed to switch so add bonus of {new_penalty} points'
+                        result_messages = self.log_message(message, result_messages)
+                        score = score + new_penalty
           
             """
             if both_nuc_total < .7 and unbound_to_total_ratio > .2:
