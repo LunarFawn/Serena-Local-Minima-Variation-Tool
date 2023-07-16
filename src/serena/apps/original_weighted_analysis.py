@@ -465,7 +465,7 @@ class EnsembleVariation:
         bail_num_structures: int = 100000
         if span_structures.num_structures > bail_num_structures:
             result_messages = self.log_message(f'Found wayayayay to many structures >100,000. Bailing and calling it a 60. Assigning score of 0', result_messages)
-            excess_limit:float = 20000#10000#this is based on new data  7500
+            excess_limit:float = 7500#this is based on new data  7500
             if span_structures.num_structures > excess_limit:#15000:
                 excess_divisor:float = 2000#2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
@@ -629,6 +629,9 @@ class EnsembleVariation:
 
             ev_comp_to_mfe:List[str] = []
 
+
+            BRaise_list:List[float] = []
+
             for group in groups_list:
                 comp_struct:str =''
                 result:str = ''
@@ -685,6 +688,12 @@ class EnsembleVariation:
                 except:
                     pass
                 
+                #added to address the ones with 0 in the first group
+                if group_index > 0:
+                    if BRaise_list[group_index-1] == 0 and bound > 0:
+                        last_bound_ratio = bound
+
+
                 try:
                     last_both_ratio = both_nuc/last_both 
                 except:
@@ -714,6 +723,7 @@ class EnsembleVariation:
                     first_BUratio = round(bound_ratio,2)
                 
                 BUratio_list.append(round(bound_ratio,2))
+                BRaise_list.append(round(bound,2))
 
                 #if bound < 4:
                     #disable ability to pass if bound is less than 4
@@ -847,54 +857,54 @@ class EnsembleVariation:
             if is_powerful_switch is True:
                 message:str = 'Potential High Fold Change'
                 result_messages = self.log_message(message, result_messages) 
-                score = score + .5
+                score = score + 1
             
             if is_good_switch is True: 
                 message:str = "Potential  Functional Switch"
                 result_messages = self.log_message(message, result_messages)
-                score = score + (len(found_bound_ratio_list)*.5)
+                score = score + (len(found_bound_ratio_list)*1)
             
             if is_off_on_switch is True:
                 message:str = "Potential  off/on leaning design via LMV"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
             
             if found_bound_index >= bound_range_min_minus_1 and found_bound_index <= bound_range_max_plus and found_bound_index != -1 and is_off_on_switch is True:
                 message:str = "Confirmned good. Add bonus point for on/off via LMV being in range for folding"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
             elif found_bound_index <= 2 and found_bound_index != -1 and is_in_bound_range is True:
                 message:str = "Confirmned good. Add bonus point for on/off via LMV being in first three groups"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
             for value in found_bound_ratio_list:
                 if value >= bound_range_min_minus_1 and value <= bound_range_max_plus and found_bound_ratio_index != -1:
                     message:str = "Confirmned good. Add bonus point for functional being in range for folding"
                     result_messages = self.log_message(message, result_messages)
-                    score= score + .5
+                    score= score + 1
                 elif value >= 0 and value <= 1 and value != -1:
                     message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
                     result_messages = self.log_message(message, result_messages)
-                    score= score + .5
+                    score= score + 1
 
             if found_bound_ratio_high_index >= bound_range_min_minus_1 and found_bound_ratio_high_index <= bound_range_max_plus and found_bound_ratio_high_index != -1 :
                 message:str = "Confirmned good. Add bonus point for high performing being in range for folding"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
             elif found_bound_ratio_high_index >= 0 and found_bound_ratio_high_index <= 1 and found_bound_ratio_high_index != -1:
                 message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
 
             if found_bound_ratio_high_index in found_bound_list:
                 message:str = "Add bonus for high performing being in range of on/off prediction"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
             
             if found_bound_ratio_index in found_bound_list:
                 message:str = "Add bonus for functional being in range of on/off prediction"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
 
             excess_limit:float = 7500#20000this is based on new data 7500
             if span_structures.num_structures > excess_limit:#15000:
@@ -915,7 +925,7 @@ class EnsembleVariation:
             if is_good_switch is True and bound_to_both_ratio >= 0.08:
                 message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
 
             comp_less_ratio: float = ev_comp_to_mfe.count('<') / num_groups
             com_great_ratio: float = ev_comp_to_mfe.count('>')  / num_groups
@@ -924,7 +934,7 @@ class EnsembleVariation:
             if com_great_ratio < comp_less_ratio and comp_less_ratio >= .7:
                 message:str = "EV for comparison struct is LESS MORE OFTEN than unbound mfe so add bonus"
                 result_messages = self.log_message(message, result_messages)
-                score= score + .5
+                score= score + 1
             elif com_great_ratio > comp_less_ratio and com_great_ratio >= .5:
                 message:str = "EV for comparison struct is GREATER MORE OFTEN than unbound mfe so penatly"
                 result_messages = self.log_message(message, result_messages)
@@ -936,26 +946,20 @@ class EnsembleVariation:
             
             if nuc_penatly_count > 0:
                 if BUratio_list[0] >= .75:
-                    new_penalty: float = nuc_penatly_count * 1
+                    new_penalty: float = nuc_penatly_count * .5
                     message:str = f'Bound unbound ratio higher than 75% so it will most likely just fold into what should have been a switch so minus {new_penalty} points'
                     result_messages = self.log_message(message, result_messages)
                     score = score - new_penalty
-                elif BUratio_list[0] > .60 and BUratio_list[1] < .3:
-                    new_penalty: float = nuc_penatly_count * 1
-                    message:str = f'Bound unbound ratio higher than 50% and then the 2nd energy group less than 20% so it will likely be blocked from switching so minus {new_penalty} points'
+                #elif BUratio_list[0] > .60 and BUratio_list[1] < .3:
+                #    new_penalty: float = nuc_penatly_count * 1
+                #    message:str = f'Bound unbound ratio higher than 50% and then the 2nd energy group less than 20% so it will likely be blocked from switching so minus {new_penalty} points'
+                #    result_messages = self.log_message(message, result_messages)
+                #    score = score - new_penalty
+                else:
+                    new_penalty: float = nuc_penatly_count * .5                   
+                    message:str = f'Bound nucs found in first energy group. Design is primed to switch so add bonus of {new_penalty} points'
                     result_messages = self.log_message(message, result_messages)
-                    score = score - new_penalty
-                else: 
-                    if is_powerful_switch is False and is_good_switch is False and is_off_on_switch is False:
-                        new_penalty: float = nuc_penatly_count * .5                   
-                        message:str = f'Bound nucs found in first energy group but design has n. Design is primed to switch so add bonus of {new_penalty} points'
-                        result_messages = self.log_message(message, result_messages)
-                        score = score + new_penalty
-                    else:
-                        new_penalty: float = nuc_penatly_count * .5                   
-                        message:str = f'Bound nucs found in first energy group. Design is primed to switch so add bonus of {new_penalty} points'
-                        result_messages = self.log_message(message, result_messages)
-                        score = score + new_penalty
+                    score = score + new_penalty
           
             """
             if both_nuc_total < .7 and unbound_to_total_ratio > .2:

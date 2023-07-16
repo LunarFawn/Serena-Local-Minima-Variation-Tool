@@ -36,10 +36,10 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        pnas_round101_sheet:str = 'Round 7 (R101) (2)' #'R101 Filtered 150'
+        details:str= f'fullrun_weighted_100K_gtrequal2_nucpenalty_run_1'
+        pnas_round101_sheet:str = 'R101 Filtered 150'
         same_state:str='1'
         sublab_name:str = f'Same State NG {same_state}'
-        details:str= f'weighted_200K_gtrequal2_nucpenalty_run4'
         run_name:str = f'SSNG{same_state}_{details}'
 
 

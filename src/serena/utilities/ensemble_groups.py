@@ -10,7 +10,7 @@ import threading
 import time
 from collections import namedtuple
 
-from serena.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, KcalRanges
+from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, KcalRanges
 
 class SingleEnsembleGroup():
     
