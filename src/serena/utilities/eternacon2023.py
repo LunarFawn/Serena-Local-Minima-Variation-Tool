@@ -97,11 +97,13 @@ class Eternacon2023():
             struct_to_use:str = ''
             if do_weighted is True:
             #this is the fmn bound mfe struct, subopt list and weighted struck
-                fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(sequence, False)
+                fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(input_sequence=sequence,
+                                                            do_fmn=True)
                 fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
                 struct_to_use= fmn_weighted_struct.weighted_structure.structure
             else:
-                fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence, False)
+                fmn_struct = vienna2_fmn_hack.rnafold_fmn(input_sequence=sequence,
+                                                            do_fmn=True)
                 struct_to_use = fmn_struct.structure
             
 
