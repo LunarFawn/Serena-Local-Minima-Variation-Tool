@@ -36,8 +36,8 @@ class Eternacon2023():
         
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
-        details:str= f'fullrun_weighted_100K_gtrequal2_nucpenalty_run_1'
-        pnas_round101_sheet:str = 'R101 Filtered 150'
+        details:str= 'unbound_as_target_run4'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
+        pnas_round101_sheet:str = 'R101 Filtered Switch All'
         same_state:str='1'
         sublab_name:str = f'Same State NG {same_state}'
         run_name:str = f'SSNG{same_state}_{details}'
@@ -93,15 +93,20 @@ class Eternacon2023():
             #make a new line of just this designs row
             
             
+            do_weighted:bool = False
+            struct_to_use:str = ''
+            if do_weighted is True:
             #this is the fmn bound mfe struct, subopt list and weighted struck
-            #fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence)
-            fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(sequence)
-            fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
-            
+                fmn_subopt = vienna2_fmn_hack.rnasubopt_fmn(sequence, False)
+                fmn_weighted_struct: WeightedStructure = WeightedStructure(fmn_subopt)
+                struct_to_use= fmn_weighted_struct.weighted_structure.structure
+            else:
+                fmn_struct = vienna2_fmn_hack.rnafold_fmn(sequence, False)
+                struct_to_use = fmn_struct.structure
             
 
             analysis:PredictionReponse = switch.do_switch_analysis(sequence=sequence,
-                                                        fmn_struct=fmn_weighted_struct.weighted_structure.structure,
+                                                        fmn_struct=struct_to_use,
                                                         fmn_struct_free_energy=0,
                                                         span=7,
                                                         units=1,

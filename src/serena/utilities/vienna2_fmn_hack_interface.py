@@ -20,8 +20,12 @@ class Vienna2FMNInterface():
     def __init__(self) -> None:
         pass
 
-    def rnafold_fmn(self,input_sequence:str, fmn_amount:int = 200, fmn_delta:float = 0)-> Sara2SecondaryStructure:
-        command= ["RNAfold", "--ligand", f'FMN:{fmn_amount}']
+    def rnafold_fmn(self,input_sequence:str,do_fmn:bool = True, fmn_amount:int = 200, fmn_delta:float = 0)-> Sara2SecondaryStructure:
+        command = []
+        if do_fmn is True:
+            command= ["RNAfold", "--ligand", f'FMN:{fmn_amount}']
+        else:
+            command= ["RNAfold"]
         sequence: str = ''
         structure:str = ''
         energy:float = 0
@@ -47,10 +51,14 @@ class Vienna2FMNInterface():
 
         return sara_struct
 
-    def rnasubopt_fmn(self, input_sequence:str, fmn_amount:int = 200):
+    def rnasubopt_fmn(self, input_sequence:str, do_fmn:bool = True, fmn_amount:int = 200):
         struct_list_response:Sara2StructureList = Sara2StructureList()
         sequence: str = ''
-        command= ["RNAsubopt", "--ligand", f'FMN:{fmn_amount}']
+        command = []
+        if do_fmn is True:
+            command= ["RNAsubopt", "--ligand", f'FMN:{fmn_amount}']
+        else:
+            command= ["RNAsubopt"]
         subopt_response = self.run_command_locally(command=command,
                                             extra_input=input_sequence)
         raw_result = subopt_response.stdout.split('\n')
