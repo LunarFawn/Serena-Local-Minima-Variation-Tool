@@ -252,4 +252,4 @@ class ComparisonStructures():
             raise Exception("wrong index")
                 
         return structure
-    
+

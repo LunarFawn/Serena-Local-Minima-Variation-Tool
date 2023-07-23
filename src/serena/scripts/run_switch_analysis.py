@@ -19,7 +19,7 @@ from datetime import datetime
 import numpy as np
 
 
-from serena.original import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
+from serena.apps.original_weighted_analysis import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation, EVResult
 
 debug:bool = False
 
@@ -37,12 +37,32 @@ class SwitchPrediction(Enum):
 class PredictionReponse():
     prediction:SwitchPrediction
     foldchange:float
-    message:str   
+    message:str
+    raw_scores:List[float]
+    num_structs:List[int] 
+
 
 class OriginalSwitchAnalysis():
 
     def __init__(self) -> None:
-        pass
+        self._save_folder_path:str
+        self._sublab_name:str
+
+    @property
+    def save_folder_path(self):
+        return self._save_folder_path
+    
+    @save_folder_path.setter
+    def save_folder_path(self, path:str):
+        self._save_folder_path = path
+    
+    @property
+    def sublab_name(self):
+        return self._sublab_name
+    
+    @sublab_name.setter
+    def sublab_name(self, name:str):
+        self._sublab_name = name
 
     def take_closest(self, myList, myNumber):
         """
@@ -62,7 +82,7 @@ class OriginalSwitchAnalysis():
         else:
             return before
         
-    def test_LMV(self, sequence, folded, folded_energy_ligoligo, span, units, manual:bool = False):
+    def do_switch_analysis(self, sequence, fmn_struct, fmn_struct_free_energy, span, units, run_name:str, manual:bool = False):
       
         target = '........(((......(((.............))).....)))........................................'
       
@@ -74,10 +94,10 @@ class OriginalSwitchAnalysis():
             target = '........(((......(((.............))).....)))........................................' #input()
 
             print("Enter predicted 2nd state folded structure")
-            folded = input()
+            fmn_struct = input()
 
             print("Enter Energy of folded structure with ligand/oligo bound")
-            folded_energy_ligoligo = float(input())
+            fmn_struct_free_energy = float(input())
 
             print("Enter Kcal delta span to look at")        
             span = input()
@@ -90,13 +110,20 @@ class OriginalSwitchAnalysis():
         EV_test: EnsembleVariation = EnsembleVariation()
         temp_list: List[int] = [36, 37, 38]
         score_list:List[float] = []
+        raw_scores:List[float] = []
+        num_structs_list:List[int] = []
+        response_messages:List[str] =[]
 
         score: float = 0
         for temp in temp_list: 
             
-            value = EV_test.process_ensemble_variation(sequence, int(span), float(units), folded, target, folded_energy_ligoligo, temp)
+            value, num_structs, result_messages = EV_test.process_ensemble_variation(sequence, int(span), float(units), fmn_struct, target, fmn_struct_free_energy, temp)
             score = score + value
             score_list.append(value)
+            raw_scores.append(value)
+            num_structs_list.append(num_structs)
+            response_messages = response_messages + result_messages
+
         
         num_scores: int = len(temp_list)
         print(f'Raw score is {score} of {len(temp_list)}')
@@ -135,9 +162,17 @@ class OriginalSwitchAnalysis():
             prediction = SwitchPrediction.FUNCTIONAL
         print(predicted_foldchange_message)
 
+        import time
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        this_save_path:str = f'{self.save_folder_path}/{self.sublab_name}_{run_name}_{timestr}.txt'
+        with open(this_save_path, 'w') as file:
+            file.write('\n'.join(response_messages))
+
         response: PredictionReponse = PredictionReponse(prediction=prediction,
                                                         foldchange=predicted_foldchange,
-                                                        message=predicted_foldchange_message)
+                                                        message=predicted_foldchange_message,
+                                                        raw_scores=raw_scores,
+                                                        num_structs=num_structs_list)
         return response
 
 
