@@ -906,7 +906,7 @@ class EnsembleVariation:
                 result_messages = self.log_message(message, result_messages)
                 score= score + 1
 
-            excess_limit:float = 7500#20000this is based on new data 7500
+            excess_limit:float = 20000#this is based on new data 7500
             if span_structures.num_structures > excess_limit:#15000:
                 excess_divisor:float = 2000#2500
                 factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
