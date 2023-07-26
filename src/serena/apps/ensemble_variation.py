@@ -18,7 +18,7 @@ import collections
 from enum import Enum
 
 
-from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
+from serena.utilities.ensemble_structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
 
 
 class SourceMFE(Enum):
