@@ -2,6 +2,8 @@
 File to handles teh calsses for dealing with scores
 """
 
+from dataclasses import dataclass
+from typing import List
 
 class Penalties():
 
