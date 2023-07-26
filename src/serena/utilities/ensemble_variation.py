@@ -17,7 +17,7 @@ import collections
 from enum import Enum
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
-from serena.utilities.ensemble_groups import MultipleEnsembleGroups
+from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
 
 class SourceMFE(Enum):
     NONE = 0
@@ -33,11 +33,17 @@ class EV:
 
 @dataclass
 class EVResult():
+    group_structs:SingleEnsembleGroup
+    ev_values:EV
+
+@dataclass
+class EVResult_old():
     groups_list : List[Sara2StructureList]
     groups_dict: Dict[int, Sara2StructureList]
     group_values: List[float]
     group_ev_list: List[EV]
     group_ev_dict: Dict[int,EV]
+
 
 class EV_Token():
     def __init__(self, num_groups: int) -> None:
