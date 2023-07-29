@@ -43,6 +43,7 @@ class InvestigatorResults():
     ratios: List[RatioResults] 
     comp_nuc_counts: List[ComparisonNucCounts]
     lmv_values: List[ComparisonLMV]
+    lmv_assertions: List[AssertionLMVResult]
 
 @dataclass
 class AnalysisRatioResults():

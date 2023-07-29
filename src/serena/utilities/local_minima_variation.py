@@ -48,4 +48,4 @@ class LocalMinimaVariation():
             lmv_results.append(ev_result)
 
         return lmv_results
-    
+
