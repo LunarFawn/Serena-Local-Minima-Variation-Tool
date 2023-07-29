@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult
 from serena.utilities.ensemble_variation import EV, EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV
+from serena.utilities.weighted_structures import WeightedNucCounts
 
 @dataclass
 class SettingsAssertionLMV():
@@ -30,6 +31,30 @@ class SwitchynessResult():
     switchable_groups_list:List[int]
     is_powerfull_switch_group:List[bool]
     powerfull_groups_list:List[int]
+
+@dataclass
+class RatioResults():
+    unbound_to_total_ratio:float = 0
+    bound_ratio: float = 0
+    bound_to_both_ratio = 0
+
+@dataclass
+class InvestigatorResults():
+    ratios: List[RatioResults] 
+    comp_nuc_counts: List[ComparisonNucCounts]
+    lmv_values: List[ComparisonLMV]
+
+@dataclass
+class AnalysisRatioResults():
+    last_count_unbound:float=0
+    last_count_bound:float=0
+    last_count_both: float = 0
+    unbound_to_total_ratio:float = 0
+    bound_ratio: float = 0
+    last_unbound_ratio = 0
+    last_bound_ratio = 0
+    last_both_ratio = 0
+    bound_to_both_ratio = 0
 
 class ComparisonNucAnalysis():
 

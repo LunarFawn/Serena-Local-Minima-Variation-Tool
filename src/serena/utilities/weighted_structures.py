@@ -12,15 +12,19 @@ class WeightedStructureResult():
     weighted_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
 
 @dataclass
-class WeightedComparisonResult():
-    comp_struct: str = ''
-    unbound_mfe_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
-    bound_mfe_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
+class WeightedNucCounts():
     num_bound:float = -1
     num_unbound:float = -1
     num_both:float = -1
     num_dot:float = -1
     num_nucs:int = -1
+
+@dataclass
+class WeightedComparisonResult():
+    comp_struct: str = ''
+    unbound_mfe_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+    bound_mfe_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
+    weighted_nuc_counts:WeightedNucCounts = WeightedNucCounts()
 
 class WeightedStructure():
 
@@ -115,6 +119,9 @@ class WeightedStructure():
         The idea is that if you have a straight line in the list then it is very close to the
         folded mfe and if it is not straight then it is more like the unbound mfe.
         """
+
+        weighted_nuc_counts:WeightedNucCounts = WeightedNucCounts()
+
         unbound:str = '|'
         num_unbound:int = 0
         bound:str = '-'
@@ -134,26 +141,24 @@ class WeightedStructure():
 
             if weighted_nuc == bound_nuc and weighted_nuc != unbound_nuc:
                 comp_nuc_symbol = bound
-                num_bound += 1
+                weighted_nuc_counts.num_bound += 1
             elif weighted_nuc != bound_nuc and weighted_nuc == unbound_nuc:
                 comp_nuc_symbol = unbound
-                num_unbound += 1
+                weighted_nuc_counts.num_unbound += 1
             elif weighted_nuc == bound_nuc and weighted_nuc == unbound_nuc:
                 comp_nuc_symbol = both
-                num_both += 1
+                weighted_nuc_counts.num_both += 1
             else:
                 comp_nuc_symbol = dot
-                num_dot += 1
+                weighted_nuc_counts.num_dot += 1
             
             compared_struct = compared_struct + comp_nuc_symbol
+
+            weighted_nuc_counts.num_nucs = nuc_count
         
         compared_data: WeightedComparisonResult = WeightedComparisonResult(comp_struct=compared_struct,
                                                                            unbound_mfe_struct=unbound_mfe_struct,
                                                                            bound_mfe_struct=bound_mfe_struct,
-                                                                           num_bound=num_bound,
-                                                                           num_unbound=num_unbound,
-                                                                           num_both=num_both,
-                                                                           num_dot=num_dot,
-                                                                           num_nucs=nuc_count)
+                                                                           nuc_counts=weighted_nuc_counts)
         
         return compared_data
