@@ -44,6 +44,7 @@ class InvestigatorResults():
     comp_nuc_counts: List[ComparisonNucCounts]
     lmv_values: List[ComparisonLMV]
     lmv_assertions: List[AssertionLMVResult]
+    num_groups:int = 0
 
 @dataclass
 class AnalysisRatioResults():

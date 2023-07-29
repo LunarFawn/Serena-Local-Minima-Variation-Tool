@@ -14,12 +14,26 @@ from serena.utilities.analysis import InvestigatorResults
 class SwitchabilitySettings():
     limit: float = 1.5 
 
+@dataclass
+class JudgesResults():
+    is_good_count:int = 0
+    is_excelent_count:int = 0
+    is_powerful_switch:bool = False
+    is_good_switch:bool = False
+    switchable_groups_list:List[bool] = []
+    is_powerfull_switch_group:List[bool] = []
+    powerfull_groups_list:List[bool] = []
+
 class AnalysisJudgePool():
 
     def __init__(self) -> None:
-        pass
+        is_powerful_switch:bool = False
+        is_good_switch:bool = False
+        is_good_count:int = 0
+        is_excelent_count:int = 0
+        current_group_index:int = -1
 
-    def functional_switch_judge(self, investigator:InvestigatorResults, current_group_index:int):
+    def is_switch_judge(self, investigator:InvestigatorResults, current_group_index:int):
         
         last_index:int = current_group_index-1
         limit: float = 1.5 
@@ -29,6 +43,8 @@ class AnalysisJudgePool():
         powerfull_groups_list:List[bool] = []
         is_good_count:int = 0
         is_excelent_count:int = 0
+        is_powerful_switch:bool = False
+        is_good_switch:bool = False
 
         last_unbound_ratio:float = investigator.ratios[last_index].unbound_to_total_ratio
         last_unbound_ratio = round(last_unbound_ratio,2)
@@ -49,37 +65,41 @@ class AnalysisJudgePool():
             ev_weigth_under_limit = True 
 
         if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.3 and ev_weigth_under_limit is True and bound > 2:
-                is_good_switch = True
-                switchable_groups_list.append(current_group_index)
-                is_good_count = is_good_count+1
+            is_good_switch = True
+            #switchable_groups_list.append(current_group_index)
+            is_good_count = is_good_count+1
 
             
         if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and ev_weight_asserted is True:
             is_powerful_switch = True
-            powerfull_groups_list.append(current_group_index)
+            #powerfull_groups_list.append(current_group_index)
             is_excelent_count = is_excelent_count +1
 
         if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.2 and ev_weight_asserted is True:
             is_powerful_switch = True
-            powerfull_groups_list.append(current_group_index)
+            #powerfull_groups_list.append(current_group_index)
             is_excelent_count = is_excelent_count +1
 
         if bound_ratio >=  limit and unbound_to_total_ratio <=.15 and ev_weight_asserted is True:
             is_powerful_switch = True
-            powerfull_groups_list.append(current_group_index)
+            #powerfull_groups_list.append(current_group_index)
             is_excelent_count = is_excelent_count +1
 
         if last_bound_ratio >=  2 and unbound_to_total_ratio <=.2:
             is_powerful_switch = True
-            powerfull_groups_list.append(current_group_index)
+            #powerfull_groups_list.append(current_group_index)
             is_excelent_count = is_excelent_count +1
         
         if last_bound_ratio > 3 and ev_weight_asserted is True:
             is_good_switch = True
-            switchable_groups_list.append(current_group_index)
-            is_good_count = is_good_count + 1
             is_powerful_switch = True
-            powerfull_groups_list.append(current_group_index)
+            is_good_count = is_good_count + 1  
             is_excelent_count = is_excelent_count + 1
+            #switchable_groups_list.append(current_group_index)
+                      
+            #powerfull_groups_list.append(current_group_index)
+            
+        
+        results: 
 
         
