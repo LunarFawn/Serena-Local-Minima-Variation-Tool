@@ -18,7 +18,7 @@ from serena.utilities.vienna2_fmn_hack_interface import Vienna2FMNInterface
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, ComparisonStructures
 from serena.utilities.weighted_structures import WeightedStructure
 from serena.scripts.run_switch_analysis import OriginalSwitchAnalysis, PredictionReponse
-from serena.utilities.logging_this import PNASAnalysisLogging
+from serena.utilities.logging_serena import PNASAnalysisLogging
 
 @dataclass
 class PNASWetLab():

@@ -869,6 +869,7 @@ class EnsembleVariation:
                 result_messages = self.log_message(message, result_messages)
                 score= score + 1
             
+            #t
             if found_bound_index >= bound_range_min_minus_1 and found_bound_index <= bound_range_max_plus and found_bound_index != -1 and is_off_on_switch is True:
                 message:str = "Confirmned good. Add bonus point for on/off via LMV being in range for folding"
                 result_messages = self.log_message(message, result_messages)
