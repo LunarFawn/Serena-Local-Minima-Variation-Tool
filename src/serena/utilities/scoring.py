@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import List
 
 from serena.utilities.judge_pool import JudgesResults
-from serena.utilities.analysis import InvestigatorResults
+from serena.utilities.investigator import InvestigatorResults
 
 class SpecialPenalties():
 

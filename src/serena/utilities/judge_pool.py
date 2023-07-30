@@ -8,7 +8,7 @@ from typing import List
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult
 from serena.utilities.ensemble_variation import EV, EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV
-from serena.utilities.analysis import InvestigatorResults
+from serena.utilities.investigator import InvestigatorResults
 
 @dataclass
 class SwitchabilitySettings():
