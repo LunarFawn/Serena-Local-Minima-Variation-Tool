@@ -75,9 +75,7 @@ class LocalMinimaVariationInvestigator():
 
     def evaluate_lmv_for_structure_presence(self, lmv_data:ComparisonLMVResponse, setting:SettingsAssertionLMV):          
 
-        ev_comp = lmv_results.lmv_comp.ev_normalized
         ev_comp_limit: float = 25
-        ev_mfe = lmv_results.lmv_mfe.ev_normalized
 
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
