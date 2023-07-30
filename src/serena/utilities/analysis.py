@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult
 from serena.utilities.ensemble_variation import EV, EVResult
-from serena.utilities.local_minima_variation import ComparisonLMV
+from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
 from serena.utilities.weighted_structures import WeightedNucCounts
 
 @dataclass
@@ -18,9 +18,9 @@ class SettingsAssertionLMV():
 @dataclass
 class LMVAssertionResult():
     bound_compare_to_unbound:List[str]
-    unbouund_pronounced:bool
-    bound_pronounced: bool
-    is_on_off_switch:bool
+    unbouund_pronounced:List[bool]
+    bound_pronounced: List[bool]
+    is_on_off_switch:List[bool]
 
 @dataclass
 class SwitchabilitySettings():
@@ -104,13 +104,18 @@ class LocalMinimaVariationInvestigator():
 
         return lmv_presence_result
     
-    def bound_comared_unbound_lmv(self, ev_comp:float, ev_mfe:float):
+    def bound_comared_unbound_lmv(self, lmv_data:ComparisonLMVResponse):
         
-        ev_comp_to_mfe:List[str] = []
-        if ev_comp < ev_mfe:
-            ev_comp_to_mfe.append('<')
-        elif ev_comp == ev_mfe:
-            ev_comp_to_mfe.append('=')
-        elif ev_comp > ev_mfe:
-            ev_comp_to_mfe.append('>')
-            
+        ev_comp_to_mfe_list:List[str] = []
+
+        for group_index in range(len(lmv_data.lmv_comps)):
+            ev_comp:float = lmv_data.lmv_comps[group_index].lmv_comp
+            ev_mfe:float = lmv_data.lmv_comps[group_index].lmv_mfe
+            if ev_comp < ev_mfe:
+                ev_comp_to_mfe_list.append('<')
+            elif ev_comp == ev_mfe:
+                ev_comp_to_mfe_list.append('=')
+            elif ev_comp > ev_mfe:
+                ev_comp_to_mfe_list.append('>')
+        
+        return ev_comp_to_mfe_list

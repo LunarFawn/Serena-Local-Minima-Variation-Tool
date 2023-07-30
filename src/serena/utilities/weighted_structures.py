@@ -8,7 +8,7 @@ from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsem
 
 @dataclass
 class WeightedEnsembleResult():
-    weighted_structs: List[Sara2SecondaryStructure]
+    structs: List[Sara2SecondaryStructure]
 
 @dataclass
 class WeightedNucCounts():
