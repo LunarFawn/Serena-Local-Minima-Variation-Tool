@@ -3,13 +3,12 @@ from dataclasses import dataclass
 from typing import List
 import collections
 
-from serena.utilities.ensemble_groups import SingleEnsembleGroup
 from serena.utilities.ensemble_structures import Sara2StructureList, Sara2SecondaryStructure
+from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
 
 @dataclass
-class WeightedStructureResult():
-    ensemble_goup:SingleEnsembleGroup = SingleEnsembleGroup()
-    weighted_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
+class WeightedEnsembleResult():
+    weighted_structs: List[Sara2SecondaryStructure]
 
 @dataclass
 class WeightedNucCounts():
@@ -111,7 +110,7 @@ class WeightedStructure():
 
         return weighted_structure
 
-    def compair_weighted_structure(self, unbound_mfe_struct:Sara2SecondaryStructure, bound_mfe_struct:Sara2SecondaryStructure, weighted_result:WeightedStructureResult, nuc_count:int):
+    def compair_weighted_structure(self, unbound_mfe_struct:Sara2SecondaryStructure, bound_mfe_struct:Sara2SecondaryStructure, weighted_result:Sara2SecondaryStructure, nuc_count:int):
         """
         Compaire the weighted structure against the folded and not-folded mfe's.
         If a element is present in the folded mfe then it gets a '-'
@@ -133,7 +132,7 @@ class WeightedStructure():
         compared_struct:str = ''            
 
         for nuc_index in range(nuc_count):
-            weighted_nuc:str = weighted_result.weighted_struct[nuc_index]
+            weighted_nuc:str = weighted_result.structure[nuc_index]
             unbound_nuc:str = unbound_mfe_struct.structure[nuc_index]
             bound_nuc: str = bound_mfe_struct.structure[nuc_index]
 
@@ -159,6 +158,16 @@ class WeightedStructure():
         compared_data: WeightedComparisonResult = WeightedComparisonResult(comp_struct=compared_struct,
                                                                            unbound_mfe_struct=unbound_mfe_struct,
                                                                            bound_mfe_struct=bound_mfe_struct,
-                                                                           nuc_counts=weighted_nuc_counts)
-        
+                                                                           nuc_counts=weighted_nuc_counts)    
         return compared_data
+    
+
+    def process_ensemble(self, ensemble:MultipleEnsembleGroups) -> WeightedEnsembleResult:
+        ensemble_weighted_structures: List[Sara2SecondaryStructure] = []
+        
+        for singel_group in ensemble.groups:
+            structs_list: Sara2StructureList = singel_group.group
+            ensemble_weighted_structures.append(self.make_weighted_struct(structure_list=structs_list))
+        
+        ensemble_result:WeightedEnsembleResult = WeightedEnsembleResult(weighted_structs=ensemble_weighted_structures)
+        return ensemble_result

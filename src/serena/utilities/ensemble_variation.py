@@ -33,8 +33,8 @@ class EV:
 
 @dataclass
 class EVResult():
-    group_structs:SingleEnsembleGroup
-    ev_values:EV
+    #group_structs:SingleEnsembleGroup
+    ev_values:List[EV]
 
 @dataclass
 class EVResult_old():
@@ -62,6 +62,11 @@ class EV_Token():
     @property
     def group_results(self):
         return self._group_results
+
+    @property
+    def ev_results(self) -> EVResult:
+        result: EVResult = EVResult(ev_values=self.group_results)
+        return result
         
     def set_group_result(self, index:int, value:EV):
         self._group_results[index]=value
