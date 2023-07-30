@@ -38,6 +38,7 @@ class LocalMinimaVariation():
         group_ev_list: List[EV] = result_thread_LMV.group_results
         group_ev_dict: Dict[int,EV] = result_thread_LMV.group_dict
 
+        #need to change to make this list part of the call
         lmv_results: List[EVResult] = []
 
         for group_index in range(len(ensemble.groups)):

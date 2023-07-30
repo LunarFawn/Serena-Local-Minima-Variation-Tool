@@ -16,12 +16,17 @@ class SwitchabilitySettings():
 
 @dataclass
 class JudgesResults():
-    is_good_count:int
-    is_excelent_count:int
-    is_powerful_switch:bool
     is_good_switch:bool
+    is_powerful_switch:bool
+    is_on_off_switch:bool
+
+    is_good_count:int
+    is_powerful_count:int
+    is_on_off_count: int 
+    
     switchable_groups_list:List[int]
     powerfull_groups_list:List[int]
+    on_off_groups_list:List[int]
 
 class AnalysisJudgePool():
 
@@ -33,8 +38,7 @@ class AnalysisJudgePool():
         current_group_index:int = -1
 
     def is_switch_judge(self, investigator:InvestigatorResults):
-        
-        
+                
         num_groups: int = investigator.num_groups
         
         limit: float = 1.5 

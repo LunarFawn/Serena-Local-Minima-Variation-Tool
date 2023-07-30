@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import List
 
 from serena.utilities.judge_pool import JudgesResults
+from serena.utilities.analysis import InvestigatorResults
 
 class SpecialPenalties():
 
@@ -34,93 +35,80 @@ class SerenaScoring():
     def __init__(self) -> None:
         pass
 
-    def score_groups(self, judge_results:JudgesResults):            
+    def score_groups(self, judge_results:JudgesResults, investigator: InvestigatorResults):
+        #inititalization data
+        found_functional_switch: List[int] = judge_results.switchable_groups_list 
+        found_powerful_switch: List[int] = judge_results.powerfull_groups_list
+        found_on_off_switch: List[int] = judge_results.on_off_groups_list
+
+
         bound_range_index_plus_one:List[int] = judge_results.switchable_groups_list
         is_powerful_switch:bool = judge_results.is_powerful_switch
-        is_good_switch:bool = judge_results.is_good_switch
+        is_functional_switch:bool = judge_results.is_good_switch
+        is_off_on_switch:bool = judge_results.is_on_off_switch
 
-        bound_range_min_minus_1: int = 0
-        bound_range_max_plus: int = 0
-        bound_good_range_modifier:int = 0 
-        #bound_range_index_plus_one is the list for groups with pair
-        if len(bound_range_index_plus_one) > 0: 
-            bound_range_min_minus_1: int = min(bound_range_index_plus_one) - bound_good_range_modifier
-        if len(bound_range_index_plus_one) > 0: 
-            bound_range_max_plus: int = max(bound_range_index_plus_one) + bound_good_range_modifier            
+        #SetupScores
+        total_score:float = 0
+        functional_switch_score:float = 0
+        powerful_switch_score:float = 0
+        on_off_switch_score:float = 0
+        bonuses:float = 0
+        penalties:float = 0
 
+        #main scores
         if is_powerful_switch is True:
+            multiplier:int = 1
             message:str = 'Potential High Fold Change'
-            result_messages = self.log_message(message, result_messages) 
-            score = score + 1
+            #result_messages = self.log_message(message, result_messages) 
+            powerful_switch_score = powerful_switch_score + (len(found_powerful_switch) * multiplier)
         
-        if is_good_switch is True: 
+        if is_functional_switch is True: 
+            multiplier:int = 1
             message:str = "Potential  Functional Switch"
-            result_messages = self.log_message(message, result_messages)
-            score = score + (len(found_bound_ratio_list)*1)
+            #result_messages = self.log_message(message, result_messages)
+            functional_switch_score = functional_switch_score + (len(found_functional_switch) * multiplier)
         
         if is_off_on_switch is True:
+            multiplier:int = 1
             message:str = "Potential  off/on leaning design via LMV"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
-        
-        #this is lmv stuff
-        if found_bound_index >= bound_range_min_minus_1 and found_bound_index <= bound_range_max_plus and found_bound_index != -1 and is_off_on_switch is True:
-            message:str = "Confirmned good. Add bonus point for on/off via LMV being in range for folding"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
-        elif found_bound_index <= 2 and found_bound_index != -1 and is_in_bound_range is True:
-            message:str = "Confirmned good. Add bonus point for on/off via LMV being in first three groups"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
-        for value in found_bound_ratio_list:
-            if value >= bound_range_min_minus_1 and value <= bound_range_max_plus and found_bound_ratio_index != -1:
-                message:str = "Confirmned good. Add bonus point for functional being in range for folding"
-                result_messages = self.log_message(message, result_messages)
-                score= score + 1
-            elif value >= 0 and value <= 1 and value != -1:
+            #result_messages = self.log_message(message, result_messages)
+            on_off_switch_score= on_off_switch_score + (len(found_on_off_switch) * multiplier)
+
+        total_score = powerful_switch_score + functional_switch_score + on_off_switch_score
+
+        #now bonuses
+        for value in found_functional_switch:
+            if value >= 0 and value <= 1 and value != -1:
                 message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
-                result_messages = self.log_message(message, result_messages)
-                score= score + 1
+                #result_messages = self.log_message(message, result_messages)
+                functional_switch_score += 1
+                bonuses += 1
 
-        if found_bound_ratio_high_index >= bound_range_min_minus_1 and found_bound_ratio_high_index <= bound_range_max_plus and found_bound_ratio_high_index != -1 :
-            message:str = "Confirmned good. Add bonus point for high performing being in range for folding"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
-        elif found_bound_ratio_high_index >= 0 and found_bound_ratio_high_index <= 1 and found_bound_ratio_high_index != -1:
-            message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
+            if value in found_on_off_switch:
+                message:str = "Add bonus for functional being in range of on/off prediction"
+                #result_messages = self.log_message(message, result_messages)
+                functional_switch_score += 1
+                bonuses += 1
 
-        if found_bound_ratio_high_index in found_bound_list:
-            message:str = "Add bonus for high performing being in range of on/off prediction"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
-        
-        if found_bound_ratio_index in found_bound_list:
-            message:str = "Add bonus for functional being in range of on/off prediction"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
+        for value in found_powerful_switch:
+            if value >= 0 and value <= 1 and value != -1:
+                message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
+                #result_messages = self.log_message(message, result_messages)
+                powerful_switch_score += 1
+                bonuses += 1
 
-        excess_limit:float = 20000#this is based on new data 7500
-        if span_structures.num_structures > excess_limit:#15000:
-            excess_divisor:float = 2000#2500
-            factor:float = ((float(span_structures.num_structures) - excess_limit) / excess_divisor ) * .5
-            message:str = f'Exsessive structs. Found:{span_structures.num_structures} penalizing {factor} points '
-            result_messages = self.log_message(message, result_messages)
-            sixty_range_num:float = 50000#15000
-            #penalize for too many structs
-            score = score - factor
-            if span_structures.num_structures > sixty_range_num:
-                message:str = f'Significant excess structures found: found {span_structures.num_structures - sixty_range_num} structures over limit of {sixty_range_num}'
-                result_messages = self.log_message(message, result_messages)
-                message:str = f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty'
-                result_messages = self.log_message(message, result_messages)
-                score = score - .5
-        
-        if is_good_switch is True and bound_to_both_ratio >= 0.08:
-            message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
-            result_messages = self.log_message(message, result_messages)
-            score= score + 1
+            if value in found_on_off_switch:
+                message:str = "Add bonus for high performing being in range of on/off prediction"
+                #result_messages = self.log_message(message, result_messages)
+                powerful_switch_score += 1
+                bonuses += 1
+      
+        #not sure if I want to use... i was ify about before and it seams not fully baked in implementatiuon. 
+        # need to make a ticket for this funciton
+        #if is_good_switch is True and bound_to_both_ratio >= 0.08:
+        #    message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
+        #    result_messages = self.log_message(message, result_messages)
+        #    score= score + 1
 
         comp_less_ratio: float = ev_comp_to_mfe.count('<') / num_groups
         com_great_ratio: float = ev_comp_to_mfe.count('>')  / num_groups
