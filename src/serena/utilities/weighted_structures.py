@@ -27,22 +27,8 @@ class WeightedComparisonResult():
 
 class WeightedStructure():
 
-    def __init__(self,source_structures: Sara2StructureList ) -> None:        
-        self._source_structures: Sara2StructureList = source_structures
-        self._weighted_structure: Sara2SecondaryStructure = self.make_weighted_struct(source_structures)
-
-    @property
-    def weighted_structure(self):
-        return self._weighted_structure
-    
-    @property
-    def source_structures(self):
-        return self._source_structures
-    
-    @source_structures.setter
-    def source_structures(self, structures: Sara2StructureList):
-        self._source_structures = structures
-        self._weighted_structure: Sara2SecondaryStructure = self.make_weighted_struct(structures)
+    def __init__(self) -> None:
+        pass
 
     def make_weighted_struct(self, structure_list: Sara2StructureList)->Sara2SecondaryStructure:
         is_bond_value: int = 2

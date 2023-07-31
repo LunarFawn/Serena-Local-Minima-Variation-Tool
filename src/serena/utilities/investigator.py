@@ -5,7 +5,7 @@ File for class for analysis stuff
 from typing import List
 from dataclasses import dataclass
 
-from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult
+from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult, ComparisonNucResults
 from serena.utilities.ensemble_variation import EV, EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
 from serena.utilities.weighted_structures import WeightedNucCounts
@@ -61,7 +61,7 @@ class ComparisonEvalResults():
 @dataclass
 class InvestigatorResults():
     comparison_eval_results: ComparisonEvalResults
-    comp_nuc_counts: List[ComparisonNucCounts]
+    comp_nuc_counts: ComparisonNucResults
     lmv_values: ComparisonLMVResponse
     lmv_assertions: LMVAssertionResult
     num_groups:int = 0

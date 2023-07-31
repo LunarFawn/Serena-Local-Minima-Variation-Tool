@@ -84,13 +84,13 @@ class SingleEnsembleGroup():
 
 class MultipleEnsembleGroups():
 
-    def __init__(self, non_switch_kcal:float =0, non_switch_struct:str = '', switched_kcal:float=0, switched_struct:str='') -> None:
+    def __init__(self, non_switch_kcal:float =0, non_switch_struct:Sara2SecondaryStructure= Sara2SecondaryStructure(), switched_kcal:float=0, switched_struct:Sara2SecondaryStructure=Sara2SecondaryStructure()) -> None:
         self._groups: List[SingleEnsembleGroup] = []  
         self._raw_groups: List[Sara2StructureList] = []
         self._non_switch_state_mfe_kcal: float = non_switch_kcal
-        self._non_switch_state_structure: str = non_switch_struct
+        self._non_switch_state_structure: Sara2SecondaryStructure = non_switch_struct
         self._switched_state_mfe_kcal: float = switched_kcal
-        self._switched_state_structure: str = switched_struct
+        self._switched_state_structure: Sara2SecondaryStructure = switched_struct
         self._groups_dict: Dict[int, Sara2StructureList] = {}
         self._group_values: List[float] = []
         self._num_groups: int = 0
@@ -144,7 +144,7 @@ class MultipleEnsembleGroups():
         return self._non_switch_state_mfe_kcal
     
     @property
-    def non_switch_state_structure(self):
+    def non_switch_state_structure(self)->Sara2SecondaryStructure:
         return self._non_switch_state_structure
     
     @property
@@ -152,7 +152,7 @@ class MultipleEnsembleGroups():
         return self._switched_state_mfe_kcal
     
     @property
-    def switched_state_structure(self):
+    def switched_state_structure(self)->Sara2SecondaryStructure:
         return self._switched_state_structure
     
     @property
