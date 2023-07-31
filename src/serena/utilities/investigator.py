@@ -65,6 +65,7 @@ class InvestigatorResults():
     lmv_values: ComparisonLMVResponse
     lmv_assertions: LMVAssertionResult
     num_groups:int = 0
+    total_structures_ensemble:int = 0
 
 
 class ComparisonInvestigator():
