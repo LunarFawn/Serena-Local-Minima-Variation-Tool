@@ -1,10 +1,8 @@
 import pytest
 from typing import List
 
-from serena.ensemble_structures import (Sara2SecondaryStructure, 
-                                        Sara2StructureList, 
-                                        ComparisonStructures, 
-                                        KcalRanges)
+from serena.utilities.ensemble_structures import (Sara2SecondaryStructure, 
+                                        Sara2StructureList)
 
 
 """
