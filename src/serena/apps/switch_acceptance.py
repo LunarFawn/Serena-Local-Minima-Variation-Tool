@@ -14,10 +14,11 @@ import time
 
 from serena.utilities.Sara2_API_Python3 import Sara2API, puzzleData
 from serena.utilities.vienna2_fmn_hack_interface import Vienna2FMNInterface
-from serena.utilities.ensemble_analysis import InvestigateEnsemble
+from serena.utilities.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults
 from serena.utilities.nupack4_sara2_extension import NUPACK4Interface, MaterialParameter, NupackSettings
 from serena.utilities.weighted_structures import WeightedStructure
-
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
+from serena.utilities.logging_serena import PNASAnalysisLogging
 
 
 
@@ -95,4 +96,52 @@ class SwitchAccetance():
                                                             do_fmn=True)
                 struct_to_use = fmn_struct.structure
 
+            material:MaterialParameter = MaterialParameter.rna95_nupack4
+            temp:int = 37
+            kcal_span:int = 7
+            kcal_unit_increments:float = 1
+
+            nupack_settings:NupackSettings = NupackSettings(material_param=material,
+                                                            temp_C=temp,
+                                                            kcal_delta_span_from_mfe=kcal_span,
+                                                            Kcal_unit_increments=kcal_unit_increments,
+                                                            sequence=sequence,
+                                                            folded_2nd_state_structure=struct_to_use,
+                                                            folded_2nd_state_kcal=0
+                                                            )
             
+            #do 37 deg first
+            nupack_4:NUPACK4Interface = NUPACK4Interface()
+            ensemble_groups: MultipleEnsembleGroups = nupack_4.get_ensemble_groups(nupack_settings)
+
+            scoreing:InvestigateEnsemble = InvestigateEnsemble()
+            investigation_results:InvestigateEnsembleResults = scoreing.investigate_and_score_ensemble(ensemble=ensemble_groups)
+            
+            total_scores: float = investigation_results.basic_scores.total_score + investigation_results.advanced_scores.total_score
+
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'SerenaTotalScore'] = total_scores
+
+
+            #pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'AvgSwitchScore'] = statistics.fmean(analysis.raw_scores)
+
+            #pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'AvgNumSstruct'] = statistics.fmean(analysis.num_structs)
+
+            
+            #pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '36Deg_SwitchScore'] = analysis.raw_scores[0]
+
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '37Deg_SwitchScore'] = total_scores
+
+            #pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '38Deg_SwitchScore'] = analysis.raw_scores[2]
+
+
+            #pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '36Deg_NumStructs'] =  analysis.num_structs[0]
+
+            pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '37Deg_NumStructs'] =  investigation_results.number_structures
+
+            #pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, '38Deg_NumStructs'] =  analysis.num_structs[2]
+
+            
+            design_data_df:DataFrame = pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID]
+            logging: PNASAnalysisLogging = PNASAnalysisLogging()
+            logging.save_excel_sheet(design_data_df, save_path, sublab_name)
+           
