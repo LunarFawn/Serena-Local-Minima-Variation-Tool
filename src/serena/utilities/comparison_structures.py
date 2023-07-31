@@ -94,26 +94,4 @@ class ComparisonStructures():
         return compared_result
     
     
-    # need to feed the ensemble to this and then process it
-    #compaire each weighted struct against the unbound mfe and bound structs
-    def process_serena_weighted_comparison(self, raw_ensemble:MultipleEnsembleGroups, weighted_ensemble:WeightedEnsembleResult):
-        #need to return a 
-
-        nuc_count:int = raw_ensemble.groups[0].group.nuc_count
-
-        comparison_nucs_list:List[ComparisonNucCounts]= []
-        for group_index in range(len(raw_ensemble.num_groups)):
-            unbound_mfe_struct:Sara2SecondaryStructure = raw_ensemble.non_switch_state_structure
-            bound_mfe_struct: Sara2SecondaryStructure = raw_ensemble.switched_state_structure
-            weighted_struct:Sara2SecondaryStructure = weighted_ensemble.structs[group_index]
-
-            comparison_data:ComparisonResult = self.compair_structures(unbound_struct=unbound_mfe_struct,
-                                                                       bound_struct=bound_mfe_struct,
-                                                                       reference_struct=weighted_struct,
-                                                                       nuc_count=nuc_count)
-            
-            comparison_nuc_counts: ComparisonNucCounts = comparison_data.comp_counts
-            comparison_nucs_list.append(comparison_nuc_counts)
-        
-        result: ComparisonNucResults = ComparisonNucResults(comparison_nuc_counts=comparison_nuc_counts)
-        return result
+    

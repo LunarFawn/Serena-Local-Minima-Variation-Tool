@@ -21,11 +21,6 @@ class ComparisonLMV():
 @dataclass
 class ComparisonLMVResponse():
     lmv_comps:List[ComparisonLMV]
-
-@dataclass
-class ReferenceStructures():
-    mfe_structure:Sara2SecondaryStructure
-    weighted_structures: WeightedEnsembleResult
     
 
 class LocalMinimaVariation():
@@ -94,28 +89,7 @@ class LocalMinimaVariation():
         result: EVResult = EVResult(ev_values=ev_values)
         return result
     
-    def process_serena_lmvs(self, ensemble: MultipleEnsembleGroups, ref_structures:ReferenceStructures):
-        
-        
-        #first get mfe lmv then weighted for groups
-        mfe_result:EVResult = self.get_multi_group_lmv(ensemble=ensemble,
-                                                        reference_structure=ref_structures.mfe_structure)
-        #now get ref ev
-        rel_result:EVResult = self.get_relative_mutli_group_lmv(ensemble=ensemble)
-
-        #now get weightedEV
-        weight_result:EVResult = self.get_weighted_multi_group_lmv(ensemble=ensemble, 
-                                                                   weighted_structures=ref_structures.weighted_structures)
-        comparisons_lmv_response: List[ComparisonLMV] = []
-        for group_index in range(len(ensemble.groups)):
-            lmv_data:ComparisonLMV = ComparisonLMV()
-            lmv_data.lmv_comp = weight_result[group_index]
-            lmv_data.lmv_mfe = mfe_result[group_index]
-            lmv_data.lmv_rel = rel_result[group_index]
-            comparisons_lmv_response.append(lmv_data)
-        
-        serena_lmv_respone: ComparisonLMVResponse = ComparisonLMVResponse(lmv_comps=comparisons_lmv_response)
-        return serena_lmv_respone
+    
 
         
         

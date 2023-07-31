@@ -147,13 +147,3 @@ class WeightedStructure():
                                                                            nuc_counts=weighted_nuc_counts)    
         return compared_data
     
-
-    def process_ensemble(self, ensemble:MultipleEnsembleGroups) -> WeightedEnsembleResult:
-        ensemble_weighted_structures: List[Sara2SecondaryStructure] = []
-        
-        for singel_group in ensemble.groups:
-            structs_list: Sara2StructureList = singel_group.group
-            ensemble_weighted_structures.append(self.make_weighted_struct(structure_list=structs_list))
-        
-        ensemble_result:WeightedEnsembleResult = WeightedEnsembleResult(weighted_structs=ensemble_weighted_structures)
-        return ensemble_result

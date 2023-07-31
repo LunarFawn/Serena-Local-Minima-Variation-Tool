@@ -178,6 +178,13 @@ class MultipleEnsembleGroups():
     @group_kcal_ranges.setter
     def group_kcal_ranges(self, values :List[KcalRanges]):
         self._group_kcal_ranges = values
+
+    @property
+    def total_structures(self):
+        total:int = 0
+        for group in self.raw_groups:
+            total += group.num_structures
+        return total
     
 
 

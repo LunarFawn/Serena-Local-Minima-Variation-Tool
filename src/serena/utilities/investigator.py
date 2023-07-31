@@ -73,7 +73,7 @@ class ComparisonInvestigator():
     def __init__(self) -> None:
         pass
 
-    def evalulate_comparison_nucs(self, comparison_nucss:List[ComparisonNucCounts])->ComparisonEvalResults:
+    def evalulate_comparison_nucs(self, comparison_nucss:ComparisonNucResults)->ComparisonEvalResults:
 
         BRaise_list:List[float] = []
         BUratio_list:List[float] = []
@@ -85,18 +85,18 @@ class ComparisonInvestigator():
             last_index:int = 0
             if group_index > 0:
                 last_index = group_index -1
-            unbound:float = comparison_nucss[group_index].unbound_count
-            last_unbound:float = comparison_nucss[last_index].unbound_count
+            unbound:float = comparison_nucss.comparison_nuc_counts[group_index].unbound_count
+            last_unbound:float = comparison_nucss.comparison_nuc_counts[last_index].unbound_count
             
-            bound:float = comparison_nucss[group_index].bound_count
-            last_bound:float = comparison_nucss[last_index].bound_count
+            bound:float = comparison_nucss.comparison_nuc_counts[group_index].bound_count
+            last_bound:float = comparison_nucss.comparison_nuc_counts[last_index].bound_count
 
-            both_nuc:float = comparison_nucss[group_index].both_count
-            last_both:float = comparison_nucss[last_index].both_count
+            both_nuc:float = comparison_nucss.comparison_nuc_counts[group_index].both_count
+            last_both:float = comparison_nucss.comparison_nuc_counts[last_index].both_count
 
-            dot_nuc:float = comparison_nucss[group_index].dot_count
+            dot_nuc:float = comparison_nucss.comparison_nuc_counts[group_index].dot_count
 
-            nuc_count:int = comparison_nucss[last_index].num_nucs
+            nuc_count:int = comparison_nucss.comparison_nuc_counts[last_index].num_nucs
 
             unbound_to_total_ratio:float = 0
             bound_to_total_ratio:float = 0
