@@ -60,10 +60,10 @@ class ComparisonEvalResults():
 #the code that makes this is not written yet...dont forget
 @dataclass
 class InvestigatorResults():
-    comparison_eval_results: List[ComparisonEvalResults] 
+    comparison_eval_results: ComparisonEvalResults
     comp_nuc_counts: List[ComparisonNucCounts]
     lmv_values: ComparisonLMVResponse
-    lmv_assertions: List[LMVAssertionResult]
+    lmv_assertions: LMVAssertionResult
     num_groups:int = 0
 
 

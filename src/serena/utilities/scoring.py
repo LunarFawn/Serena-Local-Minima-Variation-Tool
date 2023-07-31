@@ -110,13 +110,13 @@ class SerenaScoring():
         #    result_messages = self.log_message(message, result_messages)
         #    score= score + 1
 
-        comp_less_ratio: float = ev_comp_to_mfe.count('<') / num_groups
-        com_great_ratio: float = ev_comp_to_mfe.count('>')  / num_groups
+        comp_less_ratio: float = investigator.lmv_assertions.bound_compare_to_unbound.count('<') / investigator.num_groups
+        com_great_ratio: float = investigator.lmv_assertions.bound_compare_to_unbound.count('>')  / investigator.num_groups
         message:str = f'ev comp great:{com_great_ratio}, ev comp less:{comp_less_ratio}'
         result_messages = self.log_message(message, result_messages)
         if com_great_ratio < comp_less_ratio and comp_less_ratio >= .7:
             message:str = "EV for comparison struct is LESS MORE OFTEN than unbound mfe so add bonus"
-            result_messages = self.log_message(message, result_messages)
+            #result_messages = self.log_message(message, result_messages)
             score= score + 1
         elif com_great_ratio > comp_less_ratio and com_great_ratio >= .5:
             message:str = "EV for comparison struct is GREATER MORE OFTEN than unbound mfe so penatly"
@@ -124,14 +124,14 @@ class SerenaScoring():
             score= score - .5
             if com_great_ratio >= .8:
                 message:str = "EV for comp is GREATER EXTRA MORE OFTEN then mfe so minus penalty point"
-                result_messages = self.log_message(message, result_messages)
+                #result_messages = self.log_message(message, result_messages)
                 score= score - .5
         
-        if nuc_penatly_count > 0:
-            if BUratio_list[0] >= .75:
-                new_penalty: float = nuc_penatly_count * .5
+        if investigator.comparison_eval_results.nuc_penatly_count > 0:
+            if investigator.comparison_eval_results.BUratio_list[0] >= .75:
+                new_penalty: float = investigator.comparison_eval_results.nuc_penatly_count * .5
                 message:str = f'Bound unbound ratio higher than 75% so it will most likely just fold into what should have been a switch so minus {new_penalty} points'
-                result_messages = self.log_message(message, result_messages)
+                #result_messages = self.log_message(message, result_messages)
                 score = score - new_penalty
             #elif BUratio_list[0] > .60 and BUratio_list[1] < .3:
             #    new_penalty: float = nuc_penatly_count * 1
@@ -139,7 +139,7 @@ class SerenaScoring():
             #    result_messages = self.log_message(message, result_messages)
             #    score = score - new_penalty
             else:
-                new_penalty: float = nuc_penatly_count * .5                   
+                new_penalty: float = investigator.comparison_eval_results.nuc_penatly_count * .5                   
                 message:str = f'Bound nucs found in first energy group. Design is primed to switch so add bonus of {new_penalty} points'
                 result_messages = self.log_message(message, result_messages)
                 score = score + new_penalty
