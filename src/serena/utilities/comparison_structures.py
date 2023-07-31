@@ -18,9 +18,9 @@ class ComparisonNucCounts():
 
 @dataclass
 class ComparisonResult():
-    unbound_struct:Sara2SecondaryStructure 
-    bound_struct: Sara2SecondaryStructure
-    reference_struct: Sara2SecondaryStructure
+    #unbound_struct:Sara2SecondaryStructure 
+    #bound_struct: Sara2SecondaryStructure
+    #reference_struct: Sara2SecondaryStructure
     comp_struct: Sara2SecondaryStructure
     comp_counts: ComparisonNucCounts
 
@@ -80,10 +80,13 @@ class ComparisonStructures():
                                                                     num_nucs=nuc_count)
                 
         compared_result: ComparisonResult = ComparisonResult(comp_struct=comp_struct,
-                                                                unbound_struct=unbound_struct,
-                                                                bound_struct=bound_struct,
-                                                                reference_struct=reference_struct,
+                                                                #unbound_struct=unbound_struct,
+                                                                #bound_struct=bound_struct,
+                                                                #reference_struct=reference_struct,
                                                                 comp_counts=comp_nuc_counts)
         
         return compared_result
+    
+    def process_serena_weighted_comparison(self):
+        pass
     
