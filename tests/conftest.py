@@ -7,6 +7,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 
 """
 Secondary Structure Fixtures
@@ -212,3 +213,14 @@ def empty_weighted_comparison_result():
 @pytest.fixture
 def weighted_struct_class():
     return WeightedStructure()
+
+"""
+Fixtures for ensemble groups
+"""
+
+@pytest.fixture
+def empty_single_ensemble_group():
+    """
+    Return a empty single ensemble group class
+    """
+    return SingleEnsembleGroup()
