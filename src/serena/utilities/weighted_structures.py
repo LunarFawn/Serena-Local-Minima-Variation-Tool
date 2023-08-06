@@ -105,7 +105,7 @@ class WeightedStructure():
         folded mfe and if it is not straight then it is more like the unbound mfe.
         """
 
-        weighted_nuc_counts:WeightedNucCounts = WeightedNucCounts()
+       
 
         unbound:str = '|'
         num_unbound:int = 0
@@ -126,17 +126,23 @@ class WeightedStructure():
 
             if weighted_nuc == bound_nuc and weighted_nuc != unbound_nuc:
                 comp_nuc_symbol = bound
-                weighted_nuc_counts.num_bound += 1
+                num_bound += 1
             elif weighted_nuc != bound_nuc and weighted_nuc == unbound_nuc:
                 comp_nuc_symbol = unbound
-                weighted_nuc_counts.num_unbound += 1
+                num_unbound += 1
             elif weighted_nuc == bound_nuc and weighted_nuc == unbound_nuc:
                 comp_nuc_symbol = both
-                weighted_nuc_counts.num_both += 1
+                num_both += 1
             else:
                 comp_nuc_symbol = dot
-                weighted_nuc_counts.num_dot += 1
+                num_dot += 1
             
+            weighted_nuc_counts:WeightedNucCounts = WeightedNucCounts(num_unbound=num_unbound,
+                                                                        num_bound=num_bound,
+                                                                        num_both=num_both,
+                                                                        num_dot=num_dot,
+                                                                        num_nucs=nuc_count
+                                                                        )
             compared_struct = compared_struct + comp_nuc_symbol
 
             weighted_nuc_counts.num_nucs = nuc_count
@@ -144,6 +150,6 @@ class WeightedStructure():
         compared_data: WeightedComparisonResult = WeightedComparisonResult(comp_struct=compared_struct,
                                                                            unbound_mfe_struct=unbound_mfe_struct,
                                                                            bound_mfe_struct=bound_mfe_struct,
-                                                                           nuc_counts=weighted_nuc_counts)    
+                                                                           weighted_nuc_counts=weighted_nuc_counts)    
         return compared_data
     

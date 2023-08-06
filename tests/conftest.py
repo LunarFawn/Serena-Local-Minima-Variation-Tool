@@ -6,7 +6,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         KcalRanges)
 
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
-from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult
+from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
 
 """
 Secondary Structure Fixtures
@@ -111,6 +111,15 @@ def empty_secondary_structure_list():
     return Sara2StructureList()
 
 @pytest.fixture
+def secondary_structures_list(secondary_structure_3, secondary_structure_3_1, secondary_structure_4, secondary_structure_5):
+    structure_list:Sara2StructureList = Sara2StructureList()
+    structure_list.add_structure(secondary_structure_3)
+    structure_list.add_structure(secondary_structure_3_1)
+    structure_list.add_structure(secondary_structure_4)
+    structure_list.add_structure(secondary_structure_5)
+    return structure_list
+
+@pytest.fixture
 def empty_kcal_range():
     """
     Returns an initialized kcal range with default values
@@ -199,3 +208,7 @@ def empty_weighted_comparison_result():
     Return an empty comparison result
     """
     return WeightedComparisonResult()
+
+@pytest.fixture
+def weighted_struct_class():
+    return WeightedStructure()
