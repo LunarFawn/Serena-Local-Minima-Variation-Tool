@@ -54,3 +54,10 @@ def test_fancy_single_ensemble_group_properties(empty_single_ensemble_group:Sing
     assert empty_single_ensemble_group.kcal_span == 20
     assert empty_single_ensemble_group.kcal_start == 30
 
+"""
+Now multiple ensemble groups
+"""
+
+def test_empty_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleEnsembleGroups):
+    pass
+

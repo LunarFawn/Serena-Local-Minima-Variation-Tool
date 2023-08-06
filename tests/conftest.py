@@ -231,3 +231,10 @@ def empty_single_ensemble_group():
     Return a empty single ensemble group class
     """
     return SingleEnsembleGroup()
+
+@pytest.fixture
+def empty_multiple_ensemble_groups():
+    """
+    Return a empty multiple ensemble group class
+    """
+    return MultipleEnsembleGroups()
