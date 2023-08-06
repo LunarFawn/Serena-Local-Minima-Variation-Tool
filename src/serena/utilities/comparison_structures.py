@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import List
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure
-from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
-from serena.utilities.weighted_structures import WeightedEnsembleResult
+#from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
+#from serena.utilities.weighted_structures import WeightedEnsembleResult
 
 
 @dataclass
