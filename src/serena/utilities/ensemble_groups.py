@@ -55,7 +55,7 @@ class SingleEnsembleGroup():
 
     @property
     def kcal_span(self):
-        return self.kcal_span 
+        return self._kcal_span 
 
     @kcal_span.setter
     def kcal_span(self, kcal:float):
@@ -63,7 +63,7 @@ class SingleEnsembleGroup():
     
     @property
     def kcal_start(self):
-        return self.kcal_start 
+        return self._kcal_start 
 
     @kcal_start.setter
     def kcal_start(self, kcal:float):
@@ -71,7 +71,7 @@ class SingleEnsembleGroup():
 
     @property
     def kcal_end(self):
-        return self.kcal_end 
+        return self._kcal_end 
 
     @kcal_end.setter
     def kcal_end(self, kcal:float):

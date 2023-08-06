@@ -112,6 +112,13 @@ def empty_secondary_structure_list():
     return Sara2StructureList()
 
 @pytest.fixture
+def secondary_structures_list_2_item(secondary_structure_3, secondary_structure_3_1, secondary_structure_4, secondary_structure_5):
+    structure_list:Sara2StructureList = Sara2StructureList()
+    structure_list.add_structure(secondary_structure_3)
+    structure_list.add_structure(secondary_structure_4)
+    return structure_list
+
+@pytest.fixture
 def secondary_structures_list(secondary_structure_3, secondary_structure_3_1, secondary_structure_4, secondary_structure_5):
     structure_list:Sara2StructureList = Sara2StructureList()
     structure_list.add_structure(secondary_structure_3)
