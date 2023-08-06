@@ -1,3 +1,4 @@
+from re import S
 import pytest
 from typing import List, Dict, NamedTuple
 
@@ -39,4 +40,17 @@ def test_set_single_ensemble_group_properties(empty_single_ensemble_group:Single
     assert empty_single_ensemble_group.kcal_start == 30
 
 def test_fancy_single_ensemble_group_properties(empty_single_ensemble_group:SingleEnsembleGroup):
-    pass
+    empty_single_ensemble_group.append_multi_state_mfe_data('((..))',-10)
+    empty_single_ensemble_group.append_multi_state_mfe_data('(...))', -20)
+    assert empty_single_ensemble_group.multi_state_mfe_struct[0] == '((..))'
+    assert empty_single_ensemble_group.multi_state_mfe_struct[1] == '(...))'
+    assert empty_single_ensemble_group.multi_state_mfe_kcal[0] == -10
+    assert empty_single_ensemble_group.multi_state_mfe_kcal[1] == -20
+    
+    empty_single_ensemble_group.update_kcals(start=30,
+                                            stop=10,
+                                            span=20)
+    assert empty_single_ensemble_group.kcal_end == 10
+    assert empty_single_ensemble_group.kcal_span == 20
+    assert empty_single_ensemble_group.kcal_start == 30
+
