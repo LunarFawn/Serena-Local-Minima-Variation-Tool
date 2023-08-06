@@ -38,4 +38,5 @@ def test_set_single_ensemble_group_properties(empty_single_ensemble_group:Single
     assert empty_single_ensemble_group.kcal_span == 20
     assert empty_single_ensemble_group.kcal_start == 30
 
-
+def test_fancy_single_ensemble_group_properties(empty_single_ensemble_group:SingleEnsembleGroup):
+    pass
