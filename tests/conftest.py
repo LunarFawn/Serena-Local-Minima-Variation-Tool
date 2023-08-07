@@ -238,3 +238,14 @@ def empty_multiple_ensemble_groups():
     Return a empty multiple ensemble group class
     """
     return MultipleEnsembleGroups()
+
+@pytest.fixture
+def multiple_ensemble_groups(secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
+    """
+    Returns a multiple ensemble groups class with
+    values provided at instantiation
+    """
+    return MultipleEnsembleGroups(non_switch_kcal=10,
+                                    non_switch_struct=secondary_structure_4,
+                                    switched_kcal=20,
+                                    switched_struct=secondary_structure_5)

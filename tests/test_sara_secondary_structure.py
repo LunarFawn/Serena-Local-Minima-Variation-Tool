@@ -8,14 +8,14 @@ from serena.utilities.ensemble_structures import Sara2SecondaryStructure, KcalRa
 Test sara2 secondary structure
 """
 
-def test_default_new_secondary_struct_list(empty_secondary_structure:Sara2SecondaryStructure):
+def test_empty_secondary_struct(empty_secondary_structure:Sara2SecondaryStructure):
     assert empty_secondary_structure.sequence == ''
     assert empty_secondary_structure.structure == ''
     assert empty_secondary_structure.freeEnergy == 0
     assert empty_secondary_structure.stackEnergy == 0
     assert empty_secondary_structure.nuc_count == 0
 
-def test_setting_initial_secondary_struct(secondary_structure_1:Sara2SecondaryStructure):
+def test_set_secondary_struct(secondary_structure_1:Sara2SecondaryStructure):
     assert secondary_structure_1.sequence == 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA'
     assert secondary_structure_1.structure == '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
     assert secondary_structure_1.freeEnergy == -30
