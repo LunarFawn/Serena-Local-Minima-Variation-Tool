@@ -1,4 +1,4 @@
-from re import S
+#from re import S
 import pytest
 from typing import List, Dict, NamedTuple
 
@@ -18,27 +18,16 @@ def test_empty_single_ensemble_group(empty_single_ensemble_group:SingleEnsembleG
     assert empty_single_ensemble_group.kcal_span == 0
     assert empty_single_ensemble_group.kcal_start == 0
 
-def test_set_single_ensemble_group_properties(empty_single_ensemble_group:SingleEnsembleGroup, secondary_structures_list_2_item:Sara2StructureList):
-    empty_single_ensemble_group.group = secondary_structures_list_2_item
-    assert empty_single_ensemble_group.group.sara_stuctures[0].structure == '((.)))'
-    assert empty_single_ensemble_group.group.sara_stuctures[1].structure == '..().)'
-    
-    mfe_structs_list:List[str] = ['((..))','(...))']
-    empty_single_ensemble_group.multi_state_mfe_struct = mfe_structs_list
-    assert empty_single_ensemble_group.multi_state_mfe_struct[0] == '((..))'
-    assert empty_single_ensemble_group.multi_state_mfe_struct[1] == '(...))'
-    
-    mfe_kcal_list:List[float] = [-10,-20]
-    empty_single_ensemble_group.multi_state_mfe_kcal = mfe_kcal_list
-    assert empty_single_ensemble_group.multi_state_mfe_kcal[0] == -10
-    assert empty_single_ensemble_group.multi_state_mfe_kcal[1] == -20
-
-    empty_single_ensemble_group.kcal_end = 10
-    empty_single_ensemble_group.kcal_span = 20
-    empty_single_ensemble_group.kcal_start = 30
-    assert empty_single_ensemble_group.kcal_end == 10
-    assert empty_single_ensemble_group.kcal_span == 20
-    assert empty_single_ensemble_group.kcal_start == 30
+def test_set_single_ensemble_group_properties(single_ensemble_group:SingleEnsembleGroup, secondary_structures_list_2_item:Sara2StructureList):
+    assert single_ensemble_group.group.sara_stuctures[0].structure == '((.)))'
+    assert single_ensemble_group.group.sara_stuctures[1].structure == '..().)'
+    assert single_ensemble_group.multi_state_mfe_struct[0] == '((..))'
+    assert single_ensemble_group.multi_state_mfe_struct[1] == '(...))'
+    assert single_ensemble_group.multi_state_mfe_kcal[0] == -10
+    assert single_ensemble_group.multi_state_mfe_kcal[1] == -20
+    assert single_ensemble_group.kcal_end == 10
+    assert single_ensemble_group.kcal_span == 20
+    assert single_ensemble_group.kcal_start == 30
 
 def test_fancy_single_ensemble_group_properties(empty_single_ensemble_group:SingleEnsembleGroup):
     empty_single_ensemble_group.append_multi_state_mfe_data('((..))',-10)
@@ -78,5 +67,5 @@ def test_initialized_multiple_ensemble_groups(multiple_ensemble_groups:MultipleE
     assert multiple_ensemble_groups.switched_state_structure.structure == '(...))'
 
 def test_set_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleEnsembleGroups):
-    pass
+    empty_multiple_ensemble_groups.num_groups =1
 

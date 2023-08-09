@@ -233,6 +233,26 @@ def empty_single_ensemble_group():
     return SingleEnsembleGroup()
 
 @pytest.fixture
+def single_ensemble_group(secondary_structures_list_2_item:Sara2StructureList):
+    """
+    Return a empty single ensemble group class
+    """
+    ensemble_group:SingleEnsembleGroup = SingleEnsembleGroup()
+    ensemble_group.group = secondary_structures_list_2_item
+    
+    mfe_structs_list:List[str] = ['((..))','(...))']
+    ensemble_group.multi_state_mfe_struct = mfe_structs_list
+    
+    mfe_kcal_list:List[float] = [-10,-20]
+    ensemble_group.multi_state_mfe_kcal = mfe_kcal_list
+    
+    ensemble_group.kcal_end = 10
+    ensemble_group.kcal_span = 20
+    ensemble_group.kcal_start = 30
+    return ensemble_group
+
+
+@pytest.fixture
 def empty_multiple_ensemble_groups():
     """
     Return a empty multiple ensemble group class
