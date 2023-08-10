@@ -33,6 +33,7 @@ def test_initialized_multiple_ensemble_groups(multiple_ensemble_groups:MultipleE
     assert multiple_ensemble_groups.non_switch_state_structure.structure == '..().)'
     assert multiple_ensemble_groups.switched_state_structure.structure == '(...))'
 
+
 def test_set_num_groups(empty_multiple_ensemble_groups:MultipleEnsembleGroups):
     empty_multiple_ensemble_groups.num_groups = 10
     assert empty_multiple_ensemble_groups.num_groups == 10
@@ -51,6 +52,7 @@ def test_set_raw_groups(empty_multiple_ensemble_groups:MultipleEnsembleGroups,se
     empty_multiple_ensemble_groups.raw_groups = raw_group_list
     assert empty_multiple_ensemble_groups.raw_groups[0] == secondary_structures_list_2_item
     assert empty_multiple_ensemble_groups.raw_groups[1] == secondary_structures_list_2_item_alt
+    assert empty_multiple_ensemble_groups.total_structures == 4
 
 def test_set_groups_dict(empty_multiple_ensemble_groups:MultipleEnsembleGroups,secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList):
     group_dict: Dict[Sara2StructureList] = {}
