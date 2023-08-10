@@ -38,5 +38,47 @@ def test_ev_result(ev_result:EVResult):
     assert ev_result.ev_values[1].ev_structure == 5.5
     assert ev_result.ev_values[1].ev_ThresholdNorm == 6.6
 
+def test_empty_3_group_ev_token_group_results(empty_ev_token_3_groups:EV_Token):
+    #first test group results initialization
+    assert len(empty_ev_token_3_groups.group_results) == 3
+    assert empty_ev_token_3_groups.group_results[0].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_results[0].ev_structure == -1
+    assert empty_ev_token_3_groups.group_results[0].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_structure == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_structure == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_ThresholdNorm == -1
+
+def test_empty_3_group_ev_token_group_dict(empty_ev_token_3_groups:EV_Token):
+    #first test group results initialization
+    assert len(empty_ev_token_3_groups.group_dict) == 3
+    assert empty_ev_token_3_groups.group_dict[0].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_dict[0].ev_structure == -1
+    assert empty_ev_token_3_groups.group_dict[0].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_dict[1].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_dict[1].ev_structure == -1
+    assert empty_ev_token_3_groups.group_dict[1].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_dict[2].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_dict[2].ev_structure == -1
+    assert empty_ev_token_3_groups.group_dict[2].ev_ThresholdNorm == -1
+
+def test_empty_3_group_ev_token_group_values(empty_ev_token_3_groups:EV_Token):
+    #first test group results initialization
+    assert len(empty_ev_token_3_groups.group_values) == 3
+    assert empty_ev_token_3_groups.group_values[0] == ''   
+    assert empty_ev_token_3_groups.group_values[1] == ''
+    assert empty_ev_token_3_groups.group_values[2] == ''
+
+def test_empty_3_group_ev_token_group_done_status(empty_ev_token_3_groups:EV_Token):
+    #first test group results initialization
+    assert len(empty_ev_token_3_groups.group_done_status) == 3
+    assert empty_ev_token_3_groups.group_done_status[0] == False  
+    assert empty_ev_token_3_groups.group_done_status[1] == False
+    assert empty_ev_token_3_groups.group_done_status[2] == False
+    assert empty_ev_token_3_groups.is_done == False 
+
+
 
 

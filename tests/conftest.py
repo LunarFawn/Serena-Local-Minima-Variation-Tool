@@ -8,7 +8,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
-from serena.utilities.ensemble_variation import EV, EVResult
+from serena.utilities.ensemble_variation import EV, EVResult, EV_Token
 """
 Secondary Structure Fixtures
 """
@@ -341,6 +341,14 @@ def ev_result(initialized_ev:EV, initialzed_ev_2:EV):
     """
     ev_list: List[EV] = [initialized_ev, initialzed_ev_2]
     return EVResult(ev_values=ev_list)
+
+@pytest.fixture
+def empty_ev_token_3_groups():
+    """
+    Return empty EV token initialized with 3 groups
+    """
+    return EV_Token(num_groups=3)
+
 
 
 
