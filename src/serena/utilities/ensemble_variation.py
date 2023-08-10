@@ -143,28 +143,27 @@ class EnsembleVariation():
         pass
 
     def thread_EV(self, shuttle: EV_Shuttle):
-        total_EV_subscore1:int = 0
-        structure_element_count = shuttle.kcal_group_structures_list.num_structures
-        token:EV_Token = shuttle.token 
-        group_num:int = shuttle.group_index
-        if structure_element_count != 0:
-            kcal_group_structures_list: Sara2StructureList = shuttle.kcal_group_structures_list
 
-            sara_mfestructure:Sara2SecondaryStructure = shuttle.sara_mfestructure 
-           
-            
+        token:EV_Token = shuttle.token 
+        group_num:int = shuttle.group_index        
+        result: EV =  self.ensemble_variation_algorithm(kcal_group_structures_list=shuttle.kcal_group_structures_list,
+                                                        ref_structure=shuttle.sara_mfestructure )
+        token.group_results[group_num]= result
+        token.group_dict[group_num] = result
+        token.group_done_status[group_num] = True
+
+    def ensemble_variation_algorithm(self, kcal_group_structures_list: Sara2StructureList, ref_structure:Sara2SecondaryStructure)->EV:
+        total_EV_subscore1:int = 0
+        structure_element_count = kcal_group_structures_list.num_structures
+ 
+        if structure_element_count != 0:
             #need to do each char abd then structure
             #walk through each nucleotide but first prep containers grab what is needed
             
             #setup constants
             nuc_count = kcal_group_structures_list.nuc_count
             structure_element_count = kcal_group_structures_list.num_structures
-
-            ensembleVariation_score_temp = 0
-            nucleotide_position_variation_basescores=[0]*nuc_count
-            nucleotide_position_variation_subscores=[0]*nuc_count
-            energydelta_individualVariationScore_list=[]
-            
+          
             #add the step to get nuc array here
             #get all the data out of it
 
@@ -188,7 +187,7 @@ class EnsembleVariation():
             num_structs:int = kcal_group_structures_list.num_structures
 
             for nucIndex in range(nuc_count):
-                mfe_nuc=sara_mfestructure.structure[nucIndex]
+                mfe_nuc=ref_structure.structure[nucIndex]
                 num_chars = list_of_nuc_lists[nucIndex].count(mfe_nuc)
                 num_diff:int = num_structs - num_chars
                 list_of_nuc_scores_base[nucIndex] = num_diff
@@ -198,8 +197,5 @@ class EnsembleVariation():
         else:
             total_EV_subscore1 = -1
 
-        result: EV =  EV(ev_normalized=total_EV_subscore1, ev_ThresholdNorm=0, ev_structure=0)  
-        token.group_results[group_num]= result
-        token.group_dict[group_num] = result
-        token.group_done_status[group_num] = True
-
+        result: EV =  EV(ev_normalized=total_EV_subscore1, ev_ThresholdNorm=0, ev_structure=0) 
+        return result
