@@ -12,6 +12,14 @@ from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsemb
 """
 Secondary Structure Fixtures
 """
+@pytest.fixture
+def kcal_range():
+    return KcalRanges(start=1, stop=3)
+
+@pytest.fixture
+def kcal_range_2():
+    return KcalRanges(start=2, stop=5)
+
 @pytest.fixture()
 def empty_secondary_structure():
     """
@@ -116,6 +124,13 @@ def secondary_structures_list_2_item(secondary_structure_3, secondary_structure_
     structure_list:Sara2StructureList = Sara2StructureList()
     structure_list.add_structure(secondary_structure_3)
     structure_list.add_structure(secondary_structure_4)
+    return structure_list
+
+@pytest.fixture
+def secondary_structures_list_2_item_alt(secondary_structure_3, secondary_structure_3_1, secondary_structure_4, secondary_structure_5):
+    structure_list:Sara2StructureList = Sara2StructureList()
+    structure_list.add_structure(secondary_structure_3_1)
+    structure_list.add_structure(secondary_structure_5)
     return structure_list
 
 @pytest.fixture
@@ -250,6 +265,26 @@ def single_ensemble_group(secondary_structures_list_2_item:Sara2StructureList):
     ensemble_group.kcal_span = 20
     ensemble_group.kcal_start = 30
     return ensemble_group
+
+@pytest.fixture
+def single_ensemble_group_2(secondary_structures_list_2_item:Sara2StructureList):
+    """
+    Return a empty single ensemble group class
+    """
+    ensemble_group:SingleEnsembleGroup = SingleEnsembleGroup()
+    ensemble_group.group = secondary_structures_list_2_item
+    
+    mfe_structs_list:List[str] = ['(....)','..()..']
+    ensemble_group.multi_state_mfe_struct = mfe_structs_list
+    
+    mfe_kcal_list:List[float] = [-30,-40]
+    ensemble_group.multi_state_mfe_kcal = mfe_kcal_list
+    
+    ensemble_group.kcal_end = 40
+    ensemble_group.kcal_span = 50
+    ensemble_group.kcal_start = 60
+    return ensemble_group
+
 
 
 @pytest.fixture
