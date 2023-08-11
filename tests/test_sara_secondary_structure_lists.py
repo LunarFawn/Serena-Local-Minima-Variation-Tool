@@ -46,3 +46,6 @@ def test_add_sara_struct_sara_list(empty_secondary_structure_list:Sara2Structure
 def test_set_weighted_struct_sara_list(empty_secondary_structure_list:Sara2StructureList):
     empty_secondary_structure_list.weighted_structure = '.....'
     assert empty_secondary_structure_list.weighted_structure == '.....'
+
+def test_secondary_structure_list_2_item(secondary_structures_list_2_item:Sara2StructureList):
+    pass

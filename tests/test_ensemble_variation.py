@@ -2,6 +2,7 @@ import pytest
 
 from serena.utilities.ensemble_variation import EVResult, EV, EnsembleVariation, EV_Token
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
+from test_sara_secondary_structure_lists import test_default_new_secondary_struct_list
 
 
 def test_empty_ev(empty_ev:EV):
@@ -139,11 +140,6 @@ def test_ev_token_3_groups(ev_token_3_groups:EV_Token):
     assert ev_token_3_groups.group_done_status[1] == True
     assert ev_token_3_groups.group_done_status[2] == False
     assert ev_token_3_groups.is_done == False
-
-
-
-    
-
 
 
 """
