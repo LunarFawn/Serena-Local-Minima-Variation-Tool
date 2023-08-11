@@ -8,7 +8,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
-from serena.utilities.ensemble_variation import EV, EVResult, EV_Token
+from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle
 """
 Secondary Structure Fixtures
 """
@@ -348,6 +348,27 @@ def empty_ev_token_3_groups():
     Return empty EV token initialized with 3 groups
     """
     return EV_Token(num_groups=3)
+
+@pytest.fixture
+def ev_token_3_groups(empty_ev_token_3_groups: EV_Token, initialized_ev:EV, initialzed_ev_2:EV):
+    empty_ev_token_3_groups.set_group_dict(2,initialized_ev)
+    empty_ev_token_3_groups.set_group_result(index=0,
+                                             value=initialzed_ev_2)
+    empty_ev_token_3_groups.set_group_result(index=2,
+                                             value=initialized_ev)
+    empty_ev_token_3_groups.set_group_done_status(0, True)
+    empty_ev_token_3_groups.set_group_done_status(1, True)
+    return empty_ev_token_3_groups
+
+"""
+EV shuttle
+"""
+@pytest.fixture
+def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure, ev_token_3_groups:EV_Token):
+    return EV_Shuttle(structs_list=secondary_structures_list_2_item,
+                      mfe=secondary_structure_5,
+                      group_index=3,
+                      token=ev_token_3_groups)
 
 
 
