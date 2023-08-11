@@ -358,13 +358,14 @@ def empty_ev_token_3_groups():
 
 @pytest.fixture
 def ev_token_3_groups(empty_ev_token_3_groups: EV_Token, initialized_ev:EV, initialzed_ev_2:EV):
+    empty_ev_token_3_groups.set_group_dict(0,initialzed_ev_2)
     empty_ev_token_3_groups.set_group_dict(2,initialized_ev)
     empty_ev_token_3_groups.set_group_result(index=0,
                                              value=initialzed_ev_2)
     empty_ev_token_3_groups.set_group_result(index=2,
                                              value=initialized_ev)
-    empty_ev_token_3_groups.set_group_done_status(0, True)
-    empty_ev_token_3_groups.set_group_done_status(1, True)
+    empty_ev_token_3_groups.set_group_done_status(0, False)
+    empty_ev_token_3_groups.set_group_done_status(1, False)
     return empty_ev_token_3_groups
 
 """
@@ -372,7 +373,7 @@ EV shuttle
 """
 
 @pytest.fixture
-def empty_ev_shuttle_num_3(e):
+def empty_ev_shuttle_num_3():
     return EV_Shuttle(structs_list=Sara2StructureList(),
                         mfe=Sara2SecondaryStructure(),
                         group_index=3,
