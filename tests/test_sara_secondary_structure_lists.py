@@ -48,4 +48,48 @@ def test_set_weighted_struct_sara_list(empty_secondary_structure_list:Sara2Struc
     assert empty_secondary_structure_list.weighted_structure == '.....'
 
 def test_secondary_structure_list_2_item(secondary_structures_list_2_item:Sara2StructureList):
-    pass
+    assert len(secondary_structures_list_2_item.sara_stuctures) == 2
+    #test structures
+    assert secondary_structures_list_2_item.sara_stuctures[0].sequence == 'GCCAUA'
+    assert secondary_structures_list_2_item.sara_stuctures[0].structure == '((.)))'
+    assert secondary_structures_list_2_item.sara_stuctures[0].freeEnergy == -30
+    assert secondary_structures_list_2_item.sara_stuctures[0].stackEnergy == -10
+    assert secondary_structures_list_2_item.sara_stuctures[1].sequence == 'GCCAUA'
+    assert secondary_structures_list_2_item.sara_stuctures[1].structure == '..().)'
+    assert secondary_structures_list_2_item.sara_stuctures[1].freeEnergy == -50
+    assert secondary_structures_list_2_item.sara_stuctures[1].stackEnergy == -20
+    #now test the meta data stuff
+    assert secondary_structures_list_2_item.mfe_freeEnergy == -30
+    assert secondary_structures_list_2_item.mfe_stackEnergy == -10
+    assert secondary_structures_list_2_item.nuc_count == 6
+    assert secondary_structures_list_2_item.max_free_energy == -30
+    assert secondary_structures_list_2_item.min_free_energy == -50
+    assert secondary_structures_list_2_item.max_stack_energy == -10
+    assert secondary_structures_list_2_item.min_stack_energy == -20
+    assert secondary_structures_list_2_item.num_structures == 2 
+    assert secondary_structures_list_2_item.freeEnergy_span == 20
+    assert secondary_structures_list_2_item.stackEnergy_span == 10
+
+def test_secondary_structure_list_2_item_alt(secondary_structures_list_2_item_alt:Sara2StructureList):
+    assert len(secondary_structures_list_2_item_alt.sara_stuctures) == 2
+    #test structures
+    assert secondary_structures_list_2_item_alt.sara_stuctures[0].sequence == 'GCCAUA'
+    assert secondary_structures_list_2_item_alt.sara_stuctures[0].structure == '((..))'
+    assert secondary_structures_list_2_item_alt.sara_stuctures[0].freeEnergy == -30
+    assert secondary_structures_list_2_item_alt.sara_stuctures[0].stackEnergy == -10
+    assert secondary_structures_list_2_item_alt.sara_stuctures[1].sequence == 'GCCAUA'
+    assert secondary_structures_list_2_item_alt.sara_stuctures[1].structure == '(...))'
+    assert secondary_structures_list_2_item_alt.sara_stuctures[1].freeEnergy == -40
+    assert secondary_structures_list_2_item_alt.sara_stuctures[1].stackEnergy == -30
+    #now test the meta data stuff
+    assert secondary_structures_list_2_item_alt.mfe_freeEnergy == -30
+    assert secondary_structures_list_2_item_alt.mfe_stackEnergy == -10
+    assert secondary_structures_list_2_item_alt.nuc_count == 6
+    assert secondary_structures_list_2_item_alt.max_free_energy == -30
+    assert secondary_structures_list_2_item_alt.min_free_energy == -40
+    assert secondary_structures_list_2_item_alt.max_stack_energy == -10
+    assert secondary_structures_list_2_item_alt.min_stack_energy == -30
+    assert secondary_structures_list_2_item_alt.num_structures == 2 
+    assert secondary_structures_list_2_item_alt.freeEnergy_span == 10
+    assert secondary_structures_list_2_item_alt.stackEnergy_span == 20
+

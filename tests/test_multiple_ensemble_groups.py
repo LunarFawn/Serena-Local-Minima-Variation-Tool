@@ -1,6 +1,6 @@
 import pytest
 from typing import List, Dict, NamedTuple
-import  attrs
+#import  attrs
 
 from serena.utilities.ensemble_structures import (Sara2SecondaryStructure, 
                                         Sara2StructureList, 
