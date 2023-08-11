@@ -19,7 +19,8 @@ import numpy as np
 import collections
 from enum import Enum
 
-from serena.structures import SingleEnsembleGroup, MultipleEnsembleGroups, Sara2SecondaryStructure, Sara2StructureList, EVResult
+from serena.utilities.ensemble_structures import  Sara2SecondaryStructure, Sara2StructureList
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 
 class MaterialParameter(Enum):
     NONE = 0
@@ -41,7 +42,6 @@ class NupackSettings():
     sequence:str = ''
     folded_2nd_state_structure:str=''
     folded_2nd_state_kcal:float = 0
-    comp_structures:Sara2StructureList = Sara2StructureList()
 
 class NUPACK4Interface():
     """

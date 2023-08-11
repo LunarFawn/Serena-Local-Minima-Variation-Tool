@@ -55,7 +55,7 @@ class SingleEnsembleGroup():
 
     @property
     def kcal_span(self):
-        return self.kcal_span 
+        return self._kcal_span 
 
     @kcal_span.setter
     def kcal_span(self, kcal:float):
@@ -63,7 +63,7 @@ class SingleEnsembleGroup():
     
     @property
     def kcal_start(self):
-        return self.kcal_start 
+        return self._kcal_start 
 
     @kcal_start.setter
     def kcal_start(self, kcal:float):
@@ -71,7 +71,7 @@ class SingleEnsembleGroup():
 
     @property
     def kcal_end(self):
-        return self.kcal_end 
+        return self._kcal_end 
 
     @kcal_end.setter
     def kcal_end(self, kcal:float):
@@ -84,13 +84,13 @@ class SingleEnsembleGroup():
 
 class MultipleEnsembleGroups():
 
-    def __init__(self, non_switch_kcal:float =0, non_switch_struct:str = '', switched_kcal:float=0, switched_struct:str='') -> None:
+    def __init__(self, non_switch_kcal:float =0, non_switch_struct:Sara2SecondaryStructure= Sara2SecondaryStructure(), switched_kcal:float=0, switched_struct:Sara2SecondaryStructure=Sara2SecondaryStructure()) -> None:
         self._groups: List[SingleEnsembleGroup] = []  
         self._raw_groups: List[Sara2StructureList] = []
         self._non_switch_state_mfe_kcal: float = non_switch_kcal
-        self._non_switch_state_structure: str = non_switch_struct
+        self._non_switch_state_structure: Sara2SecondaryStructure = non_switch_struct
         self._switched_state_mfe_kcal: float = switched_kcal
-        self._switched_state_structure: str = switched_struct
+        self._switched_state_structure: Sara2SecondaryStructure = switched_struct
         self._groups_dict: Dict[int, Sara2StructureList] = {}
         self._group_values: List[float] = []
         self._num_groups: int = 0
@@ -104,24 +104,24 @@ class MultipleEnsembleGroups():
     def num_groups(self, num: int):
         self._num_groups = num
 
-    def add_group(self, group:SingleEnsembleGroup, group_index:int, value_of_group:float, start_kcal:float = 0, end_kcal:float=0):
-        if self._switched_state_mfe_kcal >= group.kcal_start and self._switched_state_mfe_kcal < group.kcal_end:
-            group.has_bound_mfe_kcal = True
-        self._groups.append(group)
-        self._raw_groups.append(group.group)
-        self._groups_dict[group_index]= group.group
-        self._group_values.append(value_of_group)
-        kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
-        self._group_kcal_ranges.append(kcal_range)
+    #def add_group(self, group:SingleEnsembleGroup, group_index:int, value_of_group:float, start_kcal:float = 0, end_kcal:float=0):
+    #    if self._switched_state_mfe_kcal >= group.kcal_start and self._switched_state_mfe_kcal < group.kcal_end:
+    #        group.has_bound_mfe_kcal = True
+    #    self._groups.append(group)
+    #    self._raw_groups.append(group.group)
+    #    self._groups_dict[group_index]= group.group
+    #    self._group_values.append(value_of_group)
+    #    kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
+    #    self._group_kcal_ranges.append(kcal_range)
     
-    def append_group(self, group:SingleEnsembleGroup, group_value: float, start_kcal:float = 0, end_kcal:float=0):
-        self._num_groups = self._num_groups + 1
-        self._groups.append(group)
-        self._raw_groups.append(group.group)
-        self._groups_dict[self._num_groups-1]= group.group
-        self._group_values.append(group_value)
-        kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
-        self._group_kcal_ranges.append(kcal_range)
+    #def append_group(self, group:SingleEnsembleGroup, group_value: float, start_kcal:float = 0, end_kcal:float=0):
+    #    self._num_groups = self._num_groups + 1
+    #    self._groups.append(group)
+    #    self._raw_groups.append(group.group)
+    #    self._groups_dict[self._num_groups-1]= group.group
+    #   self._group_values.append(group_value)
+    #    kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
+    #    self._group_kcal_ranges.append(kcal_range)
 
     @property
     def groups(self):
@@ -144,7 +144,7 @@ class MultipleEnsembleGroups():
         return self._non_switch_state_mfe_kcal
     
     @property
-    def non_switch_state_structure(self):
+    def non_switch_state_structure(self)->Sara2SecondaryStructure:
         return self._non_switch_state_structure
     
     @property
@@ -152,7 +152,7 @@ class MultipleEnsembleGroups():
         return self._switched_state_mfe_kcal
     
     @property
-    def switched_state_structure(self):
+    def switched_state_structure(self)->Sara2SecondaryStructure:
         return self._switched_state_structure
     
     @property
@@ -178,6 +178,13 @@ class MultipleEnsembleGroups():
     @group_kcal_ranges.setter
     def group_kcal_ranges(self, values :List[KcalRanges]):
         self._group_kcal_ranges = values
+
+    @property
+    def total_structures(self):
+        total:int = 0
+        for group in self.raw_groups:
+            total += group.num_structures
+        return total
     
 
 

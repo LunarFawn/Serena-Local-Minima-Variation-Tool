@@ -117,14 +117,14 @@ class Sara2StructureList(object):
         #self._structures.append(structure.structure)
         self._freeEnergy_list.append(structure.freeEnergy)
         self._stackEnergy_list.append(structure.stackEnergy)
-        #self.process_energy()
+        self.process_energy()
 
 
     def remove_structure(self, index:int):
         del self._structures[index]
         del self._freeEnergy_list[index]
         del self._stackEnergy_list[index]
-        #self.process_energy()            
+        self.process_energy()            
 
     @property
     def mfe_structure(self):
@@ -169,37 +169,37 @@ class Sara2StructureList(object):
     
     @property
     def max_free_energy(self):
-        self.process_energy()
+        #self.process_energy()
         return self._max_freeEnergy
     
     @property
     def min_free_energy(self):
-        self.process_energy()
+        #self.process_energy()
         return self._min_freeEnergy
     
     @property
     def max_stack_energy(self):
-        self.process_energy()
+        #self.process_energy()
         return self._max_stackEnergy
     
     @property
     def min_stack_energy(self):
-        self.process_energy()
+        #self.process_energy()
         return self._min_stackEnergy
     
     @property
     def num_structures(self):
-        self.process_energy()
+        #self.process_energy()
         return self._num_structures
     
     @property
     def freeEnergy_span(self):
-        self.process_energy()
+        #self.process_energy()
         return self._freeEnergy_span
 
     @property
     def stackEnergy_span(self):
-        self.process_energy()
+        #self.process_energy()
         return self._stackEnergy_span 
     
     @property
@@ -209,47 +209,4 @@ class Sara2StructureList(object):
     @weighted_structure.setter
     def weighted_structure(self, structure: str):
         self._weighted_structure = structure
-
-
-class ComparisonStructures():
-
-    def __init__(self) -> None:
-        self._structures: Sara2StructureList = Sara2StructureList()
-        self._names: List[str] = []
-        self._structures_dict: Dict[str, Sara2SecondaryStructure]
-
-    def add_structure(self, structure:Sara2SecondaryStructure, name: str):
-        self._structures.add_structure(structure)
-        self._names.append(name)
-        self._structures_dict[name] = structure
-    
-    @property
-    def structures(self):
-        return self._structures
-    
-    @property
-    def names(self):
-        return self._names
-    
-    @property
-    def structures_dict(self):
-        return self._structures_dict
-    
-    def get_structure_by_name(self, name:str):
-        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
-        if name in self._structures_dict:
-            structure = self._structures_dict[name]
-        else:
-            raise Exception("name does not exist")       
-        return structure
-    
-    def get_structure_by_index(self, index:int):
-        structure: Sara2SecondaryStructure = Sara2SecondaryStructure()
-        
-        if index <= len(self._structures)-1:
-            structure = self._structures[index]
-        else:
-            raise Exception("wrong index")
-                
-        return structure
 
