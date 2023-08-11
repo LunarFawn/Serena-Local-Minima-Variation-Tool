@@ -1,4 +1,5 @@
 import pytest
+from typing import List
 
 from serena.utilities.ensemble_variation import EV_Shuttle, EVResult, EV, EnsembleVariation, EV_Token
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
@@ -171,7 +172,7 @@ def test_empty_ev_shuttle_group_num_3(empty_ev_shuttle_num_3:EV_Shuttle):
     assert empty_ev_shuttle_num_3.sara_mfestructure.nuc_count == 0  
 
     #now group index
-    assert empty_ev_shuttle_num_3.group_index == 3
+    assert empty_ev_shuttle_num_3.group_index == 2
 
     #now test the token
     assert len(empty_ev_shuttle_num_3.token.group_results) == 3
@@ -199,7 +200,7 @@ def test_empty_ev_shuttle_group_num_3(empty_ev_shuttle_num_3:EV_Shuttle):
 def test_ev_shuttle_group_num_3(ev_shuttle_group_num_3:EV_Shuttle):
     test_secondary_structure_list_2_item(ev_shuttle_group_num_3.kcal_group_structures_list)
     test_secondary_structure_5(ev_shuttle_group_num_3.sara_mfestructure)
-    assert ev_shuttle_group_num_3.group_index == 3
+    assert ev_shuttle_group_num_3.group_index == 1
     test_ev_token_3_groups(ev_shuttle_group_num_3.token)
 
 def test_set_ev_shuttle_kcal_group_structures(empty_ev_shuttle_num_3:EV_Shuttle, secondary_structures_list_2_item:Sara2StructureList):
@@ -262,7 +263,30 @@ def test_set_ev_shuttle_ev_token(empty_ev_shuttle_num_3:EV_Shuttle, ev_token_3_g
     assert empty_ev_shuttle_num_3.token.group_done_status[2] == False
     assert empty_ev_shuttle_num_3.token.is_done == False
 
+def test_thread_ev(ev_shuttle_group_num_3:EV_Shuttle):
+    ensemble_variation:EnsembleVariation = EnsembleVariation()
+    ensemble_variation.thread_EV(ev_shuttle_group_num_3)
+    assert ev_shuttle_group_num_3.token.group_results[2].ev_normalized == 1.1
+    assert ev_shuttle_group_num_3.token.group_results[2].ev_structure == 2.2
+    assert ev_shuttle_group_num_3.token.group_results[2].ev_ThresholdNorm == 3.3
+    assert ev_shuttle_group_num_3.token.group_results[1].ev_normalized == 3.0
+    assert ev_shuttle_group_num_3.token.group_results[1].ev_structure == 0
+    assert ev_shuttle_group_num_3.token.group_results[1].ev_ThresholdNorm == 0
+    assert ev_shuttle_group_num_3.token.group_results[0].ev_normalized == 4.4
+    assert ev_shuttle_group_num_3.token.group_results[0].ev_structure == 5.5
+    assert ev_shuttle_group_num_3.token.group_results[0].ev_ThresholdNorm == 6.6
 
+    assert ev_shuttle_group_num_3.token.group_dict[0].ev_normalized == 4.4
+    assert ev_shuttle_group_num_3.token.group_dict[0].ev_structure == 5.5
+    assert ev_shuttle_group_num_3.token.group_dict[0].ev_ThresholdNorm == 6.6
+    assert ev_shuttle_group_num_3.token.group_dict[1].ev_normalized == 3.0
+    assert ev_shuttle_group_num_3.token.group_dict[1].ev_structure == 0
+    assert ev_shuttle_group_num_3.token.group_dict[1].ev_ThresholdNorm == 0 
+    assert ev_shuttle_group_num_3.token.group_dict[2].ev_normalized == 1.1
+    assert ev_shuttle_group_num_3.token.group_dict[2].ev_structure == 2.2
+    assert ev_shuttle_group_num_3.token.group_dict[2].ev_ThresholdNorm == 3.3 
+    
+    assert ev_shuttle_group_num_3.token.group_done_status == [False,True, False] 
 
 
 
