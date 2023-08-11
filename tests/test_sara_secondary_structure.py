@@ -51,3 +51,10 @@ def test_set_kcal_range(empty_kcal_range:KcalRanges):
     empty_kcal_range.stop = 3
     assert empty_kcal_range.start == 5
     assert empty_kcal_range.stop == 3
+
+def test_secondary_structure_5(secondary_structure_5:Sara2SecondaryStructure):
+    assert secondary_structure_5.sequence == 'GCCAUA'
+    assert secondary_structure_5.structure == '(...))'
+    assert secondary_structure_5.freeEnergy == -40
+    assert secondary_structure_5.stackEnergy == -30
+    assert secondary_structure_5.nuc_count == 6

@@ -370,6 +370,14 @@ def ev_token_3_groups(empty_ev_token_3_groups: EV_Token, initialized_ev:EV, init
 """
 EV shuttle
 """
+
+@pytest.fixture
+def empty_ev_shuttle_num_3(e):
+    return EV_Shuttle(structs_list=Sara2StructureList(),
+                        mfe=Sara2SecondaryStructure(),
+                        group_index=3,
+                        token=EV_Token(num_groups=3))
+
 @pytest.fixture
 def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure, ev_token_3_groups:EV_Token):
     return EV_Shuttle(structs_list=secondary_structures_list_2_item,
