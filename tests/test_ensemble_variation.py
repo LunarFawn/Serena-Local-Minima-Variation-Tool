@@ -288,5 +288,6 @@ def test_thread_ev(ev_shuttle_group_num_3:EV_Shuttle):
     
     assert ev_shuttle_group_num_3.token.group_done_status == [False,True, False] 
 
-
+def test_ev_thread_processor():
+    pass
 

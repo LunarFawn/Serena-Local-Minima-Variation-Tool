@@ -4,7 +4,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         Sara2StructureList, 
                                         )
 
-from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
+from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse, LocalMinimaVariation
 from serena.utilities.ensemble_variation import EV
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups
 
@@ -54,5 +54,5 @@ def test_set_comparison_lmv(empty_comparison_lmv:ComparisonLMV):
 LMV stuff
 """
 
-def test_get_multi_group_lmv(multiple_ensemble_groups:MultipleEnsembleGroups,  secondary_structure_5:Sara2SecondaryStructure)
+def test_get_multi_group_lmv(multiple_ensemble_groups:MultipleEnsembleGroups,  secondary_structure_5:Sara2SecondaryStructure):
     pass
