@@ -5,8 +5,8 @@ from enum import Enum
 import threading
 from datetime import datetime, time
 
-from serena.apps.original_weighted_analysis import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation
-from serena.utilities.ensemble_variation import EV_Shuttle, EV, EV_Token
+from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
+from serena.utilities.ensemble_variation import EV_Shuttle, EV, EV_Token, EnsembleVariation
 
 
 

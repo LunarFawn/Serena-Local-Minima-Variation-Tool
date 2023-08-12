@@ -9,6 +9,9 @@ from serena.utilities.comparison_structures import ComparisonNucCounts, Comparis
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle
+from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
+
+
 """
 Secondary Structure Fixtures
 """
@@ -387,5 +390,23 @@ def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, 
                       token=ev_token_3_groups)
 
 
+"""
+local minima variation
+"""
 
+@pytest.fixture
+def empty_comparison_lmv():
+    return ComparisonLMV()
+
+@pytest.fixture
+def initiailized_comparison_lmv():
+    return ComparisonLMV(lmv_comp=EV(ev_normalized=1,
+                                     ev_structure=2,
+                                     ev_ThresholdNorm=3),
+                        lmv_mfe=EV(ev_normalized=4,
+                                   ev_structure=5,
+                                   ev_ThresholdNorm=6),
+                        lmv_rel=EV(ev_normalized=7,
+                                   ev_structure=8,
+                                   ev_ThresholdNorm=9))
 
