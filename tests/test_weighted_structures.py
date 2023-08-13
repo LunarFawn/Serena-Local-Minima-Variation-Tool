@@ -5,8 +5,6 @@ from typing import List
 from serena.utilities.ensemble_structures import Sara2StructureList, Sara2SecondaryStructure
 from serena.utilities.weighted_structures import WeightedStructure, WeightedEnsembleResult, WeightedNucCounts, WeightedComparisonResult
 
-
-
 def test_weighted_ensemble_result(secondary_structure_3:Sara2SecondaryStructure, secondary_structure_4:Sara2SecondaryStructure):
     struct_list:List[Sara2SecondaryStructure] = []
     struct_list.append(secondary_structure_3)

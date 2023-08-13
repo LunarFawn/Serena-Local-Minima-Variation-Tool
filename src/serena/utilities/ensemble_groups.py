@@ -124,12 +124,12 @@ class MultipleEnsembleGroups():
     #def num_groups(self, num: int):
     #    self._num_groups = num
 
-    def add_group(self, group:SingleEnsembleGroup, value_of_group:float, start_kcal:float = 0, end_kcal:float=0):
+    def add_group(self, group:SingleEnsembleGroup, value_of_group:float):
         self._groups.append(group)
         self._raw_groups.append(group.group)
         self._groups_dict[self._num_groups]= group.group
         self._group_values.append(value_of_group)
-        kcal_range: KcalRanges = KcalRanges(start=start_kcal, stop=end_kcal)
+        kcal_range: KcalRanges = KcalRanges(start=group.kcal_start, stop=group.kcal_end)
         self._group_kcal_ranges.append(kcal_range)
         self._num_groups = self._num_groups + 1
 

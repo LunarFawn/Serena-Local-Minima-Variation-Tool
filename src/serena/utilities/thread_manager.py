@@ -4,6 +4,7 @@ from typing import List, Dict
 from enum import Enum
 import threading
 from datetime import datetime, time
+import time
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.ensemble_variation import EV_Shuttle, EV, EV_Token, EnsembleVariation

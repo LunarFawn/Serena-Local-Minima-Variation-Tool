@@ -5,8 +5,9 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         )
 
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse, LocalMinimaVariation
-from serena.utilities.ensemble_variation import EV
-from serena.utilities.ensemble_groups import MultipleEnsembleGroups
+from serena.utilities.ensemble_variation import EV, EVResult
+from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
+from serena.utilities.weighted_structures import WeightedEnsembleResult
 
 def test_empty_comparison_lmv(empty_comparison_lmv:ComparisonLMV):
     assert empty_comparison_lmv.lmv_comp.ev_normalized == -1
@@ -55,4 +56,41 @@ LMV stuff
 """
 
 def test_get_multi_group_lmv(multiple_ensemble_groups:MultipleEnsembleGroups,  secondary_structure_5:Sara2SecondaryStructure):
-    pass
+    local_minima_variation:LocalMinimaVariation = LocalMinimaVariation()
+    ev_results:EVResult = local_minima_variation.get_multi_group_lmv(ensemble=multiple_ensemble_groups,
+                                                                    reference_structure=secondary_structure_5)
+    assert ev_results.ev_values[0].ev_normalized == 3.0
+    assert ev_results.ev_values[0].ev_structure == 0
+    assert ev_results.ev_values[0].ev_ThresholdNorm == 0
+    assert ev_results.ev_values[1].ev_normalized == 0.5
+    assert ev_results.ev_values[1].ev_structure == 0
+    assert ev_results.ev_values[1].ev_ThresholdNorm == 0
+
+def test_get_single_group_lmv(single_ensemble_group:SingleEnsembleGroup, secondary_structure_5:Sara2SecondaryStructure):
+    local_minima_variation:LocalMinimaVariation = LocalMinimaVariation()
+    ev_results:EVResult = local_minima_variation.get_single_group_lmv(ensemble_group=single_ensemble_group,
+                                                                    reference_structure=secondary_structure_5)
+    assert ev_results.ev_values[0].ev_normalized == 3.0
+    assert ev_results.ev_values[0].ev_structure == 0
+    assert ev_results.ev_values[0].ev_ThresholdNorm == 0
+
+def test_get_relative_multi_group_lmv(multiple_ensemble_groups:MultipleEnsembleGroups):
+    local_minima_variation:LocalMinimaVariation = LocalMinimaVariation()
+    ev_results:EVResult = local_minima_variation.get_relative_mutli_group_lmv(ensemble=multiple_ensemble_groups)
+    assert ev_results.ev_values[0].ev_normalized == 2.0
+    assert ev_results.ev_values[0].ev_structure == 0
+    assert ev_results.ev_values[0].ev_ThresholdNorm == 0
+    assert ev_results.ev_values[1].ev_normalized == 0.5
+    assert ev_results.ev_values[1].ev_structure == 0
+    assert ev_results.ev_values[1].ev_ThresholdNorm == 0
+
+def test_get_weighted_structure_restul_lmv(multiple_ensemble_groups:MultipleEnsembleGroups, weighted_ensemble_result:WeightedEnsembleResult):
+    local_minima_variation:LocalMinimaVariation = LocalMinimaVariation()
+    ev_results:EVResult = local_minima_variation.get_weighted_multi_group_lmv(ensemble=multiple_ensemble_groups,
+                                                                              weighted_structures=weighted_ensemble_result)
+    assert ev_results.ev_values[0].ev_normalized == 2.0
+    assert ev_results.ev_values[0].ev_structure == 0
+    assert ev_results.ev_values[0].ev_ThresholdNorm == 0
+    assert ev_results.ev_values[1].ev_normalized == 0.5
+    assert ev_results.ev_values[1].ev_structure == 0
+    assert ev_results.ev_values[1].ev_ThresholdNorm == 0

@@ -82,25 +82,21 @@ def test_empty_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleE
     assert empty_multiple_ensemble_groups.num_groups == 0
     assert empty_multiple_ensemble_groups.group_kcal_ranges == []
 
-def test_initialized_multiple_ensemble_groups(multiple_ensemble_groups:MultipleEnsembleGroups):
-    assert multiple_ensemble_groups.non_switch_state_structure.freeEnergy == -50
-    assert multiple_ensemble_groups.switched_state_structure.freeEnergy == -40
-    assert multiple_ensemble_groups.non_switch_state_structure.structure == '..().)'
-    assert multiple_ensemble_groups.switched_state_structure.structure == '(...))'
+def test_initialized_multiple_ensemble_groups(initialized_multiple_ensemble_groups:MultipleEnsembleGroups):
+    assert initialized_multiple_ensemble_groups.non_switch_state_structure.freeEnergy == -50
+    assert initialized_multiple_ensemble_groups.switched_state_structure.freeEnergy == -40
+    assert initialized_multiple_ensemble_groups.non_switch_state_structure.structure == '..().)'
+    assert initialized_multiple_ensemble_groups.switched_state_structure.structure == '(...))'
 
 def test_add_group_multiple_ensemble_groups(single_ensemble_group:SingleEnsembleGroup, empty_multiple_ensemble_groups:MultipleEnsembleGroups):
     group_value:float = -31.5
-    kcal_start:float = -32
-    kcal_end: float = -34
     empty_multiple_ensemble_groups.add_group(group=single_ensemble_group,
-                                                value_of_group=group_value,
-                                                start_kcal=kcal_start,
-                                                end_kcal=kcal_end)
+                                                value_of_group=group_value)
     assert empty_multiple_ensemble_groups.num_groups == 1
     assert empty_multiple_ensemble_groups.groups == [single_ensemble_group]
     assert empty_multiple_ensemble_groups.raw_groups == [single_ensemble_group.group]
     assert empty_multiple_ensemble_groups.groups_dict == {0:single_ensemble_group.group}
     assert empty_multiple_ensemble_groups.group_values == [group_value]
-    assert empty_multiple_ensemble_groups.group_kcal_ranges == [KcalRanges(start=kcal_start, stop=kcal_end)]
+    assert empty_multiple_ensemble_groups.group_kcal_ranges == [KcalRanges(start=single_ensemble_group.kcal_start, stop=single_ensemble_group.kcal_end)]
 
     

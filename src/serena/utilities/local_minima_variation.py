@@ -38,8 +38,8 @@ class LocalMinimaVariation():
         print(f'Begining LMV processing at {datetime.now()}')
         
         #single_ensemble_group: List[Sara2StructureList] = [ensemble.group]
-        LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,
-                                                              comparison_structure=reference_structure)
+        LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,comp_structure=reference_structure)
+
         result_thread_LMV:EV_Token = LMV_Thread.run_EV()
         group_ev_list: List[EV] = result_thread_LMV.group_results
         group_ev_dict: Dict[int,EV] = result_thread_LMV.group_dict
@@ -61,7 +61,7 @@ class LocalMinimaVariation():
         print(f'Begining LMV processing at {datetime.now()}')
         #single_ensemble_group: List[Sara2StructureList] = [ensemble.group]
         LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=[ensemble_group.group],
-                                                              comparison_structure=reference_structure)
+                                                              comp_structure=reference_structure)
         result_thread_LMV:EV_Token = LMV_Thread.run_EV()
         lmv_results: EVResult = result_thread_LMV.ev_results
         return lmv_results
@@ -70,7 +70,7 @@ class LocalMinimaVariation():
         #result_list:List[EVResult]= []
         ev_values:List[EV] = []
         for group in ensemble.groups:
-            ref_structure:Sara2SecondaryStructure = group.group.mfe_structure
+            ref_structure:Sara2SecondaryStructure = group.group.sara_stuctures[0]
             ev_result:EVResult = self.get_single_group_lmv(ensemble_group=group,
                                                         reference_structure=ref_structure)
             ev_values.append(ev_result.ev_values[0])
