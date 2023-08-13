@@ -8,8 +8,9 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
-from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle
+from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle, EnsembleVariation
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
+from serena.utilities.thread_manager import EV_ThreadProcessor
 
 
 """
@@ -320,6 +321,10 @@ Ensemble variation fixtures
 """
 
 @pytest.fixture
+def empty_ensemble_variation():
+    return EnsembleVariation()
+
+@pytest.fixture
 def empty_ev():
     """
     Return empty ev
@@ -388,6 +393,29 @@ def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, 
                       mfe=secondary_structure_5,
                       group_index=1,
                       token=ev_token_3_groups)
+
+"""
+EV threadprocessor
+"""
+#@pytest.fixture
+#def initialized_ev_thread_processor(secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList, secondary_structures_list_2_item_2:Sara2StructureList ):
+#    structs_list:List[Sara2StructureList] = [secondary_structures_list_2_item, secondary_structures_list_2_item_alt, secondary_structures_list_2_item_2]
+#    return EV_ThreadProcessor(stuctures=structs_list)
+
+@pytest.fixture
+def empty_ev_thread_processor():
+    return EV_ThreadProcessor(stuctures=[], 
+                              comp_structure=Sara2SecondaryStructure(),
+                              comp_struct_list_option=[])
+
+@pytest.fixture
+def ev_thread_proc_struc_list(secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList, secondary_structures_list_2_item_2:Sara2StructureList):
+    return [secondary_structures_list_2_item, secondary_structures_list_2_item_alt, secondary_structures_list_2_item_2]
+
+
+
+
+
 
 
 """

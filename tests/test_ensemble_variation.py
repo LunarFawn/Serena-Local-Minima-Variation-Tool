@@ -3,8 +3,10 @@ from typing import List
 
 from serena.utilities.ensemble_variation import EV_Shuttle, EVResult, EV, EnsembleVariation, EV_Token
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
+from serena.utilities.thread_manager import EV_ThreadProcessor
 from test_sara_secondary_structure_lists import test_secondary_structure_list_2_item
-from test_sara_secondary_structure import test_secondary_structure_5
+from test_sara_secondary_structure import test_secondary_structure_5, test_empty_secondary_struct
+
 
 def test_empty_ev(empty_ev:EV):
     assert empty_ev.ev_normalized == -1
@@ -24,13 +26,20 @@ def test_set_ev_values(empty_ev:EV):
     assert empty_ev.ev_structure == 4
     assert empty_ev.ev_ThresholdNorm == 6   
 
-def test_ensemble_variation_algorithm(secondary_structures_list_2_item: Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure):
-    ensemble_variation:EnsembleVariation = EnsembleVariation()
-    result:EV = ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=secondary_structures_list_2_item,
+def test_ensemble_variation_algorithm(empty_ensemble_variation:EnsembleVariation, secondary_structures_list_2_item: Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure):
+    result:EV = empty_ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=secondary_structures_list_2_item,
                                                     ref_structure=secondary_structure_5)
     assert result.ev_normalized == 3.0
     assert result.ev_structure == 0
     assert result.ev_ThresholdNorm == 0
+
+#def test_ensemble_variation_algorithm(secondary_structures_list_2_item: Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure):
+#    ensemble_variation:EnsembleVariation = EnsembleVariation()
+#    result:EV = ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=secondary_structures_list_2_item,
+#                                                    ref_structure=secondary_structure_5)
+#    assert result.ev_normalized == 3.0
+#    assert result.ev_structure == 0
+#    assert result.ev_ThresholdNorm == 0
 
 def test_ev_result(ev_result:EVResult):
     assert ev_result.ev_values[0].ev_normalized == 1.1
@@ -74,6 +83,7 @@ def test_empty_3_group_ev_token_group_values(empty_ev_token_3_groups:EV_Token):
     assert empty_ev_token_3_groups.group_values[0] == ''   
     assert empty_ev_token_3_groups.group_values[1] == ''
     assert empty_ev_token_3_groups.group_values[2] == ''
+    
 
 def test_empty_3_group_ev_token_group_done_status(empty_ev_token_3_groups:EV_Token):
     #first test group results initialization
@@ -82,6 +92,29 @@ def test_empty_3_group_ev_token_group_done_status(empty_ev_token_3_groups:EV_Tok
     assert empty_ev_token_3_groups.group_done_status[1] == False
     assert empty_ev_token_3_groups.group_done_status[2] == False
     assert empty_ev_token_3_groups.is_done == False
+
+def test_empty_3_group_ev_token(empty_ev_token_3_groups:EV_Token):
+    assert len(empty_ev_token_3_groups.group_results) == 3
+    assert empty_ev_token_3_groups.group_results[0].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_results[0].ev_structure == -1
+    assert empty_ev_token_3_groups.group_results[0].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_structure == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_normalized == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_structure == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_dict == {}
+    assert len(empty_ev_token_3_groups.group_values) == 3
+    assert empty_ev_token_3_groups.group_values[0] == ''   
+    assert empty_ev_token_3_groups.group_values[1] == ''
+    assert empty_ev_token_3_groups.group_values[2] == ''
+    assert len(empty_ev_token_3_groups.group_done_status) == 3
+    assert empty_ev_token_3_groups.group_done_status[0] == False  
+    assert empty_ev_token_3_groups.group_done_status[1] == False
+    assert empty_ev_token_3_groups.group_done_status[2] == False
+    assert empty_ev_token_3_groups.is_done == False
+
 
 def test_set_ev_token_group_dict(empty_ev_token_3_groups:EV_Token, initialized_ev:EV, initialzed_ev_2:EV):
     empty_ev_token_3_groups.set_group_dict(2,initialized_ev)
@@ -288,6 +321,65 @@ def test_thread_ev(ev_shuttle_group_num_3:EV_Shuttle):
     
     assert ev_shuttle_group_num_3.token.group_done_status == [False,True, False] 
 
-def test_ev_thread_processor():
-    pass
+def test_empty_ev_thread_processor(empty_ev_thread_processor:EV_ThreadProcessor):
+    assert empty_ev_thread_processor.sara2_groups == []
+    test_empty_secondary_struct(empty_ev_thread_processor.comparison_structure)
+    assert empty_ev_thread_processor.comp_struct_list_option == []
+    assert empty_ev_thread_processor.num_groups == 0
+    assert len(empty_ev_thread_processor.group_token.group_values) == 0
+    assert type(empty_ev_thread_processor.EV) is EnsembleVariation
+
+def test_initialized_empty_ev_thread_processor(secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList, secondary_structures_list_2_item_2:Sara2StructureList ):
+    structs_list:List[Sara2StructureList] = [secondary_structures_list_2_item, secondary_structures_list_2_item_alt, secondary_structures_list_2_item_2]
+    comp_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+    initialized_ev_thread_processor:EV_ThreadProcessor = EV_ThreadProcessor(stuctures=structs_list,
+                                                                            comp_structure=comp_struct)
+    #test groups
+    assert initialized_ev_thread_processor.sara2_groups[0] == secondary_structures_list_2_item
+    assert initialized_ev_thread_processor.sara2_groups[1] == secondary_structures_list_2_item_alt
+    assert initialized_ev_thread_processor.sara2_groups[2] == secondary_structures_list_2_item_2
+    assert initialized_ev_thread_processor.comparison_structure == comp_struct
+    assert initialized_ev_thread_processor.comp_struct_list_option == []
+    assert initialized_ev_thread_processor.num_groups == 3
+    test_empty_3_group_ev_token(empty_ev_token_3_groups=initialized_ev_thread_processor.group_token)
+    assert type(initialized_ev_thread_processor.EV) is EnsembleVariation
+    #now test by assertion
+    
+def test_set_ev_thread_proc_group_structs_list(empty_ev_thread_processor:EV_ThreadProcessor, secondary_structures_list_2_item:Sara2StructureList):
+    new_list:List[Sara2StructureList] = [secondary_structures_list_2_item]
+    empty_ev_thread_processor.sara2_groups = new_list
+    assert empty_ev_thread_processor.sara2_groups == new_list
+
+def test_set_comp_struct_ev_thread_proc(empty_ev_thread_processor:EV_ThreadProcessor, secondary_structure_1:Sara2SecondaryStructure):
+    empty_ev_thread_processor.comparison_structure = secondary_structure_1
+    assert empty_ev_thread_processor.comparison_structure == secondary_structure_1
+
+def test_set_compt_struct_option_ev_thread_proc(empty_ev_thread_processor:EV_ThreadProcessor, secondary_structures_list_2_item:Sara2StructureList):
+    new_list:List[Sara2StructureList] = [secondary_structures_list_2_item]
+    empty_ev_thread_processor.comp_struct_list_option = new_list
+    assert empty_ev_thread_processor.comp_struct_list_option == new_list
+
+def test_set_num_groups_ev_thread_proc(empty_ev_thread_processor:EV_ThreadProcessor):
+    empty_ev_thread_processor.num_groups = 5
+    assert empty_ev_thread_processor.num_groups == 5
+
+def test_set_ev_token_ev_thread_proc(empty_ev_thread_processor:EV_ThreadProcessor, ev_token_3_groups:EV_Token):
+    empty_ev_thread_processor.group_token = ev_token_3_groups
+    assert empty_ev_thread_processor.group_token == ev_token_3_groups
+
+def test_ev_thread_processor_comp_struct(secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure):
+    struct_list:List[Sara2StructureList]= [secondary_structures_list_2_item, secondary_structures_list_2_item_alt]
+    thread_proc:EV_ThreadProcessor = EV_ThreadProcessor(stuctures=struct_list,
+                                                        comp_structure=secondary_structure_5)
+    result_token:EV_Token = thread_proc.run_EV()
+    result_token.ev_results.ev_values[0]
+    assert result_token.ev_results.ev_values[0].ev_normalized == 3.0
+    assert result_token.ev_results.ev_values[0].ev_structure == 0
+    assert result_token.ev_results.ev_values[0].ev_ThresholdNorm == 0
+    assert result_token.ev_results.ev_values[1].ev_normalized == 0.5
+    assert result_token.ev_results.ev_values[1].ev_structure == 0
+    assert result_token.ev_results.ev_values[1].ev_ThresholdNorm == 0
+
+
+
 

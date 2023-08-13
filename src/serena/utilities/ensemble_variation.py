@@ -1,7 +1,7 @@
 """
 File for the ensemble variation code to live
 """
-
+import attrs
 from typing import List, Dict
 import struct
 import pandas as pd
@@ -43,7 +43,6 @@ class EVResult_old():
     group_values: List[float]
     group_ev_list: List[EV]
     group_ev_dict: Dict[int,EV]
-
 
 class EV_Token():
     def __init__(self, num_groups: int) -> None:
