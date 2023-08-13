@@ -267,7 +267,7 @@ def empty_single_ensemble_group():
     return SingleEnsembleGroup()
 
 @pytest.fixture
-def single_ensemble_group(secondary_structures_list_2_item:Sara2StructureList):
+def single_ensemble_group(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
     """
     Return a empty single ensemble group class
     """
@@ -279,6 +279,9 @@ def single_ensemble_group(secondary_structures_list_2_item:Sara2StructureList):
     
     mfe_kcal_list:List[float] = [-10,-20]
     ensemble_group.multi_state_mfe_kcal = mfe_kcal_list
+
+    ensemble_group.switch_state_structures = EnsembleSwitchStateMFEStructs(switched_mfe_struct=secondary_structure_4,
+                                                                           non_switch_mfe_struct=secondary_structure_5)
     
     ensemble_group.kcal_end = 10
     ensemble_group.kcal_span = 20
@@ -333,10 +336,8 @@ def multiple_ensemble_groups(initialized_multiple_ensemble_groups:MultipleEnsemb
     Returns a multiple ensemble groups class with
     values provided at instantiation
     """
-    initialized_multiple_ensemble_groups.add_group(group=single_ensemble_group,
-                                                   value_of_group=-10)
-    initialized_multiple_ensemble_groups.add_group(group=single_ensemble_group_2,
-                                                   value_of_group=-20)
+    initialized_multiple_ensemble_groups.add_group(group=single_ensemble_group)
+    initialized_multiple_ensemble_groups.add_group(group=single_ensemble_group_2)
     return initialized_multiple_ensemble_groups
 
 """
