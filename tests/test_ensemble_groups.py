@@ -5,7 +5,7 @@ from typing import List, Dict, NamedTuple
 from serena.utilities.ensemble_structures import (Sara2SecondaryStructure, 
                                         Sara2StructureList, 
                                         KcalRanges)
-from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
 from test_sara_secondary_structure_lists import test_default_new_secondary_struct_list
 from test_sara_secondary_structure import test_empty_secondary_struct
 
@@ -44,6 +44,30 @@ def test_fancy_single_ensemble_group_properties(empty_single_ensemble_group:Sing
     assert empty_single_ensemble_group.kcal_span == 20
     assert empty_single_ensemble_group.kcal_start == 30
 
+
+"""
+test Ensemble state mfe structs
+"""
+def test_empty_ensemble_switch_state_mfe_strucs(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs):
+    test_empty_secondary_struct(empty_ensemble_state_mfe_strucs.non_switch_mfe_struct)
+    test_empty_secondary_struct(empty_ensemble_state_mfe_strucs.switched_mfe_struct)
+
+def test_set_non_switch_mfe_ensemble_switch_state_mfe_strucs(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs, secondary_structure_3: Sara2SecondaryStructure):
+    empty_ensemble_state_mfe_strucs.non_switch_mfe_struct = secondary_structure_3
+    assert empty_ensemble_state_mfe_strucs.non_switch_mfe_struct == secondary_structure_3
+    empty_ensemble_state_mfe_strucs.set_non_switch_mfe(kcal=-30,
+                                                       struct="(((())))")
+    assert empty_ensemble_state_mfe_strucs.non_switch_mfe_struct.structure == "(((())))"
+    assert empty_ensemble_state_mfe_strucs.non_switch_mfe_struct.freeEnergy == -30
+
+def test_set_switch_mfe_ensemble_switch_state_mfe_strucs(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs, secondary_structure_3: Sara2SecondaryStructure):
+    empty_ensemble_state_mfe_strucs.switched_mfe_struct = secondary_structure_3
+    assert empty_ensemble_state_mfe_strucs.switched_mfe_struct == secondary_structure_3
+    empty_ensemble_state_mfe_strucs.set_switch_mfe(kcal=-30,
+                                                       struct="(((())))")
+    assert empty_ensemble_state_mfe_strucs.switched_mfe_struct.structure == "(((())))"
+    assert empty_ensemble_state_mfe_strucs.switched_mfe_struct.freeEnergy == -30    
+
 """
 Now multiple ensemble groups
 """
@@ -51,9 +75,7 @@ Now multiple ensemble groups
 def test_empty_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleEnsembleGroups):
     assert empty_multiple_ensemble_groups.groups == []
     assert empty_multiple_ensemble_groups.raw_groups == []
-    assert empty_multiple_ensemble_groups.non_switch_state_mfe_kcal == 0
     test_empty_secondary_struct(empty_multiple_ensemble_groups.non_switch_state_structure)
-    assert empty_multiple_ensemble_groups.switched_state_mfe_kcal == 0
     test_empty_secondary_struct(empty_multiple_ensemble_groups.switched_state_structure)
     assert empty_multiple_ensemble_groups.groups_dict == {}
     assert empty_multiple_ensemble_groups.group_values == []
@@ -61,11 +83,24 @@ def test_empty_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleE
     assert empty_multiple_ensemble_groups.group_kcal_ranges == []
 
 def test_initialized_multiple_ensemble_groups(multiple_ensemble_groups:MultipleEnsembleGroups):
-    assert multiple_ensemble_groups.non_switch_state_mfe_kcal == 10
-    assert multiple_ensemble_groups.switched_state_mfe_kcal == 20
+    assert multiple_ensemble_groups.non_switch_state_structure.freeEnergy == -50
+    assert multiple_ensemble_groups.switched_state_structure.freeEnergy == -40
     assert multiple_ensemble_groups.non_switch_state_structure.structure == '..().)'
     assert multiple_ensemble_groups.switched_state_structure.structure == '(...))'
 
-def test_set_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleEnsembleGroups):
-    empty_multiple_ensemble_groups.num_groups =1
+def test_add_group_multiple_ensemble_groups(single_ensemble_group:SingleEnsembleGroup, empty_multiple_ensemble_groups:MultipleEnsembleGroups):
+    group_value:float = -31.5
+    kcal_start:float = -32
+    kcal_end: float = -34
+    empty_multiple_ensemble_groups.add_group(group=single_ensemble_group,
+                                                value_of_group=group_value,
+                                                start_kcal=kcal_start,
+                                                end_kcal=kcal_end)
+    assert empty_multiple_ensemble_groups.num_groups == 1
+    assert empty_multiple_ensemble_groups.groups == [single_ensemble_group]
+    assert empty_multiple_ensemble_groups.raw_groups == [single_ensemble_group.group]
+    assert empty_multiple_ensemble_groups.groups_dict == {0:single_ensemble_group.group}
+    assert empty_multiple_ensemble_groups.group_values == [group_value]
+    assert empty_multiple_ensemble_groups.group_kcal_ranges == [KcalRanges(start=kcal_start, stop=kcal_end)]
 
+    

@@ -7,7 +7,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
-from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
 from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle, EnsembleVariation
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
 from serena.utilities.thread_manager import EV_ThreadProcessor
@@ -297,24 +297,27 @@ def single_ensemble_group_2(secondary_structures_list_2_item:Sara2StructureList)
     return ensemble_group
 
 
+@pytest.fixture
+def empty_ensemble_state_mfe_strucs():
+    return EnsembleSwitchStateMFEStructs()
+
 
 @pytest.fixture
-def empty_multiple_ensemble_groups():
+def empty_multiple_ensemble_groups(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs):
     """
     Return a empty multiple ensemble group class
     """
-    return MultipleEnsembleGroups()
+    return MultipleEnsembleGroups(switch_state_structures=empty_ensemble_state_mfe_strucs)
 
 @pytest.fixture
-def multiple_ensemble_groups(secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
+def multiple_ensemble_groups(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs, secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
     """
     Returns a multiple ensemble groups class with
     values provided at instantiation
     """
-    return MultipleEnsembleGroups(non_switch_kcal=10,
-                                    non_switch_struct=secondary_structure_4,
-                                    switched_kcal=20,
-                                    switched_struct=secondary_structure_5)
+    empty_ensemble_state_mfe_strucs.non_switch_mfe_struct = secondary_structure_4
+    empty_ensemble_state_mfe_strucs.switched_mfe_struct = secondary_structure_5
+    return MultipleEnsembleGroups(switch_state_structures=empty_ensemble_state_mfe_strucs)
 
 """
 Ensemble variation fixtures
