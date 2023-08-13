@@ -3,21 +3,12 @@ File that provides an interface to standard python nupack4 install on linux
 Intention is to be able to access this via a docker that will be accessable on docker hub
 that has nupack4 setup and ready for this project to consume
 """
-
-from typing import List, Dict
-import struct
-from nupack import *
-import pandas as pd
-import sys
-import openpyxl
-from copy import deepcopy
+from typing import List, Dictf
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-import threading
-import time
-import numpy as np
-import collections
+from datetime import datetime
+
 from enum import Enum
+from nupack import *
 
 from serena.utilities.ensemble_structures import  Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups

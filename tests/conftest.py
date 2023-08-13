@@ -6,9 +6,13 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         KcalRanges)
 
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
-from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure
-from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
-from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle
+from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure, WeightedEnsembleResult
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
+from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle, EnsembleVariation
+from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
+from serena.utilities.thread_manager import EV_ThreadProcessor
+
+
 """
 Secondary Structure Fixtures
 """
@@ -215,6 +219,14 @@ Weighted Structure Fixtures
 """
 
 @pytest.fixture
+def weighted_ensemble_result(secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
+    struct_list:List[Sara2SecondaryStructure] = []
+    struct_list.append(secondary_structure_4)
+    struct_list.append(secondary_structure_5)
+    return WeightedEnsembleResult(structs=struct_list)
+
+
+@pytest.fixture
 def empty_weighted_nuc_count():
     """
     Returns a empty weighted nuc count
@@ -274,12 +286,12 @@ def single_ensemble_group(secondary_structures_list_2_item:Sara2StructureList):
     return ensemble_group
 
 @pytest.fixture
-def single_ensemble_group_2(secondary_structures_list_2_item:Sara2StructureList):
+def single_ensemble_group_2(secondary_structures_list_2_item_alt:Sara2StructureList):
     """
     Return a empty single ensemble group class
     """
     ensemble_group:SingleEnsembleGroup = SingleEnsembleGroup()
-    ensemble_group.group = secondary_structures_list_2_item
+    ensemble_group.group = secondary_structures_list_2_item_alt
     
     mfe_structs_list:List[str] = ['(....)','..()..']
     ensemble_group.multi_state_mfe_struct = mfe_structs_list
@@ -293,28 +305,47 @@ def single_ensemble_group_2(secondary_structures_list_2_item:Sara2StructureList)
     return ensemble_group
 
 
+@pytest.fixture
+def empty_ensemble_state_mfe_strucs():
+    return EnsembleSwitchStateMFEStructs()
+
 
 @pytest.fixture
-def empty_multiple_ensemble_groups():
+def empty_multiple_ensemble_groups(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs):
     """
     Return a empty multiple ensemble group class
     """
-    return MultipleEnsembleGroups()
+    return MultipleEnsembleGroups(switch_state_structures=empty_ensemble_state_mfe_strucs)
 
 @pytest.fixture
-def multiple_ensemble_groups(secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
+def initialized_multiple_ensemble_groups(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs, secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure):
     """
     Returns a multiple ensemble groups class with
     values provided at instantiation
     """
-    return MultipleEnsembleGroups(non_switch_kcal=10,
-                                    non_switch_struct=secondary_structure_4,
-                                    switched_kcal=20,
-                                    switched_struct=secondary_structure_5)
+    empty_ensemble_state_mfe_strucs.non_switch_mfe_struct = secondary_structure_4
+    empty_ensemble_state_mfe_strucs.switched_mfe_struct = secondary_structure_5
+    return MultipleEnsembleGroups(switch_state_structures=empty_ensemble_state_mfe_strucs)  
+
+@pytest.fixture
+def multiple_ensemble_groups(initialized_multiple_ensemble_groups:MultipleEnsembleGroups, single_ensemble_group:SingleEnsembleGroup, single_ensemble_group_2:SingleEnsembleGroup):
+    """
+    Returns a multiple ensemble groups class with
+    values provided at instantiation
+    """
+    initialized_multiple_ensemble_groups.add_group(group=single_ensemble_group,
+                                                   value_of_group=-10)
+    initialized_multiple_ensemble_groups.add_group(group=single_ensemble_group_2,
+                                                   value_of_group=-20)
+    return initialized_multiple_ensemble_groups
 
 """
 Ensemble variation fixtures
 """
+
+@pytest.fixture
+def empty_ensemble_variation():
+    return EnsembleVariation()
 
 @pytest.fixture
 def empty_ev():
@@ -386,6 +417,42 @@ def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, 
                       group_index=1,
                       token=ev_token_3_groups)
 
+"""
+EV threadprocessor
+"""
+#@pytest.fixture
+#def initialized_ev_thread_processor(secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList, secondary_structures_list_2_item_2:Sara2StructureList ):
+#    structs_list:List[Sara2StructureList] = [secondary_structures_list_2_item, secondary_structures_list_2_item_alt, secondary_structures_list_2_item_2]
+#    return EV_ThreadProcessor(stuctures=structs_list)
+
+@pytest.fixture
+def empty_ev_thread_processor():
+    return EV_ThreadProcessor(stuctures=[], 
+                              comp_structure=Sara2SecondaryStructure(),
+                              comp_struct_list_option=[])
+
+@pytest.fixture
+def ev_thread_proc_struc_list(secondary_structures_list_2_item:Sara2StructureList, secondary_structures_list_2_item_alt:Sara2StructureList, secondary_structures_list_2_item_2:Sara2StructureList):
+    return [secondary_structures_list_2_item, secondary_structures_list_2_item_alt, secondary_structures_list_2_item_2]
 
 
+"""
+local minima variation
+"""
+
+@pytest.fixture
+def empty_comparison_lmv():
+    return ComparisonLMV()
+
+@pytest.fixture
+def initiailized_comparison_lmv():
+    return ComparisonLMV(lmv_comp=EV(ev_normalized=1,
+                                     ev_structure=2,
+                                     ev_ThresholdNorm=3),
+                        lmv_mfe=EV(ev_normalized=4,
+                                   ev_structure=5,
+                                   ev_ThresholdNorm=6),
+                        lmv_rel=EV(ev_normalized=7,
+                                   ev_structure=8,
+                                   ev_ThresholdNorm=9))
 

@@ -12,13 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 import matplotlib
 
-
-import serena.ensemble_variation as ev
-from serena.ensemble_variation import EnsembleVariation, EVResult
-import serena.structures as ser_structs
-from serena.structures import MultipleEnsembleGroups
-import serena.nupack4_sara2_extension as nupack_extension
-from serena.nupack4_sara2_extension import NUPACK4Interface, NupackSettings, MaterialParameter
+from serena.utilities.ensemble_variation import EnsembleVariation, EVResult
 
 @dataclass
 class SequenceResults():
@@ -44,46 +38,46 @@ class SequenceInfo():
 
 class FullRunInfo():
 
-        def __init__(self, run_name:str, run_ID: int, sequence_info: SequenceInfo) -> None:
-            self._run_results: List[SequenceResults] = []
-            self._sequence_info: SequenceInfo  = sequence_info
-            self._run_name: str = run_name
-            self._run_ID: int = run_ID
-        
-        def add_sequence_result(self, result: SequenceResults):
-            self._run_results.append(result)
-        
-        @property
-        def run_results(self):
-            return self._run_results
-        
-        @run_results.setter
-        def run_results(self, results:List[SequenceResults] ):
-            self._run_results = results
+    def __init__(self, run_name:str, run_ID: int, sequence_info: SequenceInfo) -> None:
+        self._run_results: List[SequenceResults] = []
+        self._sequence_info: SequenceInfo  = sequence_info
+        self._run_name: str = run_name
+        self._run_ID: int = run_ID
+    
+    def add_sequence_result(self, result: SequenceResults):
+        self._run_results.append(result)
+    
+    @property
+    def run_results(self):
+        return self._run_results
+    
+    @run_results.setter
+    def run_results(self, results:List[SequenceResults] ):
+        self._run_results = results
 
-        @property
-        def sequence_info(self):
-            return self._sequence_info
-        
-        @sequence_info.setter
-        def sequence_info(self, info:SequenceInfo):
-            self._sequence_info = info
-        
-        @property
-        def run_name(self):
-            return self._run_name
-        
-        @run_name.setter
-        def run_name(self, name:str):
-            self._run_name = name
+    @property
+    def sequence_info(self):
+        return self._sequence_info
+    
+    @sequence_info.setter
+    def sequence_info(self, info:SequenceInfo):
+        self._sequence_info = info
+    
+    @property
+    def run_name(self):
+        return self._run_name
+    
+    @run_name.setter
+    def run_name(self, name:str):
+        self._run_name = name
 
-        @property
-        def run_ID(self):
-            return self._run_ID
-        
-        @run_ID.setter
-        def run_ID(self, ID:int):
-            self._run_ID = ID
+    @property
+    def run_ID(self):
+        return self._run_ID
+    
+    @run_ID.setter
+    def run_ID(self, ID:int):
+        self._run_ID = ID
 
 @dataclass
 class PrepedReportData():

@@ -4,9 +4,10 @@ from typing import List, Dict
 from enum import Enum
 import threading
 from datetime import datetime, time
+import time
 
-from serena.apps.original_weighted_analysis import Sara2SecondaryStructure, Sara2StructureList, EnsembleVariation
-from serena.utilities.ensemble_variation import EV_Shuttle, EV, EV_Token
+from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
+from serena.utilities.ensemble_variation import EV_Shuttle, EV, EV_Token, EnsembleVariation
 
 
 
@@ -136,14 +137,14 @@ class Temperature_ThreadProcessor():
 
 class EV_ThreadProcessor():
     
-    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(), comp_struct_list_option: List[Sara2SecondaryStructure] = []) -> None:
+    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure , comp_struct_list_option: List[Sara2SecondaryStructure] = []) -> None:
         self._sara2_groups: List[Sara2StructureList] = stuctures
         num_groups:int = len(stuctures)
         self._num_groups: int =  num_groups
         self._group_token: EV_Token = EV_Token(num_groups)
         self._EV: EnsembleVariation = EnsembleVariation()
         self._comparison_structure: Sara2SecondaryStructure = comp_structure
-
+        self._comp_struct_list_option:List[Sara2SecondaryStructure] = comp_struct_list_option
     @property
     def sara2_groups(self):
         return self._sara2_groups
@@ -188,9 +189,9 @@ class EV_ThreadProcessor():
     def EV(self):
         return self._EV
 
-    @EV.setter
-    def EV(self, new_ev:EnsembleVariation):
-        self._EV = new_ev
+    #@EV.setter
+    #def EV(self, new_ev:EnsembleVariation):
+    #    self._EV = new_ev
 
     def run_EV(self):
         self.start_calculations()
