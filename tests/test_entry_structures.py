@@ -1,8 +1,9 @@
 import pytest
 from typing import List
 
-from serena.generate_structures import SecondaryStructures
+from serena.generate_structures import SecondaryStructures, EnsembleGroups
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
 
 def test_make_secondary_structure():
     generate_structs: SecondaryStructures = SecondaryStructures()
@@ -26,6 +27,3 @@ def test_make_secondary_structure_list(secondary_structure_3:Sara2SecondaryStruc
     secondary_structs_list: Sara2StructureList = generate_structs.make_secondary_strucuture_list(secondary_structures_list=new_struct_list)
     assert secondary_structs_list.num_structures == 2
     assert secondary_structs_list.sara_stuctures == new_struct_list
-
-def test_make_single_ensemble_group():
-    pass

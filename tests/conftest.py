@@ -312,6 +312,12 @@ def single_ensemble_group_2(secondary_structures_list_2_item_alt:Sara2StructureL
 def empty_ensemble_state_mfe_strucs():
     return EnsembleSwitchStateMFEStructs()
 
+@pytest.fixture
+def ensemble_state_mfe_structs(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs, secondary_structure_4:Sara2SecondaryStructure, secondary_structure_5:Sara2SecondaryStructure ):
+    empty_ensemble_state_mfe_strucs.non_switch_mfe_struct = secondary_structure_4
+    empty_ensemble_state_mfe_strucs.switched_mfe_struct = secondary_structure_5
+    return empty_ensemble_state_mfe_strucs    
+
 
 @pytest.fixture
 def empty_multiple_ensemble_groups(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs):
