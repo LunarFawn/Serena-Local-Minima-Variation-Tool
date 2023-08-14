@@ -15,7 +15,7 @@ from serena.utilities.weighted_structures import WeightedEnsembleResult
 
 class RunEnsembleVariation():
     
-    def get_ev_from_structures_list(self, structures_list:Sara2StructureList, mfe_structure:Sara2SecondaryStructure):
+    def ev_from_structures_list(self, structures_list:Sara2StructureList, mfe_structure:Sara2SecondaryStructure):
         ensemble_variation:EnsembleVariation = EnsembleVariation()
         ev:EV = ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=structures_list,
                                                         ref_structure=mfe_structure)
