@@ -12,29 +12,12 @@ from serena.utilities.ensemble_variation import EV, EnsembleVariation
 from serena.utilities.weighted_structures import WeightedEnsembleResult
 
 
-@attrs.define
-class RunEnsembleVariation():
 
-    def ev_from_list_strings_mfe(primary_structure:str, mfe_secondary_structure:str, secondary_structures_list: List[str])->float:
-        #create mfe secondary structure
-        mfe_structure:Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=primary_structure,
-                                                                        structure=mfe_secondary_structure)
-        
-        #populate secondary structure list
-        structure_list:Sara2StructureList = Sara2StructureList()
-        for structure in secondary_structures_list:
-            structure_list.add_structure(Sara2SecondaryStructure(sequence=primary_structure,
-                                                                 structure=structure))
-            
+class RunEnsembleVariation():
+    
+    def get_ev_from_structures_list(self, structures_list:Sara2StructureList, mfe_structure:Sara2SecondaryStructure):
         ensemble_variation:EnsembleVariation = EnsembleVariation()
-        ev:EV = ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=structure_list,
+        ev:EV = ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=structures_list,
                                                         ref_structure=mfe_structure)
         
         return ev.ev_normalized
-    
-def ev_from_sara_structures(structures_list:Sara2StructureList, mfe_structure:Sara2SecondaryStructure):
-    ensemble_variation:EnsembleVariation = EnsembleVariation()
-    ev:EV = ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=structures_list,
-                                                    ref_structure=mfe_structure)
-    
-    return ev.ev_normalized

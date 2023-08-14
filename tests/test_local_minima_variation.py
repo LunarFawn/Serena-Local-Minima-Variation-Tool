@@ -4,7 +4,8 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         Sara2StructureList, 
                                         )
 
-from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse, LocalMinimaVariation
+from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
+from serena.local_minima_variation import  LocalMinimaVariation
 from serena.utilities.ensemble_variation import EV, EVResult
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
 from serena.utilities.weighted_structures import WeightedEnsembleResult
