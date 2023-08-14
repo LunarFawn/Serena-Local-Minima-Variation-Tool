@@ -13,18 +13,41 @@ from collections import namedtuple
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, KcalRanges
 
+@attrs.define
+class EnsembleSwitchStateMFEStructs():
+    non_switch_mfe_struct:Sara2SecondaryStructure= Sara2SecondaryStructure()
+    switched_mfe_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
+
+    def set_non_switch_mfe(self, kcal:float, struct:str):
+        self.non_switch_mfe_struct = Sara2SecondaryStructure(structure=struct,
+                                                             freeEnergy=kcal)
+    
+    def set_switch_mfe(self, kcal:float, struct:str):
+        self.switched_mfe_struct = Sara2SecondaryStructure(structure=struct,
+                                                             freeEnergy=kcal)
+
+@attrs.define
+class SingleEnsembleGroup_new():
+    group: Sara2StructureList
+    switch_state_structures: EnsembleSwitchStateMFEStructs
+    kcal_span: float
+    kcal_start: float
+    kcal_end: float
+    
+#need to turn into a dataclass or attrs.define
 class SingleEnsembleGroup():
     
     def __init__(self) -> None:
         self._group: Sara2StructureList = Sara2StructureList()
+        self._switch_state_structures: EnsembleSwitchStateMFEStructs = None
         self._multi_state_mfe_struct: List[str] = []
         """
         0 is mfe for unbound and 1 is mfe for bound
         """
         self._multi_state_mfe_kcal: List[float] = [] 
-        self._kcal_span: float = 0
         self._kcal_start: float = 0
         self._kcal_end: float = 0
+        self._kcal_span: float = 0
 
     @property
     def group(self):
@@ -82,19 +105,15 @@ class SingleEnsembleGroup():
         self._kcal_start = start
         self._kcal_end = stop
         self._kcal_span = span
-
-@attrs.define
-class EnsembleSwitchStateMFEStructs():
-    non_switch_mfe_struct:Sara2SecondaryStructure= Sara2SecondaryStructure()
-    switched_mfe_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
-
-    def set_non_switch_mfe(self, kcal:float, struct:str):
-        self.non_switch_mfe_struct = Sara2SecondaryStructure(structure=struct,
-                                                             freeEnergy=kcal)
     
-    def set_switch_mfe(self, kcal:float, struct:str):
-        self.switched_mfe_struct = Sara2SecondaryStructure(structure=struct,
-                                                             freeEnergy=kcal)
+    @property
+    def switch_state_structures(self)->EnsembleSwitchStateMFEStructs:
+        return self._switch_state_structures
+    
+    @switch_state_structures.setter
+    def switch_state_structures(self, structs:EnsembleSwitchStateMFEStructs):
+        self._switch_state_structures = structs
+
 
 
 class MultipleEnsembleGroups():
@@ -124,11 +143,11 @@ class MultipleEnsembleGroups():
     #def num_groups(self, num: int):
     #    self._num_groups = num
 
-    def add_group(self, group:SingleEnsembleGroup, value_of_group:float):
+    def add_group(self, group:SingleEnsembleGroup):
         self._groups.append(group)
         self._raw_groups.append(group.group)
         self._groups_dict[self._num_groups]= group.group
-        self._group_values.append(value_of_group)
+        self._group_values.append(group.kcal_start)
         kcal_range: KcalRanges = KcalRanges(start=group.kcal_start, stop=group.kcal_end)
         self._group_kcal_ranges.append(kcal_range)
         self._num_groups = self._num_groups + 1
