@@ -19,4 +19,4 @@ The sara2 secondary structure list is the primary vehicle for performing analysi
 
 See unit tests for examples of implementation.
 
-This version 1.0.0 and it is still in beta release
+This version 1.0.1 and it is still in beta release
