@@ -3,7 +3,7 @@ File that provides an interface to standard python nupack4 install on linux
 Intention is to be able to access this via a docker that will be accessable on docker hub
 that has nupack4 setup and ready for this project to consume
 """
-from typing import List, Dictf
+from typing import List, Dict
 from dataclasses import dataclass
 from datetime import datetime
 
