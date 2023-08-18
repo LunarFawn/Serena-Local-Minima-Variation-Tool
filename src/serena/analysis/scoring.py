@@ -5,8 +5,8 @@ File to handles teh calsses for dealing with scores
 from dataclasses import dataclass
 from typing import List
 
-from serena.utilities.judge_pool import JudgesResults
-from serena.utilities.investigator import InvestigatorResults
+from src.serena.analysis.judge_pool import JudgesResults
+from src.serena.analysis.investigator import InvestigatorResults
 
 class SpecialPenalties():
 

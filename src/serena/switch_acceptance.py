@@ -12,10 +12,10 @@ from pandas import DataFrame
 from typing import List, Dict
 import time
 
-from serena.utilities.Sara2_API_Python3 import Sara2API, puzzleData
-from serena.utilities.vienna2_fmn_hack_interface import Vienna2FMNInterface
+from src.serena.interfaces.Sara2_API_Python3 import Sara2API, puzzleData
+from src.serena.interfaces.vienna2_fmn_hack_interface import Vienna2FMNInterface
 from serena.utilities.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults
-from serena.utilities.nupack4_sara2_extension import NUPACK4Interface, MaterialParameter, NupackSettings
+from src.serena.interfaces.nupack4_sara2_extension import NUPACK4Interface, MaterialParameter, NupackSettings
 from serena.utilities.weighted_structures import WeightedStructure
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 from serena.utilities.logging_serena import PNASAnalysisLogging
