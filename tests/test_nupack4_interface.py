@@ -6,6 +6,7 @@ from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, Nupa
 from serena.utilities.ensemble_structures import  Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
 from serena.local_minima_variation import LocalMinimaVariation
+from serena.ensemble_variation import RunEnsembleVariation, EV
 from serena.utilities.ensemble_variation import EVResult
 
 @pytest.fixture
@@ -19,6 +20,15 @@ def initialized_nupack_4_settings():
                           kcal_span_from_mfe=5,
                           Kcal_unit_increments=1,
                           sequence='ACGUACAUGAC')
+
+@pytest.fixture
+def real_world_nupack_4_settings():
+    return NupackSettings(material_param=MaterialParameter.rna95_nupack4,
+                          temp_C=37,
+                          kcal_span_from_mfe=5,
+                          Kcal_unit_increments=1,
+                          sequence='GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA')
+
 
 @pytest.fixture
 def nupack_switch_states():
@@ -148,4 +158,17 @@ def test_get_lmv_nupack_ensemble(initialized_nupack_4_settings:NupackSettings, n
     assert groups_results.ev_values[2].ev_normalized == 6.0
     assert groups_results.ev_values[3].ev_normalized == 4.0
     assert groups_results.ev_values[4].ev_normalized == 6.0
+    
+def test_get_real_ev_nupack_struct_list(real_world_nupack_4_settings:NupackSettings):
+    nupack4: NUPACK4Interface = NUPACK4Interface()   
+    structs:Sara2StructureList = nupack4.get_subopt_energy_gap(material_param=real_world_nupack_4_settings.material_param,
+                                  temp_C=real_world_nupack_4_settings.temp_C,
+                                  sequence_string=real_world_nupack_4_settings.sequence,
+                                  energy_delta_from_MFE=real_world_nupack_4_settings.kcal_span_from_mfe,
+                                  )
+    run_ev:RunEnsembleVariation = RunEnsembleVariation()
+    ensemble_variation:float = run_ev.ev_from_structures_list(structures_list=structs, mfe_structure=structs.sara_stuctures[0])
+    assert ensemble_variation == 10.441805225653205
+    
+    
     
