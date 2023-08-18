@@ -13,9 +13,9 @@ from serena.utilities.ensemble_variation import EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse, LocalMinimaVariation
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult, ComparisonNucResults, ComparisonStructures
 
-from serena.utilities.investigator import ComparisonInvestigator, ComparisonEvalResults, LocalMinimaVariationInvestigator, LMVAssertionResult, SettingsAssertionLMV,InvestigatorResults
-from serena.utilities.judge_pool import AnalysisJudgePool, JudgesResults
-from serena.utilities.scoring import SerenaScoring, BasicScoreResults, AdvancedScoreResults
+from src.serena.analysis.investigator import ComparisonInvestigator, ComparisonEvalResults, LocalMinimaVariationInvestigator, LMVAssertionResult, SettingsAssertionLMV,InvestigatorResults
+from src.serena.analysis.judge_pool import AnalysisJudgePool, JudgesResults
+from src.serena.analysis.scoring import SerenaScoring, BasicScoreResults, AdvancedScoreResults
 
 @dataclass
 class ReferenceStructures():

@@ -8,14 +8,22 @@ from typing import List
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult
 from serena.utilities.ensemble_variation import EV, EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV
-from serena.utilities.investigator import InvestigatorResults
+from src.serena.analysis.investigator import InvestigatorResults
 
 @dataclass
 class SwitchabilitySettings():
+    """
+    Class for holding values for limits when
+    deterining switchability
+    """
     limit: float = 1.5 
 
 @dataclass
 class JudgesResults():
+    """
+    Class to hold the results from
+    the judge decisions
+    """
     is_good_switch:bool
     is_powerful_switch:bool
     is_on_off_switch:bool
@@ -29,13 +37,16 @@ class JudgesResults():
     on_off_groups_list:List[int]
 
 class AnalysisJudgePool():
-
+    """
+    Class for all the different specialized judges
+    """
     def __init__(self) -> None:
-        is_powerful_switch:bool = False
-        is_good_switch:bool = False
-        is_good_count:int = 0
-        is_excelent_count:int = 0
-        current_group_index:int = -1
+        pass
+        #is_powerful_switch:bool = False
+        #is_good_switch:bool = False
+        #is_good_count:int = 0
+        #is_excelent_count:int = 0
+        #current_group_index:int = -1
 
     def is_switch_judge(self, investigator:InvestigatorResults):
                 
@@ -99,23 +110,21 @@ class AnalysisJudgePool():
                 is_powerful_switch = True
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
-            
+
             if last_bound_ratio > 3 and ev_weight_asserted is True:
                 is_good_switch = True
                 is_powerful_switch = True
-                is_good_count = is_good_count + 1  
+                is_good_count = is_good_count + 1
                 is_excelent_count = is_excelent_count + 1
                 switchable_groups_list.append(current_group_index)
                 powerfull_groups_list.append(current_group_index)
-            
-        
+
+
         results: JudgesResults = JudgesResults(is_excelent_count=is_excelent_count,
                                                is_good_count=is_good_count,
                                                is_good_switch=is_good_switch,
                                                is_powerful_switch=is_powerful_switch,
                                                switchable_groups_list=switchable_groups_list,
                                                powerfull_groups_list=powerfull_groups_list)
-       
-        return results
 
-        
+        return results

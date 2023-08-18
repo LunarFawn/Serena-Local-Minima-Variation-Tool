@@ -210,3 +210,21 @@ class Sara2StructureList(object):
     def weighted_structure(self, structure: str):
         self._weighted_structure = structure
 
+class MakeSecondaryStructures():
+    """
+    Class to genereate the secondary structure
+    framework used by serena and sara
+    """
+
+    def make_secondary_structure(self, primary_structure:str, secondary_structure:str, free_energy:float, stack_free_energy:float)->Sara2SecondaryStructure:
+        return Sara2SecondaryStructure(sequence=primary_structure,
+                                       structure=secondary_structure,
+                                       freeEnergy=free_energy,
+                                       stackEnergy=stack_free_energy
+                                       )
+    
+    def make_secondary_strucuture_list(self, secondary_structures_list: List[Sara2SecondaryStructure])->Sara2StructureList:
+        structure_list:Sara2StructureList = Sara2StructureList()
+        for structure in secondary_structures_list:
+            structure_list.add_structure(structure)
+        return structure_list

@@ -207,5 +207,26 @@ class MultipleEnsembleGroups():
             total += group.num_structures
         return total
     
+class MakeEnsembleGroups():
+    """
+    Class for generating the ensemble groups consumed by serena and sara
+    """
 
-
+    def make_switch_mfe_states_from_secondary_strucures(self, switched_state_mfe_structure:Sara2SecondaryStructure, non_switch_mfe_structure:Sara2SecondaryStructure):
+        return EnsembleSwitchStateMFEStructs(non_switch_mfe_struct=non_switch_mfe_structure,
+                                             switched_mfe_struct=switched_state_mfe_structure)
+    
+    def make_singel_ensemble_group(self, ensemble_structures:Sara2StructureList, mfe_switch_structures:EnsembleSwitchStateMFEStructs, kcal_start:float, kcal_end:float):
+        single_ensemble_group:SingleEnsembleGroup = SingleEnsembleGroup()
+        single_ensemble_group.group = ensemble_structures
+        single_ensemble_group.switch_state_structures = mfe_switch_structures
+        single_ensemble_group.kcal_start = kcal_start
+        single_ensemble_group.kcal_end = kcal_end
+        single_ensemble_group.kcal_span = kcal_end - kcal_start
+        return single_ensemble_group
+    
+    def make_multiple_ensemple_groups(self, ensemble_groups:List[SingleEnsembleGroup], mfe_switch_structures:EnsembleSwitchStateMFEStructs):
+        multiple_ensemble_group:MultipleEnsembleGroups = MultipleEnsembleGroups(switch_state_structures=mfe_switch_structures)
+        for group in ensemble_groups:
+            multiple_ensemble_group.add_group(group=group)
+        return multiple_ensemble_group
