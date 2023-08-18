@@ -10,8 +10,8 @@ from datetime import datetime
 from enum import Enum
 from nupack import *
 
-from serena.utilities.ensemble_structures import  Sara2SecondaryStructure, Sara2StructureList
-from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
+from serena.utilities.ensemble_structures import  Sara2SecondaryStructure, Sara2StructureList, MakeSecondaryStructures
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, MakeEnsembleGroups, EnsembleSwitchStateMFEStructs
 
 class MaterialParameter(Enum):
     NONE = 0
@@ -72,5 +72,67 @@ class NUPACK4Interface():
             structure_info: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence_string, structure=structure, 
                                                                               freeEnergy=freeEnergy, stackEnergy=stackEnergy)
             kcal_group_structures_list.add_structure(structure_info)
-
+            
         return kcal_group_structures_list
+    
+    def load_nupack_subopt_as_ensemble(self, span_structures:Sara2StructureList, settings: NupackSettings, switch_state:EnsembleSwitchStateMFEStructs):
+        make_ensemble: MakeEnsembleGroups = MakeEnsembleGroups()
+        make_structs: MakeSecondaryStructures = MakeSecondaryStructures()
+        mfe_energy:float =  span_structures.mfe_freeEnergy
+
+        #this is for increments of 1 kcal need to do fraction
+        num_groups: int = int(settings.kcal_span_from_mfe / settings.Kcal_unit_increments)
+        remainder: int = settings.kcal_span_from_mfe % settings.Kcal_unit_increments
+
+        groups_list : List[Sara2StructureList] = []
+        groups_index_used: List[bool] = []
+        groups_dict: Dict[int, Sara2StructureList] = {}
+        group_values: List[float] = []
+
+        #this fills up the list of energy deltas to publich EV's for
+        current_energy: float = mfe_energy
+        group_values.append(current_energy)
+        for index in range(num_groups):
+            current_energy = current_energy + settings.Kcal_unit_increments
+            group_values.append(current_energy)
+        
+        #now initialize the groups_list
+        for index in range(len(group_values)-1):
+            group: Sara2StructureList = Sara2StructureList()
+            groups_list.append(group)
+            groups_index_used.append(False)
+            groups_dict[index+1] = group
+
+        num_sara_struct: int = span_structures.num_structures
+        for sara_index in range(0,num_sara_struct):
+            sara_structure: Sara2SecondaryStructure = span_structures.sara_stuctures[sara_index]
+            current_energy = sara_structure.freeEnergy
+
+            #need to do this because there are two indexes need to look at each 
+            #loop and want to avoid triggering a list index overrun
+            for group_index in range(len(group_values)-1):
+                #remember we are dealing with neg kcal so its you want to 
+                min_energy: float = group_values[group_index]
+                max_energy: float = group_values[group_index+1]
+                if current_energy >= min_energy and current_energy < max_energy:
+                    groups_list[group_index].add_structure(sara_structure)
+                    groups_index_used[group_index] = True            
+    
+        single_groups: List[SingleEnsembleGroup] = []
+        
+        for group_index in range(len(groups_list)):
+            group = groups_list[group_index]
+            start_value = group_values[group_index] - settings.Kcal_unit_increments
+            end_value = group_values[group_index]
+            this_group:SingleEnsembleGroup = make_ensemble.make_singel_ensemble_group(ensemble_structures=group,
+                                                                                      mfe_switch_structures=switch_state,
+                                                                                      kcal_start=start_value,
+                                                                                      kcal_end=end_value)
+            single_groups.append(this_group)
+
+        ensemble_groups: MultipleEnsembleGroups = make_ensemble.make_multiple_ensemple_groups(ensemble_groups=single_groups,
+                                                                                              mfe_switch_structures=switch_state)
+        
+        return ensemble_groups
+            
+        

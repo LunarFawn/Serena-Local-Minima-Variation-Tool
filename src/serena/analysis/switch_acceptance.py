@@ -14,7 +14,7 @@ import time
 
 from src.serena.interfaces.Sara2_API_Python3 import Sara2API, puzzleData
 from src.serena.interfaces.vienna2_fmn_hack_interface import Vienna2FMNInterface
-from serena.utilities.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults
+from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults
 from src.serena.interfaces.nupack4_sara2_extension import NUPACK4Interface, MaterialParameter, NupackSettings
 from serena.utilities.weighted_structures import WeightedStructure
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups

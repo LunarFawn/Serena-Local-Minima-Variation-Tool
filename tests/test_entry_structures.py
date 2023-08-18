@@ -1,12 +1,12 @@
 import pytest
 from typing import List
 
-from serena.generate_structures import SecondaryStructures, EnsembleGroups
-from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
-from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
+#from serena.generate_structures import SecondaryStructures, EnsembleGroups
+from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList, MakeSecondaryStructures
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs, MakeEnsembleGroups
 
 def test_make_secondary_structure():
-    generate_structs: SecondaryStructures = SecondaryStructures()
+    generate_structs: MakeSecondaryStructures = MakeSecondaryStructures()
     sequence:str = "ACGUAC"
     structure:str = '((()))'
     free_energy:float = -31
@@ -23,7 +23,7 @@ def test_make_secondary_structure():
 
 def test_make_secondary_structure_list(secondary_structure_3:Sara2SecondaryStructure, secondary_structure_3_1: Sara2SecondaryStructure):
     new_struct_list:List[Sara2SecondaryStructure] = [secondary_structure_3, secondary_structure_3_1]
-    generate_structs: SecondaryStructures = SecondaryStructures()
+    generate_structs: MakeSecondaryStructures = MakeSecondaryStructures()
     secondary_structs_list: Sara2StructureList = generate_structs.make_secondary_strucuture_list(secondary_structures_list=new_struct_list)
     assert secondary_structs_list.num_structures == 2
     assert secondary_structs_list.sara_stuctures == new_struct_list
