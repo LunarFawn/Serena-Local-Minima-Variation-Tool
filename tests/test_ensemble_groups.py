@@ -101,4 +101,3 @@ def test_add_group_multiple_ensemble_groups(single_ensemble_group:SingleEnsemble
     assert empty_multiple_ensemble_groups.group_values == [single_ensemble_group.kcal_start]
     assert empty_multiple_ensemble_groups.group_kcal_ranges == [KcalRanges(start=single_ensemble_group.kcal_start, stop=single_ensemble_group.kcal_end)]
 
-    

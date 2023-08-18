@@ -11,6 +11,7 @@ from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsemb
 from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle, EnsembleVariation
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
 from serena.utilities.thread_manager import EV_ThreadProcessor
+from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, NupackSettings
 
 
 """
