@@ -43,18 +43,16 @@ class NUPACK4Interface():
         pass
 
     def select_material_parameters(self, parameters:MaterialParameter):
-        param:str = ''
-        
-        match parameters :            
-            case MaterialParameter.rna06_nupack4:
-                param = "rna06"
-            case MaterialParameter.rna95_nupack4:
-                param = "rna95"
-            case MaterialParameter.rna99_nupack3:
-                param = "rna99-nupack3"
-            case MaterialParameter.rna95_nupack3:
-                param = "rna95-nupack3"
-        return param                                                      
+        param:str = ''        
+        if parameters == MaterialParameter.rna06_nupack4:
+            param = "rna06"
+        elif parameters == MaterialParameter.rna95_nupack4:
+            param = "rna95"
+        elif parameters == MaterialParameter.rna99_nupack3:
+            param = "rna99-nupack3"
+        elif parameters == MaterialParameter.rna95_nupack3:
+            param = "rna95-nupack3"            
+        return param                                                
 
     def select_model(self, material_param:MaterialParameter, temp_C:int):
         param: str = self.select_material_parameters(material_param)
