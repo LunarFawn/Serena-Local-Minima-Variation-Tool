@@ -171,10 +171,6 @@ class MultipleEnsembleGroups():
         self._groups: List[SingleEnsembleGroup] = []
         self._raw_groups: List[Sara2StructureList] = []
         self._switch_state_structures: EnsembleSwitchStateMFEStructs = switch_state_structures
-        #self._non_switch_state_mfe_kcal: float = non_switch_kcal
-        #self._non_switch_state_structure: Sara2SecondaryStructure = non_switch_struct
-        #self._switched_state_mfe_kcal: float = switched_kcal
-        #self._switched_state_structure: Sara2SecondaryStructure = switched_struct
         self._groups_dict: Dict[int, Sara2StructureList] = {}
         self._group_values: List[float] = []
         self._num_groups: int = 0

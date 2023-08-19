@@ -25,7 +25,6 @@ class Sara2SecondaryStructure():
         self._structure: str = structure
         self._free_energy: float = free_energy
         self._stack_energy: float = stack_energy
-        #self._nuc_count: int = len(sequence)
 
     @property
     def sequence(self):
@@ -106,10 +105,6 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         self._min_stack_energy: float = 0
         self._max_stack_energy: float = 0
         self._num_structures: int = 0
-        #self._nuc_count: int = 0
-        #self._mfe_structure: str = ''
-        #self._mfe_free_energy: float = 0
-        #self._mfe_stack_energy: float = 0
         self._free_energy_span:float = 0
         self._stack_energy_span:float = 0
         self._weighted_structure:str = ''
