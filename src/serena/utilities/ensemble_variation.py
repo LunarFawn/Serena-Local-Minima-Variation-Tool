@@ -31,7 +31,7 @@ class EVResult():
 #    group_ev_list: List[EV]
 #    group_ev_dict: Dict[int,EV]
 
-class EV_Token():
+class EVToken():
     """
     Class for the token that is used to pass data between thread
     and caller to record ev's and comlete flags
@@ -117,13 +117,13 @@ class EV_Token():
             is_completed = True
         return is_completed
 
-class EV_Shuttle():
+class EVShuttle():
 
-    def __init__(self, structs_list: Sara2StructureList, mfe:Sara2SecondaryStructure, group_index:int, token:EV_Token) -> None:#pylint: disable=line-too-long
+    def __init__(self, structs_list: Sara2StructureList, mfe:Sara2SecondaryStructure, group_index:int, token:EVToken) -> None:#pylint: disable=line-too-long
         self._kcal_group_structures_list: Sara2StructureList = structs_list
         self._sara_mfestructure:Sara2SecondaryStructure = mfe
         self._group_index:int = group_index
-        self._token:EV_Token = token
+        self._token:EVToken = token
 
     @property
     def kcal_group_structures_list(self):
@@ -154,7 +154,7 @@ class EV_Shuttle():
         return self._token
 
     @token.setter
-    def token(self, new_token: EV_Token):
+    def token(self, new_token: EVToken):
         self._token = new_token
 
 class EnsembleVariation():
@@ -165,9 +165,9 @@ class EnsembleVariation():
     def __init__(self) -> None:
         pass
 
-    def thread_EV(self, shuttle: EV_Shuttle):
+    def thread_EV(self, shuttle: EVShuttle):
 
-        token:EV_Token = shuttle.token
+        token:EVToken = shuttle.token
         group_num:int = shuttle.group_index
         structs_list:Sara2StructureList = shuttle.kcal_group_structures_list
         result: EV =  self.ensemble_variation_algorithm(kcal_group_structures_list=structs_list,
@@ -177,7 +177,7 @@ class EnsembleVariation():
         token.group_done_status[group_num] = True
 
     def ensemble_variation_algorithm(self, kcal_group_structures_list: Sara2StructureList, ref_structure:Sara2SecondaryStructure)->EV:#pylint: disable=line-too-long
-        total_EV_subscore1:int = 0
+        total_ev_subscore1:int = 0
         structure_element_count = kcal_group_structures_list.num_structures
 
         if structure_element_count != 0:
@@ -209,17 +209,17 @@ class EnsembleVariation():
             list_of_nuc_scores_subscores: List[int] = [0]*nuc_count
             num_structs:int = kcal_group_structures_list.num_structures
 
-            for nucIndex in range(nuc_count):
-                mfe_nuc=ref_structure.structure[nucIndex]
-                num_chars = list_of_nuc_lists[nucIndex].count(mfe_nuc)
+            for nuc_index in range(nuc_count):
+                mfe_nuc=ref_structure.structure[nuc_index]
+                num_chars = list_of_nuc_lists[nuc_index].count(mfe_nuc)
                 num_diff:int = num_structs - num_chars
-                list_of_nuc_scores_base[nucIndex] = num_diff
-                list_of_nuc_scores_subscores[nucIndex] = list_of_nuc_scores_base[nucIndex] / structure_element_count#pylint: disable=line-too-long
+                list_of_nuc_scores_base[nuc_index] = num_diff
+                list_of_nuc_scores_subscores[nuc_index] = list_of_nuc_scores_base[nuc_index] / structure_element_count#pylint: disable=line-too-long
 
-            total_EV_subscore1 = sum(list_of_nuc_scores_subscores)
+            total_ev_subscore1 = sum(list_of_nuc_scores_subscores)
         else:
-            total_EV_subscore1 = -1
+            total_ev_subscore1 = -1
 
-        result: EV =  EV(ev_normalized=total_EV_subscore1, ev_threshold_norm=0, ev_structure=0)
+        result: EV =  EV(ev_normalized=total_ev_subscore1, ev_threshold_norm=0, ev_structure=0)
         return result
     

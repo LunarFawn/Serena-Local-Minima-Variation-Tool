@@ -7,7 +7,7 @@ from datetime import datetime, time
 import time
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
-from serena.utilities.ensemble_variation import EV_Shuttle, EV, EV_Token, EnsembleVariation
+from serena.utilities.ensemble_variation import EVShuttle, EV, EVToken, EnsembleVariation
 
 
 
@@ -141,7 +141,7 @@ class EV_ThreadProcessor():
         self._sara2_groups: List[Sara2StructureList] = stuctures
         num_groups:int = len(stuctures)
         self._num_groups: int =  num_groups
-        self._group_token: EV_Token = EV_Token(num_groups)
+        self._group_token: EVToken = EVToken(num_groups)
         self._EV: EnsembleVariation = EnsembleVariation()
         self._comparison_structure: Sara2SecondaryStructure = comp_structure
         self._comp_struct_list_option:List[Sara2SecondaryStructure] = comp_struct_list_option
@@ -182,7 +182,7 @@ class EV_ThreadProcessor():
         return self._group_token
 
     @group_token.setter
-    def group_token(self, new_token:EV_Token):
+    def group_token(self, new_token:EVToken):
         self._group_token = new_token
     
     @property
@@ -214,7 +214,7 @@ class EV_ThreadProcessor():
             else:
                 comp_structure = self.comparison_structure
             sara2_structs: Sara2StructureList  = self.sara2_groups[thread_index]
-            new_shuttle: EV_Shuttle = EV_Shuttle(structs_list=sara2_structs, mfe=comp_structure, group_index=thread_index,token=self.group_token) 
+            new_shuttle: EVShuttle = EVShuttle(structs_list=sara2_structs, mfe=comp_structure, group_index=thread_index,token=self.group_token) 
             mew_thread = threading.Thread(target=self.EV.thread_EV, args=[new_shuttle])
             mew_thread.start()
 

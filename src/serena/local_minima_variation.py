@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import List
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
-from serena.utilities.ensemble_variation import EV, EnsembleVariation, EVResult, EV_Shuttle, EV_Token
+from serena.utilities.ensemble_variation import EV, EnsembleVariation, EVResult, EVShuttle, EVToken
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup, EnsembleSwitchStateMFEStructs
 from serena.utilities.thread_manager import EV_ThreadProcessor
 from serena.utilities.weighted_structures import WeightedEnsembleResult, WeightedStructure

@@ -8,7 +8,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure, WeightedEnsembleResult
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
-from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle, EnsembleVariation
+from serena.utilities.ensemble_variation import EV, EVResult, EVShuttle, EVToken, EnsembleVariation
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
 from serena.utilities.thread_manager import EV_ThreadProcessor
 from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, NupackSettings
@@ -393,10 +393,10 @@ def empty_ev_token_3_groups():
     """
     Return empty EV token initialized with 3 groups
     """
-    return EV_Token(num_groups=3)
+    return EVToken(num_groups=3)
 
 @pytest.fixture
-def ev_token_3_groups(empty_ev_token_3_groups: EV_Token, initialized_ev:EV, initialzed_ev_2:EV):
+def ev_token_3_groups(empty_ev_token_3_groups: EVToken, initialized_ev:EV, initialzed_ev_2:EV):
     empty_ev_token_3_groups.set_group_dict(0,initialzed_ev_2)
     empty_ev_token_3_groups.set_group_dict(2,initialized_ev)
     empty_ev_token_3_groups.set_group_result(index=0,
@@ -413,14 +413,14 @@ EV shuttle
 
 @pytest.fixture
 def empty_ev_shuttle_num_3():
-    return EV_Shuttle(structs_list=Sara2StructureList(),
+    return EVShuttle(structs_list=Sara2StructureList(),
                         mfe=Sara2SecondaryStructure(),
                         group_index=2,
-                        token=EV_Token(num_groups=3))
+                        token=EVToken(num_groups=3))
 
 @pytest.fixture
-def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure, ev_token_3_groups:EV_Token):
-    return EV_Shuttle(structs_list=secondary_structures_list_2_item,
+def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure, ev_token_3_groups:EVToken):
+    return EVShuttle(structs_list=secondary_structures_list_2_item,
                       mfe=secondary_structure_5,
                       group_index=1,
                       token=ev_token_3_groups)
