@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure
-from serena.utilities.ensemble_variation import SourceMFE, EV_Token, EV, EVResult
+from serena.utilities.ensemble_variation import EV_Token, EV, EVResult
 from serena.utilities.thread_manager import EV_ThreadProcessor
 from serena.utilities.weighted_structures import WeightedEnsembleResult
 
