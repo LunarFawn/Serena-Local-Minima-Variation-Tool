@@ -5,9 +5,10 @@ import pytest
 from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, NupackSettings, MaterialParameter
 from serena.utilities.ensemble_structures import  Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
-from serena.local_minima_variation import LocalMinimaVariation
+from serena.local_minima_variation import RunLocalMinimaVariation
 from serena.ensemble_variation import RunEnsembleVariation, EV
 from serena.utilities.ensemble_variation import EVResult
+from serena.utilities.local_minima_variation import LocalMinimaVariation
 
 @pytest.fixture
 def nupack_4_settings():
@@ -40,7 +41,20 @@ def nupack_switch_states():
     switch_state:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(non_switch_mfe_struct=unbound_struct,
                                                                                switched_mfe_struct=bound_struct)
     return switch_state
-    
+
+@pytest.fixture
+def simple_nupack_multi_group_ensemble(initialized_nupack_4_settings:NupackSettings, nupack_switch_states:EnsembleSwitchStateMFEStructs):    
+    nupack4: NUPACK4Interface = NUPACK4Interface()   
+    structs:Sara2StructureList = nupack4.get_subopt_energy_gap(material_param=initialized_nupack_4_settings.material_param,
+                                  temp_C=initialized_nupack_4_settings.temp_C,
+                                  sequence_string=initialized_nupack_4_settings.sequence,
+                                  energy_delta_from_MFE=initialized_nupack_4_settings.kcal_span_from_mfe,
+                                  )
+    ensemble:MultipleEnsembleGroups = nupack4.load_nupack_subopt_as_ensemble(span_structures=structs,
+                                                                             settings=initialized_nupack_4_settings,
+                                                                             switch_state=nupack_switch_states
+                                                                             )
+    return ensemble
 
 
 def test_empty_nupack_4_settings(nupack_4_settings:NupackSettings):
@@ -169,6 +183,18 @@ def test_get_real_ev_nupack_struct_list(real_world_nupack_4_settings:NupackSetti
     run_ev:RunEnsembleVariation = RunEnsembleVariation()
     ensemble_variation:float = run_ev.ev_from_structures_list(structures_list=structs, mfe_structure=structs.sara_stuctures[0])
     assert ensemble_variation == 10.441805225653205
+    
+def test_get_mfe_lmv_nupack(simple_nupack_multi_group_ensemble:MultipleEnsembleGroups):
+    is_pass:bool = False
+    assert is_pass is True
+
+def test_get_relative_lmv_nupack(simple_nupack_multi_group_ensemble:MultipleEnsembleGroups):
+    is_pass:bool = False
+    assert is_pass is True
+
+def test_get_folded_lmv_nupack(simple_nupack_multi_group_ensemble:MultipleEnsembleGroups):
+    is_pass:bool = False
+    assert is_pass is True
     
     
     

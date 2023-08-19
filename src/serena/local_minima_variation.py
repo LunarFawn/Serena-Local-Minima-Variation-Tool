@@ -29,6 +29,9 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
         result: EVResult = EVResult(ev_values=ev_values)
         return result
     
+    def get_relative_multi_group_lmv_nupack():
+        pass
+    
     def get_weighted_multi_group_lmv(self, ensemble: MultipleEnsembleGroups, weighted_structures: WeightedEnsembleResult):
         ev_values:List[EV] = []
         for group_index in range(len(ensemble.groups)):
