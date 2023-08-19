@@ -3,17 +3,8 @@ Sara2 api for accessing and manipulating secondary structures
 in dot parenthisis form
 copyright 2023 GrizzlyEngineer
 """
-from typing import List, Dict, NamedTuple
-import struct
-import pandas as pd
-import sys
-import openpyxl
-from copy import deepcopy
+from typing import List
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-import threading
-import time
-from collections import namedtuple
 
 @dataclass
 class KcalRanges():
@@ -23,13 +14,13 @@ class KcalRanges():
     start: float = 0
     stop: float = 0
 
-class Sara2SecondaryStructure(object):
+class Sara2SecondaryStructure():
     """
     Sara 2 Secondary Structure that is used to hold all the info for
     each secondary structure in ensemble
     """
 
-    def __init__(self, sequence:str = '', structure: str = '', freeEnergy: float = 0, stackEnergy: float = 0) -> None:
+    def __init__(self, sequence:str = '', structure: str = '', freeEnergy: float = 0, stackEnergy: float = 0) -> None:#pylint: disable=line-too-long
         self._sequence: str = sequence
         self._structure: str = structure
         self._freeEnergy: float = freeEnergy
@@ -100,7 +91,7 @@ class Sara2SecondaryStructure(object):
         return len(self._sequence)
 
 
-class Sara2StructureList(object):
+class Sara2StructureList():
     """
     Sara2 Structure List that holds all the Sar2SecondaryStructurs
     that represent the ensemble in raw form
@@ -169,7 +160,7 @@ class Sara2StructureList(object):
         del self._structures[index]
         del self._freeEnergy_list[index]
         del self._stackEnergy_list[index]
-        self.process_energy()            
+        self.process_energy()
 
     @property
     def mfe_structure(self):
@@ -178,8 +169,8 @@ class Sara2StructureList(object):
         """
         structure:str = ''
         if len(self.sara_stuctures) > 0:
-           structure = self.sara_stuctures[0].structure
-        return structure 
+            structure = self.sara_stuctures[0].structure
+        return structure
 
     @property
     def mfe_freeEnergy(self):
@@ -208,7 +199,7 @@ class Sara2StructureList(object):
         """
         count: int = 0
         if len(self.sara_stuctures) > 0:
-            count = self.sara_stuctures[0].nuc_count  
+            count = self.sara_stuctures[0].nuc_count
         return count
 
     @property
@@ -218,7 +209,7 @@ class Sara2StructureList(object):
         """
         return self._sara_structures_list
 
-    @sara_stuctures.setter   
+    @sara_stuctures.setter
     def sara_stuctures(self, structs_list: List[Sara2SecondaryStructure]):
         """
         Sets the sara structures list using a List of Sara2Structures
@@ -276,7 +267,7 @@ class Sara2StructureList(object):
         """
         Returns the span of the stack energy of the structures in the list
         """
-        return self._stackEnergy_span 
+        return self._stackEnergy_span
 
     @property
     def weighted_structure(self):
@@ -285,7 +276,7 @@ class Sara2StructureList(object):
         """
         return self._weighted_structure
 
-    @weighted_structure.setter        
+    @weighted_structure.setter
     def weighted_structure(self, structure: str):
         """
         sets the weigthed structure
@@ -297,7 +288,7 @@ class MakeSecondaryStructures():
     Class to genereate the secondary structure
     framework used by serena and sara
     """
-    def make_secondary_structure(self, primary_structure:str, secondary_structure:str, free_energy:float, stack_free_energy:float)->Sara2SecondaryStructure:
+    def make_secondary_structure(self, primary_structure:str, secondary_structure:str, free_energy:float, stack_free_energy:float)->Sara2SecondaryStructure:#pylint: disable=line-too-long
         """
         Function to make a secondary structue
         """
@@ -307,7 +298,7 @@ class MakeSecondaryStructures():
                                        stackEnergy=stack_free_energy
                                        )
 
-    def make_secondary_strucuture_list(self, secondary_structures_list: List[Sara2SecondaryStructure])->Sara2StructureList:
+    def make_secondary_strucuture_list(self, secondary_structures_list: List[Sara2SecondaryStructure])->Sara2StructureList:#pylint: disable=line-too-long
         """
         Function to make a secondary structure list
         """
