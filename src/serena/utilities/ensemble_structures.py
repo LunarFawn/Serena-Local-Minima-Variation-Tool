@@ -91,7 +91,7 @@ class Sara2SecondaryStructure():
         return len(self._sequence)
 
 
-class Sara2StructureList():
+class Sara2StructureList():#pylint: disable=too-many-instance-attributes
     """
     Sara2 Structure List that holds all the Sar2SecondaryStructurs
     that represent the ensemble in raw form
