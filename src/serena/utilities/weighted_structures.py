@@ -8,6 +8,9 @@ from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsem
 
 @dataclass
 class WeightedEnsembleResult():
+    """
+    Class that holds the resuls from weighted structurs as sara2SecondaryStructures
+    """
     structs: List[Sara2SecondaryStructure]
 
 @dataclass
@@ -56,25 +59,13 @@ class WeightedStructure():
                 else:
                     adder = is_bond_value
                 nuc_poistion_values[nucIndex] = nuc_poistion_values[nucIndex] + adder
-        
+
         #now record if the nuc position has a weghted bond
         for nucIndex in range(structure_list.nuc_count):
             is_weighted_bond=False
             if nuc_poistion_values[nucIndex] > struct_count:
                 is_weighted_bond = True
             good_nucs_each_pos.append(is_weighted_bond)
-
-        """
-        for nucIndex in range(structure_list.nuc_count):
-            nuc_value: float = float(nuc_poistion_values[nucIndex])
-            #worked out this algotithm one night.. idk
-            num_bonds_found:float = nuc_value / 2 + 1
-            min_good_bonds: float = (num_bonds_found * 2) - ((nuc_value-num_bonds_found) * (-1))
-            is_weighted_bond=False
-            if num_bonds_found >= min_good_bonds and num_bonds_found > 0:
-                is_weighted_bond = True
-            good_nucs_each_pos.append(is_weighted_bond)
-        """
 
         weighted_structure:str = ''
         for nucIndex in range(structure_list.nuc_count):
@@ -104,9 +95,6 @@ class WeightedStructure():
         The idea is that if you have a straight line in the list then it is very close to the
         folded mfe and if it is not straight then it is more like the unbound mfe.
         """
-
-       
-
         unbound:str = '|'
         num_unbound:int = 0
         bound:str = '-'
@@ -136,7 +124,7 @@ class WeightedStructure():
             else:
                 comp_nuc_symbol = dot
                 num_dot += 1
-            
+
             weighted_nuc_counts:WeightedNucCounts = WeightedNucCounts(num_unbound=num_unbound,
                                                                         num_bound=num_bound,
                                                                         num_both=num_both,
@@ -146,10 +134,9 @@ class WeightedStructure():
             compared_struct = compared_struct + comp_nuc_symbol
 
             weighted_nuc_counts.num_nucs = nuc_count
-        
+
         compared_data: WeightedComparisonResult = WeightedComparisonResult(comp_struct=compared_struct,
                                                                            unbound_mfe_struct=unbound_mfe_struct,
                                                                            bound_mfe_struct=bound_mfe_struct,
                                                                            weighted_nuc_counts=weighted_nuc_counts)    
         return compared_data
-    
