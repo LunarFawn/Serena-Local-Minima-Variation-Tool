@@ -80,7 +80,7 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
                                                                     energy_delta_from_MFE=kcal_span_from_mfe,
                                                                     )
         switch_states:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(non_switch_mfe_struct=nupack_structs.sara_stuctures[0])
-        ensemble:MultipleEnsembleGroups = nupack4.load_nupack_subopt_as_ensemble(span_structures=structs,
+        ensemble:MultipleEnsembleGroups = nupack4.load_nupack_subopt_as_ensemble(span_structures=nupack_structs,
                                                                                     kcal_span_from_mfe=kcal_span_from_mfe,
                                                                                     Kcal_unit_increments=Kcal_unit_increments,
                                                                                     switch_state=switch_states
