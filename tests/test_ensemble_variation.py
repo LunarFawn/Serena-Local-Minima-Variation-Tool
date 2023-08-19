@@ -298,7 +298,7 @@ def test_set_ev_shuttle_ev_token(empty_ev_shuttle_num_3:EVShuttle, ev_token_3_gr
 
 def test_thread_ev(ev_shuttle_group_num_3:EVShuttle):
     ensemble_variation:EnsembleVariation = EnsembleVariation()
-    ensemble_variation.thread_EV(ev_shuttle_group_num_3)
+    ensemble_variation.thread_ev(ev_shuttle_group_num_3)
     assert ev_shuttle_group_num_3.token.group_results[2].ev_normalized == 1.1
     assert ev_shuttle_group_num_3.token.group_results[2].ev_structure == 2.2
     assert ev_shuttle_group_num_3.token.group_results[2].ev_threshold_norm == 3.3

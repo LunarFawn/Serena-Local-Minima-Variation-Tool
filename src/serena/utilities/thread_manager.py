@@ -215,7 +215,7 @@ class EV_ThreadProcessor():
                 comp_structure = self.comparison_structure
             sara2_structs: Sara2StructureList  = self.sara2_groups[thread_index]
             new_shuttle: EVShuttle = EVShuttle(structs_list=sara2_structs, mfe=comp_structure, group_index=thread_index,token=self.group_token) 
-            mew_thread = threading.Thread(target=self.EV.thread_EV, args=[new_shuttle])
+            mew_thread = threading.Thread(target=self.EV.thread_ev, args=[new_shuttle])
             mew_thread.start()
 
     

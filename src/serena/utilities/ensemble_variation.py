@@ -3,7 +3,6 @@ File for the ensemble variation code to live
 """
 from typing import List, Dict
 from dataclasses import dataclass
-from enum import Enum
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 
@@ -22,14 +21,6 @@ class EVResult():
     Class for holding the ev values for ensemble groups 
     """
     ev_values:List[EV]
-
-#@dataclass
-#class EVResult_old():
-#    groups_list : List[Sara2StructureList]
-#    groups_dict: Dict[int, Sara2StructureList]
-#    group_values: List[float]
-#    group_ev_list: List[EV]
-#    group_ev_dict: Dict[int,EV]
 
 class EVToken():
     """
@@ -118,7 +109,10 @@ class EVToken():
         return is_completed
 
 class EVShuttle():
-
+    """
+    This is the controller so to speak for the EVTokens to talk back and forth
+    bettween the EV threads to pass results and status
+    """
     def __init__(self, structs_list: Sara2StructureList, mfe:Sara2SecondaryStructure, group_index:int, token:EVToken) -> None:#pylint: disable=line-too-long
         self._kcal_group_structures_list: Sara2StructureList = structs_list
         self._sara_mfestructure:Sara2SecondaryStructure = mfe
@@ -126,47 +120,76 @@ class EVShuttle():
         self._token:EVToken = token
 
     @property
-    def kcal_group_structures_list(self):
+    def kcal_group_structures_list(self)->Sara2StructureList:
+        """
+        Returns the list of structures that is being analyzed 
+        """
         return self._kcal_group_structures_list
 
     @kcal_group_structures_list.setter
     def kcal_group_structures_list(self, new_list: Sara2StructureList):
+        """
+        Sets the list of structures that is being analyzed 
+        """
         self._kcal_group_structures_list = new_list
 
     @property
-    def sara_mfestructure(self):
+    def sara_mfestructure(self)->Sara2SecondaryStructure:
+        """
+        Return the secondary structure used as the reference structure
+        """
         return self._sara_mfestructure
 
     @sara_mfestructure.setter
     def sara_mfestructure(self, new_strucr: Sara2SecondaryStructure):
+        """
+        Sets the secondary structure used as the reference structure
+        """
         self._sara_mfestructure = new_strucr
 
     @property
-    def group_index(self):
+    def group_index(self)->int:
+        """
+        Returns the group index of this shuttle
+        """
         return self._group_index
 
     @group_index.setter
     def group_index(self, new_index: int):
+        """
+        Sets the group index of this shuttle
+        """
         self._group_index = new_index
 
     @property
-    def token(self):
+    def token(self)->EVToken:
+        """
+        Returns the token tha tis feed between the threads
+        """
         return self._token
 
     @token.setter
     def token(self, new_token: EVToken):
+        """
+        Sets the token tha tis feed between the threads
+        """
         self._token = new_token
 
 class EnsembleVariation():
     """
-    Class that exposes the algorithm
+    Ensemble Variation algorithm that gives a estimated
+    stability of the RNA controlling for nucleotide numbers
+    and number of structures in the ensemble analyzed
     """
 
     def __init__(self) -> None:
         pass
 
-    def thread_EV(self, shuttle: EVShuttle):
-
+    def thread_ev(self, shuttle: EVShuttle):
+        """
+        Access point for using multithreading to get
+        EV quicker 
+        """
         token:EVToken = shuttle.token
         group_num:int = shuttle.group_index
         structs_list:Sara2StructureList = shuttle.kcal_group_structures_list
@@ -176,7 +199,10 @@ class EnsembleVariation():
         token.group_dict[group_num] = result
         token.group_done_status[group_num] = True
 
-    def ensemble_variation_algorithm(self, kcal_group_structures_list: Sara2StructureList, ref_structure:Sara2SecondaryStructure)->EV:#pylint: disable=line-too-long
+    def ensemble_variation_algorithm(self, kcal_group_structures_list: Sara2StructureList, ref_structure:Sara2SecondaryStructure)->EV:#pylint: disable=line-too-long, too-many-locals
+        """
+        This is the actual ensemble variation algorithm
+        """
         total_ev_subscore1:int = 0
         structure_element_count = kcal_group_structures_list.num_structures
 
