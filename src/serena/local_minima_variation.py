@@ -14,28 +14,11 @@ from serena.utilities.ensemble_variation import EV, EnsembleVariation, EVResult,
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
 from serena.utilities.thread_manager import EV_ThreadProcessor
 from serena.utilities.weighted_structures import WeightedEnsembleResult
+from serena.utilities.local_minima_variation import LocalMinimaVariation
 
 
-class LocalMinimaVariation():
-
-    def __init__(self) -> None:
-        pass
-
-    def get_multi_group_lmv(self, ensemble: MultipleEnsembleGroups, reference_structure:Sara2SecondaryStructure):        
-        print(f'Begining LMV processing at {datetime.now()}')
-        LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,comp_structure=reference_structure)
-        result_thread_LMV:EV_Token = LMV_Thread.run_EV()
-        lmv_results: EVResult = result_thread_LMV.ev_results
-        return lmv_results
-
-    def get_single_group_lmv(self, ensemble_group: SingleEnsembleGroup, reference_structure:Sara2SecondaryStructure):
-        print(f'Begining LMV processing at {datetime.now()}')
-        LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=[ensemble_group.group],
-                                                              comp_structure=reference_structure)
-        result_thread_LMV:EV_Token = LMV_Thread.run_EV()
-        lmv_results: EVResult = result_thread_LMV.ev_results
-        return lmv_results
-    
+class RunLocalMinimaVariation(LocalMinimaVariation):
+   
     def get_relative_mutli_group_lmv(self, ensemble: MultipleEnsembleGroups):
         ev_values:List[EV] = []
         for group in ensemble.groups:
@@ -56,5 +39,12 @@ class LocalMinimaVariation():
             ev_values.append(ev_result.ev_values[0])
         result: EVResult = EVResult(ev_values=ev_values)
         return result
+    
+    def get_mfe_mult_group_lmv(self, ensemble: MultipleEnsembleGroups):
+        LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,
+                                                            comp_structure=ensemble.non_switch_state_structure)
+        result_thread_LMV:EV_Token = LMV_Thread.run_EV()
+        lmv_results: EVResult = result_thread_LMV.ev_results
+        return lmv_results
     
     
