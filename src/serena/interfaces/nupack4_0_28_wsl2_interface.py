@@ -88,7 +88,7 @@ class NUPACK4Interface():
             freeEnergy = float(kcal_group_elementInfo.energy)
             stackEnergy = float(kcal_group_elementInfo.stack_energy)
             structure_info: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence_string, structure=structure, 
-                                                                              freeEnergy=freeEnergy, stackEnergy=stackEnergy)
+                                                                              free_energy=freeEnergy, stack_energy=stackEnergy)
             kcal_group_structures_list.add_structure(structure_info)
 
         return kcal_group_structures_list
@@ -99,7 +99,7 @@ class NUPACK4Interface():
         """
         make_ensemble: MakeEnsembleGroups = MakeEnsembleGroups()
         make_structs: MakeSecondaryStructures = MakeSecondaryStructures()
-        mfe_energy:float =  span_structures.mfe_freeEnergy
+        mfe_energy:float =  span_structures.mfe_free_energy
 
         #this is for increments of 1 kcal need to do fraction
         num_groups: int = int(kcal_span_from_mfe / Kcal_unit_increments)
@@ -127,7 +127,7 @@ class NUPACK4Interface():
         num_sara_struct: int = span_structures.num_structures
         for sara_index in range(0,num_sara_struct):
             sara_structure: Sara2SecondaryStructure = span_structures.sara_stuctures[sara_index]
-            current_energy = sara_structure.freeEnergy
+            current_energy = sara_structure.free_energy
 
             #need to do this because there are two indexes need to look at each 
             #loop and want to avoid triggering a list index overrun

@@ -18,8 +18,8 @@ def test_make_secondary_structure():
     assert secondary_structure.structure == structure
     assert secondary_structure.sequence == sequence
     assert secondary_structure.nuc_count == 6
-    assert secondary_structure.freeEnergy == free_energy
-    assert secondary_structure.stackEnergy == stack_energy
+    assert secondary_structure.free_energy == free_energy
+    assert secondary_structure.stack_energy == stack_energy
 
 def test_make_secondary_structure_list(secondary_structure_3:Sara2SecondaryStructure, secondary_structure_3_1: Sara2SecondaryStructure):
     new_struct_list:List[Sara2SecondaryStructure] = [secondary_structure_3, secondary_structure_3_1]

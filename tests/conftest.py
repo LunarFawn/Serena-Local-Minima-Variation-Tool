@@ -8,7 +8,7 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonNucResults, ComparisonResult
 from serena.utilities.weighted_structures import WeightedNucCounts,WeightedComparisonResult, WeightedStructure, WeightedEnsembleResult
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
-from serena.utilities.ensemble_variation import EV, EVResult, EV_Token, EV_Shuttle, EnsembleVariation
+from serena.utilities.ensemble_variation import EV, EVResult, EVShuttle, EVToken, EnsembleVariation
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
 from serena.utilities.thread_manager import EV_ThreadProcessor
 from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, NupackSettings
@@ -44,8 +44,8 @@ def secondary_structure_1():
     stack_energgy:float = -10
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_2():
@@ -58,8 +58,8 @@ def secondary_structure_2():
     stack_energgy:float = -20
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_3():
@@ -72,8 +72,8 @@ def secondary_structure_3():
     stack_energgy:float = -10
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_3_1():
@@ -86,8 +86,8 @@ def secondary_structure_3_1():
     stack_energgy:float = -10
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_4():
@@ -100,8 +100,8 @@ def secondary_structure_4():
     stack_energgy:float = -20
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_5():
@@ -114,8 +114,8 @@ def secondary_structure_5():
     stack_energgy:float = -30
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture
 def empty_secondary_structure_list():
@@ -369,7 +369,7 @@ def initialized_ev():
     """
     return EV(ev_normalized=1.1,
               ev_structure=2.2,
-              ev_ThresholdNorm=3.3)
+              ev_threshold_norm=3.3)
 
 @pytest.fixture
 def initialzed_ev_2():
@@ -378,7 +378,7 @@ def initialzed_ev_2():
     """
     return EV(ev_normalized=4.4,
               ev_structure=5.5,
-              ev_ThresholdNorm=6.6)
+              ev_threshold_norm=6.6)
 
 @pytest.fixture
 def ev_result(initialized_ev:EV, initialzed_ev_2:EV):
@@ -393,10 +393,10 @@ def empty_ev_token_3_groups():
     """
     Return empty EV token initialized with 3 groups
     """
-    return EV_Token(num_groups=3)
+    return EVToken(num_groups=3)
 
 @pytest.fixture
-def ev_token_3_groups(empty_ev_token_3_groups: EV_Token, initialized_ev:EV, initialzed_ev_2:EV):
+def ev_token_3_groups(empty_ev_token_3_groups: EVToken, initialized_ev:EV, initialzed_ev_2:EV):
     empty_ev_token_3_groups.set_group_dict(0,initialzed_ev_2)
     empty_ev_token_3_groups.set_group_dict(2,initialized_ev)
     empty_ev_token_3_groups.set_group_result(index=0,
@@ -413,14 +413,14 @@ EV shuttle
 
 @pytest.fixture
 def empty_ev_shuttle_num_3():
-    return EV_Shuttle(structs_list=Sara2StructureList(),
+    return EVShuttle(structs_list=Sara2StructureList(),
                         mfe=Sara2SecondaryStructure(),
                         group_index=2,
-                        token=EV_Token(num_groups=3))
+                        token=EVToken(num_groups=3))
 
 @pytest.fixture
-def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure, ev_token_3_groups:EV_Token):
-    return EV_Shuttle(structs_list=secondary_structures_list_2_item,
+def ev_shuttle_group_num_3(secondary_structures_list_2_item:Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure, ev_token_3_groups:EVToken):
+    return EVShuttle(structs_list=secondary_structures_list_2_item,
                       mfe=secondary_structure_5,
                       group_index=1,
                       token=ev_token_3_groups)
@@ -456,11 +456,11 @@ def empty_comparison_lmv():
 def initiailized_comparison_lmv():
     return ComparisonLMV(lmv_comp=EV(ev_normalized=1,
                                      ev_structure=2,
-                                     ev_ThresholdNorm=3),
+                                     ev_threshold_norm=3),
                         lmv_mfe=EV(ev_normalized=4,
                                    ev_structure=5,
-                                   ev_ThresholdNorm=6),
+                                   ev_threshold_norm=6),
                         lmv_rel=EV(ev_normalized=7,
                                    ev_structure=8,
-                                   ev_ThresholdNorm=9))
+                                   ev_threshold_norm=9))
 

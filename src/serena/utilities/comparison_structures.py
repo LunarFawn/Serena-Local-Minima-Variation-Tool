@@ -6,12 +6,12 @@ from dataclasses import dataclass
 from typing import List
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure
-#from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup
-#from serena.utilities.weighted_structures import WeightedEnsembleResult
-
 
 @dataclass
 class ComparisonNucCounts():
+    """
+    Class for comparison nucs counts for analysis
+    """
     bound_count:float = -1
     unbound_count:float = -1
     both_count:float = -1
@@ -20,23 +20,32 @@ class ComparisonNucCounts():
 
 @dataclass
 class ComparisonNucResults():
+    """
+    Class that holds a list of comparison nucs 
+    for analysis and result returning
+    """
     comparison_nuc_counts: List[ComparisonNucCounts]
 
 @dataclass
 class ComparisonResult():
-    #unbound_struct:Sara2SecondaryStructure 
+    """
+    Class that holds the results from comparying structures
+    """
+    #unbound_struct:Sara2SecondaryStructure
     #bound_struct: Sara2SecondaryStructure
     #reference_struct: Sara2SecondaryStructure
     comp_struct: Sara2SecondaryStructure
     comp_counts: ComparisonNucCounts
 
 
-class ComparisonStructures():
-
+class ComparisonStructures():#pylint: disable=too-few-public-methods
+    """
+    Class for the comparison structure algorithm for switch performance predicitons
+    """
     def __init__(self) -> None:
         pass
 
-    def compair_structures(self, unbound_struct:Sara2SecondaryStructure, bound_struct:Sara2SecondaryStructure, reference_struct:Sara2SecondaryStructure, nuc_count:int):
+    def compair_structures(self, unbound_struct:Sara2SecondaryStructure, bound_struct:Sara2SecondaryStructure, reference_struct:Sara2SecondaryStructure, nuc_count:int):#pylint: disable=line-too-long,too-many-locals
         """
         Compaire the weighted structure against the folded and not-folded mfe's.
         If a element is present in the folded mfe then it gets a '-'
@@ -52,7 +61,7 @@ class ComparisonStructures():
         num_both:int = 0
         dot:str = '.'
         num_dot:int = 0
-        temp_compared_struct:str = ''            
+        temp_comp_struct:str = ''
 
         for nuc_index in range(nuc_count):
             reference_nuc:str = reference_struct.structure[nuc_index]
@@ -73,25 +82,22 @@ class ComparisonStructures():
             else:
                 comp_nuc_symbol = dot
                 num_dot += 1
-            
-            temp_compared_struct = temp_compared_struct + comp_nuc_symbol
-        
-        comp_struct:Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=unbound_struct.sequence,
-                                                                        structure=temp_compared_struct)
-        
-        comp_nuc_counts: ComparisonNucCounts = ComparisonNucCounts(bound_count=num_bound,
+
+            temp_comp_struct = temp_comp_struct + comp_nuc_symbol
+
+        sequence: str = unbound_struct.sequence
+        comp_struct:Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence,
+                                                                    structure=temp_comp_struct)
+
+        comp_nuc_num:ComparisonNucCounts = ComparisonNucCounts(bound_count=num_bound,
                                                                     unbound_count=num_unbound,
                                                                     both_count=num_both,
                                                                     dot_count=num_dot,
                                                                     num_nucs=nuc_count)
-                
+
         compared_result: ComparisonResult = ComparisonResult(comp_struct=comp_struct,
                                                                 #unbound_struct=unbound_struct,
                                                                 #bound_struct=bound_struct,
                                                                 #reference_struct=reference_struct,
-                                                                comp_counts=comp_nuc_counts)
-        
+                                                                comp_counts=comp_nuc_num)
         return compared_result
-    
-    
-    

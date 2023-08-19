@@ -3,17 +3,8 @@ Sara2 api for accessing and manipulating secondary structures
 in dot parenthisis form
 copyright 2023 GrizzlyEngineer
 """
-from typing import List, Dict, NamedTuple
-import struct
-import pandas as pd
-import sys
-import openpyxl
-from copy import deepcopy
+from typing import List
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-import threading
-import time
-from collections import namedtuple
 
 @dataclass
 class KcalRanges():
@@ -23,18 +14,17 @@ class KcalRanges():
     start: float = 0
     stop: float = 0
 
-class Sara2SecondaryStructure(object):
+class Sara2SecondaryStructure():
     """
     Sara 2 Secondary Structure that is used to hold all the info for
     each secondary structure in ensemble
     """
 
-    def __init__(self, sequence:str = '', structure: str = '', freeEnergy: float = 0, stackEnergy: float = 0) -> None:
+    def __init__(self, sequence:str = '', structure: str = '', free_energy: float = 0, stack_energy: float = 0) -> None:#pylint: disable=line-too-long
         self._sequence: str = sequence
         self._structure: str = structure
-        self._freeEnergy: float = freeEnergy
-        self._stackEnergy: float = stackEnergy
-        #self._nuc_count: int = len(sequence)
+        self._free_energy: float = free_energy
+        self._stack_energy: float = stack_energy
 
     @property
     def sequence(self):
@@ -65,32 +55,32 @@ class Sara2SecondaryStructure(object):
         self._structure = dot_parens
 
     @property
-    def freeEnergy(self):
+    def free_energy(self):
         """
         Returns the total free energy as float
         """
-        return self._freeEnergy
+        return self._free_energy
 
-    @freeEnergy.setter
-    def freeEnergy(self, energy: float):
+    @free_energy.setter
+    def free_energy(self, energy: float):
         """
         Sets the total free energy with float
         """
-        self._freeEnergy = energy
+        self._free_energy = energy
 
     @property
-    def stackEnergy(self):
+    def stack_energy(self):
         """
         Returns the stack energy as float
         """
-        return self._stackEnergy
+        return self._stack_energy
 
-    @stackEnergy.setter
-    def stackEnergy(self, energy: float):
+    @stack_energy.setter
+    def stack_energy(self, energy: float):
         """
         Sets the stack energy with float
         """
-        self._stackEnergy = energy
+        self._stack_energy = energy
 
     @property
     def nuc_count(self):
@@ -100,7 +90,7 @@ class Sara2SecondaryStructure(object):
         return len(self._sequence)
 
 
-class Sara2StructureList(object):
+class Sara2StructureList():#pylint: disable=too-many-instance-attributes
     """
     Sara2 Structure List that holds all the Sar2SecondaryStructurs
     that represent the ensemble in raw form
@@ -108,19 +98,15 @@ class Sara2StructureList(object):
     def __init__(self) -> None:
         self._sara_structures_list: List[Sara2SecondaryStructure] = []
         self._structures: List[str] = []
-        self._freeEnergy_list: list[float] = []
-        self._stackEnergy_list: list[float] = []
-        self._min_freeEnergy: float = 0
-        self._max_freeEnergy: float = 0
-        self._min_stackEnergy: float = 0
-        self._max_stackEnergy: float = 0
+        self._free_energy_list: list[float] = []
+        self._stack_energy_list: list[float] = []
+        self._min_free_energy: float = 0
+        self._max_free_energy: float = 0
+        self._min_stack_energy: float = 0
+        self._max_stack_energy: float = 0
         self._num_structures: int = 0
-        #self._nuc_count: int = 0
-        #self._mfe_structure: str = ''
-        #self._mfe_freeEnergy: float = 0
-        #self._mfe_stackEnergy: float = 0
-        self._freeEnergy_span:float = 0
-        self._stackEnergy_span:float = 0
+        self._free_energy_span:float = 0
+        self._stack_energy_span:float = 0
         self._weighted_structure:str = ''
 
     def process_energy(self):
@@ -131,23 +117,23 @@ class Sara2StructureList(object):
         """
             #now populate min and max
         #do free energy
-        if len(self._freeEnergy_list) == 0:
-            self._min_freeEnergy = 0
-            self._max_freeEnergy = 0
+        if len(self._free_energy_list) == 0:
+            self._min_free_energy = 0
+            self._max_free_energy = 0
         else:
-            self._min_freeEnergy = min(self._freeEnergy_list)
-            self._max_freeEnergy = max(self._freeEnergy_list)
+            self._min_free_energy = min(self._free_energy_list)
+            self._max_free_energy = max(self._free_energy_list)
 
-        self._freeEnergy_span = self._max_freeEnergy - self._min_freeEnergy
+        self._free_energy_span = self._max_free_energy - self._min_free_energy
         #do stack energy
 
-        if len(self._stackEnergy_list) == 0:
-            self._min_stackEnergy = 0
-            self._max_stackEnergy = 0
+        if len(self._stack_energy_list) == 0:
+            self._min_stack_energy = 0
+            self._max_stack_energy = 0
         else:
-            self._min_stackEnergy = min(self._stackEnergy_list)
-            self._max_stackEnergy = max(self._stackEnergy_list)
-        self._stackEnergy_span = self._max_stackEnergy - self._min_stackEnergy
+            self._min_stack_energy = min(self._stack_energy_list)
+            self._max_stack_energy = max(self._stack_energy_list)
+        self._stack_energy_span = self._max_stack_energy - self._min_stack_energy
 
         #now count
         self._num_structures = len(self._sara_structures_list)
@@ -158,8 +144,8 @@ class Sara2StructureList(object):
         """
         self._sara_structures_list.append(structure)
         #self._structures.append(structure.structure)
-        self._freeEnergy_list.append(structure.freeEnergy)
-        self._stackEnergy_list.append(structure.stackEnergy)
+        self._free_energy_list.append(structure.free_energy)
+        self._stack_energy_list.append(structure.stack_energy)
         self.process_energy()
 
     def remove_structure(self, index:int):
@@ -167,9 +153,9 @@ class Sara2StructureList(object):
         remove a structure from memory
         """
         del self._structures[index]
-        del self._freeEnergy_list[index]
-        del self._stackEnergy_list[index]
-        self.process_energy()            
+        del self._free_energy_list[index]
+        del self._stack_energy_list[index]
+        self.process_energy()
 
     @property
     def mfe_structure(self):
@@ -178,27 +164,27 @@ class Sara2StructureList(object):
         """
         structure:str = ''
         if len(self.sara_stuctures) > 0:
-           structure = self.sara_stuctures[0].structure
-        return structure 
+            structure = self.sara_stuctures[0].structure
+        return structure
 
     @property
-    def mfe_freeEnergy(self):
+    def mfe_free_energy(self):
         """
         Returns the mfe total free energy as float
         """
         energy: float = 0
         if len(self.sara_stuctures) > 0:
-            energy = self.sara_stuctures[0].freeEnergy
+            energy = self.sara_stuctures[0].free_energy
         return energy
 
     @property
-    def mfe_stackEnergy(self):
+    def mfe_stack_energy(self):
         """
         Returns the mfe stack energy as float
         """
         energy: float = 0
         if len(self.sara_stuctures) > 0:
-            energy = self.sara_stuctures[0].stackEnergy
+            energy = self.sara_stuctures[0].stack_energy
         return energy
 
     @property
@@ -208,7 +194,7 @@ class Sara2StructureList(object):
         """
         count: int = 0
         if len(self.sara_stuctures) > 0:
-            count = self.sara_stuctures[0].nuc_count  
+            count = self.sara_stuctures[0].nuc_count
         return count
 
     @property
@@ -220,6 +206,9 @@ class Sara2StructureList(object):
 
     @sara_stuctures.setter
     def sara_stuctures(self, structs_list: List[Sara2SecondaryStructure]):
+        """
+        Sets the sara structures list using a List of Sara2Structures
+        """
         #reset list
         self._sara_structures_list=[]
         #fill it in now
@@ -228,38 +217,65 @@ class Sara2StructureList(object):
 
     @property
     def max_free_energy(self):
-        return self._max_freeEnergy
+        """
+        Returns the maximum free energy of the structures in the list
+        """
+        return self._max_free_energy
 
     @property
     def min_free_energy(self):
-        return self._min_freeEnergy
+        """
+        Returns the minimum free energy of the structures in the list
+        """
+        return self._min_free_energy
 
     @property
     def max_stack_energy(self):
-        return self._max_stackEnergy
+        """
+        Returns the maximum stack energy of the structures in the list
+        """
+        return self._max_stack_energy
 
     @property
     def min_stack_energy(self):
-        return self._min_stackEnergy
+        """
+        Returns the minimum stack energy of the structures in the list
+        """
+        return self._min_stack_energy
 
     @property
     def num_structures(self):
+        """
+        Returns the number of structures in the list
+        """
         return self._num_structures
 
     @property
-    def freeEnergy_span(self):
-        return self._freeEnergy_span
+    def free_energy_span(self):
+        """
+        Returns the span of the free energy of the structures in the list
+        """
+        return self._free_energy_span
 
     @property
-    def stackEnergy_span(self):
-        return self._stackEnergy_span 
-    
+    def stack_energy_span(self):
+        """
+        Returns the span of the stack energy of the structures in the list
+        """
+        return self._stack_energy_span
+
     @property
     def weighted_structure(self):
+        """
+        Returns the weighted structure as a string
+        """
         return self._weighted_structure
 
     @weighted_structure.setter
     def weighted_structure(self, structure: str):
+        """
+        sets the weigthed structure
+        """
         self._weighted_structure = structure
 
 class MakeSecondaryStructures():
@@ -267,15 +283,20 @@ class MakeSecondaryStructures():
     Class to genereate the secondary structure
     framework used by serena and sara
     """
-
-    def make_secondary_structure(self, primary_structure:str, secondary_structure:str, free_energy:float, stack_free_energy:float)->Sara2SecondaryStructure:
+    def make_secondary_structure(self, primary_structure:str, secondary_structure:str, free_energy:float, stack_free_energy:float)->Sara2SecondaryStructure:#pylint: disable=line-too-long
+        """
+        Function to make a secondary structue
+        """
         return Sara2SecondaryStructure(sequence=primary_structure,
                                        structure=secondary_structure,
-                                       freeEnergy=free_energy,
-                                       stackEnergy=stack_free_energy
+                                       free_energy=free_energy,
+                                       stack_energy=stack_free_energy
                                        )
-    
-    def make_secondary_strucuture_list(self, secondary_structures_list: List[Sara2SecondaryStructure])->Sara2StructureList:
+
+    def make_secondary_strucuture_list(self, secondary_structures_list: List[Sara2SecondaryStructure])->Sara2StructureList:#pylint: disable=line-too-long
+        """
+        Function to make a secondary structure list
+        """
         structure_list:Sara2StructureList = Sara2StructureList()
         for structure in secondary_structures_list:
             structure_list.add_structure(structure)

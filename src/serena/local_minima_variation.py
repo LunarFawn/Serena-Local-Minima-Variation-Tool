@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import List
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
-from serena.utilities.ensemble_variation import EV, EnsembleVariation, EVResult, EV_Shuttle, EV_Token
+from serena.utilities.ensemble_variation import EV, EnsembleVariation, EVResult, EVShuttle, EVToken
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, SingleEnsembleGroup, EnsembleSwitchStateMFEStructs
 from serena.utilities.thread_manager import EV_ThreadProcessor
 from serena.utilities.weighted_structures import WeightedEnsembleResult, WeightedStructure
@@ -74,13 +74,13 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
         Function for getting the lmv_c for a RNA sequence folded in silico by NUPACK4
         """
         nupack4:NUPACK4Interface = NUPACK4Interface()
-        structs:Sara2StructureList = nupack4.get_subopt_energy_gap(material_param=material_param,
+        nupack_structs:Sara2StructureList = nupack4.get_subopt_energy_gap(material_param=material_param,
                                                                     temp_C=temp_C,
                                                                     sequence_string=sequence,
                                                                     energy_delta_from_MFE=kcal_span_from_mfe,
                                                                     )
-        switch_states:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(non_switch_mfe_struct=structs.sara_stuctures[0])
-        ensemble:MultipleEnsembleGroups = nupack4.load_nupack_subopt_as_ensemble(span_structures=structs,
+        switch_states:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(non_switch_mfe_struct=nupack_structs.sara_stuctures[0])
+        ensemble:MultipleEnsembleGroups = nupack4.load_nupack_subopt_as_ensemble(span_structures=nupack_structs,
                                                                                     kcal_span_from_mfe=kcal_span_from_mfe,
                                                                                     Kcal_unit_increments=Kcal_unit_increments,
                                                                                     switch_state=switch_states
@@ -103,7 +103,7 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
         """
         LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,
                                                             comp_structure=ensemble.non_switch_state_structure)
-        result_thread_LMV:EV_Token = LMV_Thread.run_EV()
+        result_thread_LMV:EVToken = LMV_Thread.run_EV()
         lmv_results: EVResult = result_thread_LMV.ev_results
         return lmv_results
 
@@ -133,7 +133,7 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
         """
         LMV_Thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,
                                                             comp_structure=folded_structure)
-        result_thread_LMV:EV_Token = LMV_Thread.run_EV()
+        result_thread_LMV:EVToken = LMV_Thread.run_EV()
         lmv_results: EVResult = result_thread_LMV.ev_results
         return lmv_results
 

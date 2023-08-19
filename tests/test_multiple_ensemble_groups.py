@@ -28,7 +28,7 @@ def test_set_non_switch_mfe_ensemble_switch_state_mfe_strucs(empty_ensemble_stat
     empty_ensemble_state_mfe_strucs.set_non_switch_mfe(kcal=-30,
                                                        struct="(((())))")
     assert empty_ensemble_state_mfe_strucs.non_switch_mfe_struct.structure == "(((())))"
-    assert empty_ensemble_state_mfe_strucs.non_switch_mfe_struct.freeEnergy == -30
+    assert empty_ensemble_state_mfe_strucs.non_switch_mfe_struct.free_energy == -30
 
 def test_set_switch_mfe_ensemble_switch_state_mfe_strucs(empty_ensemble_state_mfe_strucs:EnsembleSwitchStateMFEStructs, secondary_structure_3: Sara2SecondaryStructure):
     empty_ensemble_state_mfe_strucs.switched_mfe_struct = secondary_structure_3
@@ -36,7 +36,7 @@ def test_set_switch_mfe_ensemble_switch_state_mfe_strucs(empty_ensemble_state_mf
     empty_ensemble_state_mfe_strucs.set_switch_mfe(kcal=-30,
                                                        struct="(((())))")
     assert empty_ensemble_state_mfe_strucs.switched_mfe_struct.structure == "(((())))"
-    assert empty_ensemble_state_mfe_strucs.switched_mfe_struct.freeEnergy == -30    
+    assert empty_ensemble_state_mfe_strucs.switched_mfe_struct.free_energy == -30    
 
 """
 Now multiple ensemble groups
@@ -53,8 +53,8 @@ def test_empty_multiple_ensemble_groups(empty_multiple_ensemble_groups:MultipleE
     assert empty_multiple_ensemble_groups.group_kcal_ranges == []
 
 def test_initialized_multiple_ensemble_groups(multiple_ensemble_groups:MultipleEnsembleGroups):
-    assert multiple_ensemble_groups.non_switch_state_structure.freeEnergy == -50
-    assert multiple_ensemble_groups.switched_state_structure.freeEnergy == -40
+    assert multiple_ensemble_groups.non_switch_state_structure.free_energy == -50
+    assert multiple_ensemble_groups.switched_state_structure.free_energy == -40
     assert multiple_ensemble_groups.non_switch_state_structure.structure == '..().)'
     assert multiple_ensemble_groups.switched_state_structure.structure == '(...))'
 

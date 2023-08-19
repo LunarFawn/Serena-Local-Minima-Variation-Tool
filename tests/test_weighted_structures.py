@@ -45,15 +45,15 @@ def test_empty_weighted_result(empty_weighted_comparison_result:WeightedComparis
     #do unbound struct first
     assert empty_weighted_comparison_result.unbound_mfe_struct.sequence == ''
     assert empty_weighted_comparison_result.unbound_mfe_struct.structure == ''
-    assert empty_weighted_comparison_result.unbound_mfe_struct.freeEnergy == 0
-    assert empty_weighted_comparison_result.unbound_mfe_struct.stackEnergy == 0
+    assert empty_weighted_comparison_result.unbound_mfe_struct.free_energy == 0
+    assert empty_weighted_comparison_result.unbound_mfe_struct.stack_energy == 0
     assert empty_weighted_comparison_result.unbound_mfe_struct.nuc_count == 0
 
     #now do bound struct
     assert empty_weighted_comparison_result.bound_mfe_struct.sequence == ''
     assert empty_weighted_comparison_result.bound_mfe_struct.structure == ''
-    assert empty_weighted_comparison_result.bound_mfe_struct.freeEnergy == 0
-    assert empty_weighted_comparison_result.bound_mfe_struct.stackEnergy == 0
+    assert empty_weighted_comparison_result.bound_mfe_struct.free_energy == 0
+    assert empty_weighted_comparison_result.bound_mfe_struct.stack_energy == 0
     assert empty_weighted_comparison_result.bound_mfe_struct.nuc_count == 0
 
     #now weighted nuc counts

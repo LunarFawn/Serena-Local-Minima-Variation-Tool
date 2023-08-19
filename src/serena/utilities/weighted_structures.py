@@ -15,6 +15,9 @@ class WeightedEnsembleResult():
 
 @dataclass
 class WeightedNucCounts():
+    """
+    Class for the weighted structure counts
+    """
     num_bound:float = -1
     num_unbound:float = -1
     num_both:float = -1
@@ -23,6 +26,9 @@ class WeightedNucCounts():
 
 @dataclass
 class WeightedComparisonResult():
+    """
+    Holds the results from weighting the structures
+    """
     comp_struct: str = ''
     unbound_mfe_struct:Sara2SecondaryStructure = Sara2SecondaryStructure()
     bound_mfe_struct: Sara2SecondaryStructure = Sara2SecondaryStructure()
