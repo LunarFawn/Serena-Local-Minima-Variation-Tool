@@ -369,7 +369,7 @@ def initialized_ev():
     """
     return EV(ev_normalized=1.1,
               ev_structure=2.2,
-              ev_ThresholdNorm=3.3)
+              ev_threshold_norm=3.3)
 
 @pytest.fixture
 def initialzed_ev_2():
@@ -378,7 +378,7 @@ def initialzed_ev_2():
     """
     return EV(ev_normalized=4.4,
               ev_structure=5.5,
-              ev_ThresholdNorm=6.6)
+              ev_threshold_norm=6.6)
 
 @pytest.fixture
 def ev_result(initialized_ev:EV, initialzed_ev_2:EV):
@@ -456,11 +456,11 @@ def empty_comparison_lmv():
 def initiailized_comparison_lmv():
     return ComparisonLMV(lmv_comp=EV(ev_normalized=1,
                                      ev_structure=2,
-                                     ev_ThresholdNorm=3),
+                                     ev_threshold_norm=3),
                         lmv_mfe=EV(ev_normalized=4,
                                    ev_structure=5,
-                                   ev_ThresholdNorm=6),
+                                   ev_threshold_norm=6),
                         lmv_rel=EV(ev_normalized=7,
                                    ev_structure=8,
-                                   ev_ThresholdNorm=9))
+                                   ev_threshold_norm=9))
 

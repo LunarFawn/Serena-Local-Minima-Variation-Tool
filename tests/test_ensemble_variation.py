@@ -11,27 +11,27 @@ from test_sara_secondary_structure import test_secondary_structure_5, test_empty
 def test_empty_ev(empty_ev:EV):
     assert empty_ev.ev_normalized == -1
     assert empty_ev.ev_structure == -1
-    assert empty_ev.ev_ThresholdNorm == -1
+    assert empty_ev.ev_threshold_norm == -1
 
 def test_initialized_ev(initialized_ev:EV):
     assert initialized_ev.ev_normalized == 1.1
     assert initialized_ev.ev_structure == 2.2
-    assert initialized_ev.ev_ThresholdNorm == 3.3
+    assert initialized_ev.ev_threshold_norm == 3.3
 
 def test_set_ev_values(empty_ev:EV):
     empty_ev.ev_normalized = 2
     empty_ev.ev_structure = 4
-    empty_ev.ev_ThresholdNorm = 6
+    empty_ev.ev_threshold_norm = 6
     assert empty_ev.ev_normalized == 2
     assert empty_ev.ev_structure == 4
-    assert empty_ev.ev_ThresholdNorm == 6   
+    assert empty_ev.ev_threshold_norm == 6   
 
 def test_ensemble_variation_algorithm(empty_ensemble_variation:EnsembleVariation, secondary_structures_list_2_item: Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure):
     result:EV = empty_ensemble_variation.ensemble_variation_algorithm(kcal_group_structures_list=secondary_structures_list_2_item,
                                                     ref_structure=secondary_structure_5)
     assert result.ev_normalized == 3.0
     assert result.ev_structure == 0
-    assert result.ev_ThresholdNorm == 0
+    assert result.ev_threshold_norm == 0
 
 #def test_ensemble_variation_algorithm(secondary_structures_list_2_item: Sara2StructureList, secondary_structure_5:Sara2SecondaryStructure):
 #    ensemble_variation:EnsembleVariation = EnsembleVariation()
@@ -39,15 +39,15 @@ def test_ensemble_variation_algorithm(empty_ensemble_variation:EnsembleVariation
 #                                                    ref_structure=secondary_structure_5)
 #    assert result.ev_normalized == 3.0
 #    assert result.ev_structure == 0
-#    assert result.ev_ThresholdNorm == 0
+#    assert result.ev_threshold_norm == 0
 
 def test_ev_result(ev_result:EVResult):
     assert ev_result.ev_values[0].ev_normalized == 1.1
     assert ev_result.ev_values[0].ev_structure == 2.2
-    assert ev_result.ev_values[0].ev_ThresholdNorm == 3.3
+    assert ev_result.ev_values[0].ev_threshold_norm == 3.3
     assert ev_result.ev_values[1].ev_normalized == 4.4
     assert ev_result.ev_values[1].ev_structure == 5.5
-    assert ev_result.ev_values[1].ev_ThresholdNorm == 6.6
+    assert ev_result.ev_values[1].ev_threshold_norm == 6.6
 
 
 def test_empty_3_group_ev_token_group_results(empty_ev_token_3_groups:EV_Token):
@@ -55,13 +55,13 @@ def test_empty_3_group_ev_token_group_results(empty_ev_token_3_groups:EV_Token):
     assert len(empty_ev_token_3_groups.group_results) == 3
     assert empty_ev_token_3_groups.group_results[0].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[0].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[0].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[0].ev_threshold_norm == -1
     assert empty_ev_token_3_groups.group_results[1].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[1].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_threshold_norm == -1
     assert empty_ev_token_3_groups.group_results[2].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[2].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[2].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_threshold_norm == -1
 
 def test_empty_3_group_ev_token_group_dict(empty_ev_token_3_groups:EV_Token):
     #first test group results initialization
@@ -69,13 +69,13 @@ def test_empty_3_group_ev_token_group_dict(empty_ev_token_3_groups:EV_Token):
     #assert len(empty_ev_token_3_groups.group_dict) == 3
     #assert empty_ev_token_3_groups.group_dict[0].ev_normalized == -1
     #assert empty_ev_token_3_groups.group_dict[0].ev_structure == -1
-    #assert empty_ev_token_3_groups.group_dict[0].ev_ThresholdNorm == -1
+    #assert empty_ev_token_3_groups.group_dict[0].ev_threshold_norm == -1
     #assert empty_ev_token_3_groups.group_dict[1].ev_normalized == -1
     #assert empty_ev_token_3_groups.group_dict[1].ev_structure == -1
-    #assert empty_ev_token_3_groups.group_dict[1].ev_ThresholdNorm == -1
+    #assert empty_ev_token_3_groups.group_dict[1].ev_threshold_norm == -1
     #assert empty_ev_token_3_groups.group_dict[2].ev_normalized == -1
     #assert empty_ev_token_3_groups.group_dict[2].ev_structure == -1
-    #assert empty_ev_token_3_groups.group_dict[2].ev_ThresholdNorm == -1
+    #assert empty_ev_token_3_groups.group_dict[2].ev_threshold_norm == -1
 
 def test_empty_3_group_ev_token_group_values(empty_ev_token_3_groups:EV_Token):
     #first test group results initialization
@@ -97,13 +97,13 @@ def test_empty_3_group_ev_token(empty_ev_token_3_groups:EV_Token):
     assert len(empty_ev_token_3_groups.group_results) == 3
     assert empty_ev_token_3_groups.group_results[0].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[0].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[0].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[0].ev_threshold_norm == -1
     assert empty_ev_token_3_groups.group_results[1].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[1].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_threshold_norm == -1
     assert empty_ev_token_3_groups.group_results[2].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[2].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[2].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[2].ev_threshold_norm == -1
     assert empty_ev_token_3_groups.group_dict == {}
     assert len(empty_ev_token_3_groups.group_values) == 3
     assert empty_ev_token_3_groups.group_values[0] == ''   
@@ -129,14 +129,14 @@ def test_set_ev_token_group_results(empty_ev_token_3_groups:EV_Token, initialize
     assert empty_ev_token_3_groups.group_results[0] == initialzed_ev_2
     assert empty_ev_token_3_groups.group_results[1].ev_normalized == -1
     assert empty_ev_token_3_groups.group_results[1].ev_structure == -1
-    assert empty_ev_token_3_groups.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_token_3_groups.group_results[1].ev_threshold_norm == -1
     assert empty_ev_token_3_groups.group_results[2] == initialized_ev
     #now test the EVREsult part
     ev_results:EVResult = empty_ev_token_3_groups.ev_results
     assert ev_results.ev_values[0] == initialzed_ev_2
     assert ev_results.ev_values[1].ev_normalized == -1
     assert ev_results.ev_values[1].ev_structure == -1
-    assert ev_results.ev_values[1].ev_ThresholdNorm == -1
+    assert ev_results.ev_values[1].ev_threshold_norm == -1
     assert ev_results.ev_values[2] == initialized_ev
 
 def test_set_ev_token_group_done_status(empty_ev_token_3_groups:EV_Token):
@@ -157,18 +157,18 @@ def test_ev_token_3_groups(ev_token_3_groups:EV_Token):
     #first test the groups dict
     assert ev_token_3_groups.group_dict[2].ev_normalized == 1.1
     assert ev_token_3_groups.group_dict[2].ev_structure == 2.2
-    assert ev_token_3_groups.group_dict[2].ev_ThresholdNorm == 3.3
+    assert ev_token_3_groups.group_dict[2].ev_threshold_norm == 3.3
     #then test the group results
     assert len(ev_token_3_groups.group_results) == 3
     assert ev_token_3_groups.group_results[0].ev_normalized == 4.4
     assert ev_token_3_groups.group_results[0].ev_structure == 5.5
-    assert ev_token_3_groups.group_results[0].ev_ThresholdNorm == 6.6
+    assert ev_token_3_groups.group_results[0].ev_threshold_norm == 6.6
     assert ev_token_3_groups.group_results[1].ev_normalized == -1
     assert ev_token_3_groups.group_results[1].ev_structure == -1
-    assert ev_token_3_groups.group_results[1].ev_ThresholdNorm == -1
+    assert ev_token_3_groups.group_results[1].ev_threshold_norm == -1
     assert ev_token_3_groups.group_results[2].ev_normalized == 1.1
     assert ev_token_3_groups.group_results[2].ev_structure == 2.2
-    assert ev_token_3_groups.group_results[2].ev_ThresholdNorm == 3.3
+    assert ev_token_3_groups.group_results[2].ev_threshold_norm == 3.3
     #then test group done status
     assert len(ev_token_3_groups.group_done_status) == 3
     assert ev_token_3_groups.group_done_status[0] == False  
@@ -211,13 +211,13 @@ def test_empty_ev_shuttle_group_num_3(empty_ev_shuttle_num_3:EV_Shuttle):
     assert len(empty_ev_shuttle_num_3.token.group_results) == 3
     assert empty_ev_shuttle_num_3.token.group_results[0].ev_normalized == -1
     assert empty_ev_shuttle_num_3.token.group_results[0].ev_structure == -1
-    assert empty_ev_shuttle_num_3.token.group_results[0].ev_ThresholdNorm == -1
+    assert empty_ev_shuttle_num_3.token.group_results[0].ev_threshold_norm == -1
     assert empty_ev_shuttle_num_3.token.group_results[1].ev_normalized == -1
     assert empty_ev_shuttle_num_3.token.group_results[1].ev_structure == -1
-    assert empty_ev_shuttle_num_3.token.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_shuttle_num_3.token.group_results[1].ev_threshold_norm == -1
     assert empty_ev_shuttle_num_3.token.group_results[2].ev_normalized == -1
     assert empty_ev_shuttle_num_3.token.group_results[2].ev_structure == -1
-    assert empty_ev_shuttle_num_3.token.group_results[2].ev_ThresholdNorm == -1
+    assert empty_ev_shuttle_num_3.token.group_results[2].ev_threshold_norm == -1
     assert empty_ev_shuttle_num_3.token.group_dict == {}
     assert len(empty_ev_shuttle_num_3.token.group_values) == 3
     assert empty_ev_shuttle_num_3.token.group_values[0] == ''   
@@ -277,18 +277,18 @@ def test_set_ev_shuttle_ev_token(empty_ev_shuttle_num_3:EV_Shuttle, ev_token_3_g
     #first test the groups dict
     assert empty_ev_shuttle_num_3.token.group_dict[2].ev_normalized == 1.1
     assert empty_ev_shuttle_num_3.token.group_dict[2].ev_structure == 2.2
-    assert empty_ev_shuttle_num_3.token.group_dict[2].ev_ThresholdNorm == 3.3
+    assert empty_ev_shuttle_num_3.token.group_dict[2].ev_threshold_norm == 3.3
     #then test the group results
     assert len(empty_ev_shuttle_num_3.token.group_results) == 3
     assert empty_ev_shuttle_num_3.token.group_results[0].ev_normalized == 4.4
     assert empty_ev_shuttle_num_3.token.group_results[0].ev_structure == 5.5
-    assert empty_ev_shuttle_num_3.token.group_results[0].ev_ThresholdNorm == 6.6
+    assert empty_ev_shuttle_num_3.token.group_results[0].ev_threshold_norm == 6.6
     assert empty_ev_shuttle_num_3.token.group_results[1].ev_normalized == -1
     assert empty_ev_shuttle_num_3.token.group_results[1].ev_structure == -1
-    assert empty_ev_shuttle_num_3.token.group_results[1].ev_ThresholdNorm == -1
+    assert empty_ev_shuttle_num_3.token.group_results[1].ev_threshold_norm == -1
     assert empty_ev_shuttle_num_3.token.group_results[2].ev_normalized == 1.1
     assert empty_ev_shuttle_num_3.token.group_results[2].ev_structure == 2.2
-    assert empty_ev_shuttle_num_3.token.group_results[2].ev_ThresholdNorm == 3.3
+    assert empty_ev_shuttle_num_3.token.group_results[2].ev_threshold_norm == 3.3
     #then test group done status
     assert len(empty_ev_shuttle_num_3.token.group_done_status) == 3
     assert empty_ev_shuttle_num_3.token.group_done_status[0] == False  
@@ -301,23 +301,23 @@ def test_thread_ev(ev_shuttle_group_num_3:EV_Shuttle):
     ensemble_variation.thread_EV(ev_shuttle_group_num_3)
     assert ev_shuttle_group_num_3.token.group_results[2].ev_normalized == 1.1
     assert ev_shuttle_group_num_3.token.group_results[2].ev_structure == 2.2
-    assert ev_shuttle_group_num_3.token.group_results[2].ev_ThresholdNorm == 3.3
+    assert ev_shuttle_group_num_3.token.group_results[2].ev_threshold_norm == 3.3
     assert ev_shuttle_group_num_3.token.group_results[1].ev_normalized == 3.0
     assert ev_shuttle_group_num_3.token.group_results[1].ev_structure == 0
-    assert ev_shuttle_group_num_3.token.group_results[1].ev_ThresholdNorm == 0
+    assert ev_shuttle_group_num_3.token.group_results[1].ev_threshold_norm == 0
     assert ev_shuttle_group_num_3.token.group_results[0].ev_normalized == 4.4
     assert ev_shuttle_group_num_3.token.group_results[0].ev_structure == 5.5
-    assert ev_shuttle_group_num_3.token.group_results[0].ev_ThresholdNorm == 6.6
+    assert ev_shuttle_group_num_3.token.group_results[0].ev_threshold_norm == 6.6
 
     assert ev_shuttle_group_num_3.token.group_dict[0].ev_normalized == 4.4
     assert ev_shuttle_group_num_3.token.group_dict[0].ev_structure == 5.5
-    assert ev_shuttle_group_num_3.token.group_dict[0].ev_ThresholdNorm == 6.6
+    assert ev_shuttle_group_num_3.token.group_dict[0].ev_threshold_norm == 6.6
     assert ev_shuttle_group_num_3.token.group_dict[1].ev_normalized == 3.0
     assert ev_shuttle_group_num_3.token.group_dict[1].ev_structure == 0
-    assert ev_shuttle_group_num_3.token.group_dict[1].ev_ThresholdNorm == 0 
+    assert ev_shuttle_group_num_3.token.group_dict[1].ev_threshold_norm == 0 
     assert ev_shuttle_group_num_3.token.group_dict[2].ev_normalized == 1.1
     assert ev_shuttle_group_num_3.token.group_dict[2].ev_structure == 2.2
-    assert ev_shuttle_group_num_3.token.group_dict[2].ev_ThresholdNorm == 3.3 
+    assert ev_shuttle_group_num_3.token.group_dict[2].ev_threshold_norm == 3.3 
     
     assert ev_shuttle_group_num_3.token.group_done_status == [False,True, False] 
 
@@ -375,10 +375,10 @@ def test_ev_thread_processor_comp_struct(secondary_structures_list_2_item:Sara2S
     result_token.ev_results.ev_values[0]
     assert result_token.ev_results.ev_values[0].ev_normalized == 3.0
     assert result_token.ev_results.ev_values[0].ev_structure == 0
-    assert result_token.ev_results.ev_values[0].ev_ThresholdNorm == 0
+    assert result_token.ev_results.ev_values[0].ev_threshold_norm == 0
     assert result_token.ev_results.ev_values[1].ev_normalized == 0.5
     assert result_token.ev_results.ev_values[1].ev_structure == 0
-    assert result_token.ev_results.ev_values[1].ev_ThresholdNorm == 0
+    assert result_token.ev_results.ev_values[1].ev_threshold_norm == 0
 
 
 

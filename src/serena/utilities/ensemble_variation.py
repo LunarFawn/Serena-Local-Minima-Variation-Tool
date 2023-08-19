@@ -13,7 +13,7 @@ class EV:
     Returns the different version of enemble variation
     """
     ev_normalized: float = -1
-    ev_ThresholdNorm: float = -1
+    ev_threshold_norm: float = -1
     ev_structure: float = -1
 
 @dataclass
@@ -220,6 +220,6 @@ class EnsembleVariation():
         else:
             total_EV_subscore1 = -1
 
-        result: EV =  EV(ev_normalized=total_EV_subscore1, ev_ThresholdNorm=0, ev_structure=0)
+        result: EV =  EV(ev_normalized=total_EV_subscore1, ev_threshold_norm=0, ev_structure=0)
         return result
     
