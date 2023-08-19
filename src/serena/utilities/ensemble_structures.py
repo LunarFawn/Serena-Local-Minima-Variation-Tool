@@ -218,8 +218,11 @@ class Sara2StructureList(object):
         """
         return self._sara_structures_list
 
-    @sara_stuctures.setter
+    @sara_stuctures.setter   
     def sara_stuctures(self, structs_list: List[Sara2SecondaryStructure]):
+        """
+        Sets the sara structures list using a List of Sara2Structures
+        """
         #reset list
         self._sara_structures_list=[]
         #fill it in now
@@ -228,38 +231,65 @@ class Sara2StructureList(object):
 
     @property
     def max_free_energy(self):
+        """
+        Returns the maximum free energy of the structures in the list
+        """
         return self._max_freeEnergy
 
     @property
     def min_free_energy(self):
+        """
+        Returns the minimum free energy of the structures in the list
+        """
         return self._min_freeEnergy
 
     @property
     def max_stack_energy(self):
+        """
+        Returns the maximum stack energy of the structures in the list
+        """
         return self._max_stackEnergy
 
     @property
     def min_stack_energy(self):
+        """
+        Returns the minimum stack energy of the structures in the list
+        """
         return self._min_stackEnergy
 
     @property
     def num_structures(self):
+        """
+        Returns the number of structures in the list
+        """
         return self._num_structures
 
     @property
     def freeEnergy_span(self):
+        """
+        Returns the span of the free energy of the structures in the list
+        """
         return self._freeEnergy_span
 
     @property
     def stackEnergy_span(self):
+        """
+        Returns the span of the stack energy of the structures in the list
+        """
         return self._stackEnergy_span 
-    
+
     @property
     def weighted_structure(self):
+        """
+        Returns the weighted structure as a string
+        """
         return self._weighted_structure
 
-    @weighted_structure.setter
+    @weighted_structure.setter        
     def weighted_structure(self, structure: str):
+        """
+        sets the weigthed structure
+        """
         self._weighted_structure = structure
 
 class MakeSecondaryStructures():
@@ -267,15 +297,20 @@ class MakeSecondaryStructures():
     Class to genereate the secondary structure
     framework used by serena and sara
     """
-
     def make_secondary_structure(self, primary_structure:str, secondary_structure:str, free_energy:float, stack_free_energy:float)->Sara2SecondaryStructure:
+        """
+        Function to make a secondary structue
+        """
         return Sara2SecondaryStructure(sequence=primary_structure,
                                        structure=secondary_structure,
                                        freeEnergy=free_energy,
                                        stackEnergy=stack_free_energy
                                        )
-    
+
     def make_secondary_strucuture_list(self, secondary_structures_list: List[Sara2SecondaryStructure])->Sara2StructureList:
+        """
+        Function to make a secondary structure list
+        """
         structure_list:Sara2StructureList = Sara2StructureList()
         for structure in secondary_structures_list:
             structure_list.add_structure(structure)
