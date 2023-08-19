@@ -184,8 +184,8 @@ EV shuttle
 def test_empty_ev_shuttle_group_num_3(empty_ev_shuttle_num_3:EV_Shuttle):
     #test structs list first
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_structure == ''
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_freeEnergy == 0
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_stackEnergy == 0
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_free_energy == 0
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_stack_energy == 0
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.nuc_count == 0
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures == []
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.max_free_energy == 0
@@ -193,15 +193,15 @@ def test_empty_ev_shuttle_group_num_3(empty_ev_shuttle_num_3:EV_Shuttle):
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.max_stack_energy == 0
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.min_stack_energy == 0
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.num_structures == 0 
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.freeEnergy_span == 0
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.stackEnergy_span == 0
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.free_energy_span == 0
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.stack_energy_span == 0
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.weighted_structure == ''
     
     #now test mfe structure
     assert empty_ev_shuttle_num_3.sara_mfestructure.sequence == ''
     assert empty_ev_shuttle_num_3.sara_mfestructure.structure == ''
-    assert empty_ev_shuttle_num_3.sara_mfestructure.freeEnergy == 0
-    assert empty_ev_shuttle_num_3.sara_mfestructure.stackEnergy == 0
+    assert empty_ev_shuttle_num_3.sara_mfestructure.free_energy == 0
+    assert empty_ev_shuttle_num_3.sara_mfestructure.stack_energy == 0
     assert empty_ev_shuttle_num_3.sara_mfestructure.nuc_count == 0  
 
     #now group index
@@ -242,30 +242,30 @@ def test_set_ev_shuttle_kcal_group_structures(empty_ev_shuttle_num_3:EV_Shuttle,
     #test structures
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[0].sequence == 'GCCAUA'
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[0].structure == '((.)))'
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[0].freeEnergy == -30
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[0].stackEnergy == -10
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[0].free_energy == -30
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[0].stack_energy == -10
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[1].sequence == 'GCCAUA'
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[1].structure == '..().)'
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[1].freeEnergy == -50
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[1].stackEnergy == -20
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[1].free_energy == -50
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.sara_stuctures[1].stack_energy == -20
     #now test the meta data stuff
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_freeEnergy == -30
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_stackEnergy == -10
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_free_energy == -30
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.mfe_stack_energy == -10
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.nuc_count == 6
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.max_free_energy == -30
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.min_free_energy == -50
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.max_stack_energy == -10
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.min_stack_energy == -20
     assert empty_ev_shuttle_num_3.kcal_group_structures_list.num_structures == 2 
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.freeEnergy_span == 20
-    assert empty_ev_shuttle_num_3.kcal_group_structures_list.stackEnergy_span == 10
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.free_energy_span == 20
+    assert empty_ev_shuttle_num_3.kcal_group_structures_list.stack_energy_span == 10
 
 def test_set_ev_shuttle_mfe_structure(empty_ev_shuttle_num_3:EV_Shuttle, secondary_structure_5:Sara2SecondaryStructure):
     empty_ev_shuttle_num_3.sara_mfestructure = secondary_structure_5
     assert empty_ev_shuttle_num_3.sara_mfestructure.sequence == 'GCCAUA'
     assert empty_ev_shuttle_num_3.sara_mfestructure.structure == '(...))'
-    assert empty_ev_shuttle_num_3.sara_mfestructure.freeEnergy == -40
-    assert empty_ev_shuttle_num_3.sara_mfestructure.stackEnergy == -30
+    assert empty_ev_shuttle_num_3.sara_mfestructure.free_energy == -40
+    assert empty_ev_shuttle_num_3.sara_mfestructure.stack_energy == -30
     assert empty_ev_shuttle_num_3.sara_mfestructure.nuc_count == 6
 
 def test_set_ev_shuttle_group_index(empty_ev_shuttle_num_3:EV_Shuttle):

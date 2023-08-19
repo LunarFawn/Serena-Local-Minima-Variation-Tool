@@ -11,15 +11,15 @@ Test sara2 secondary structure
 def test_empty_secondary_struct(empty_secondary_structure:Sara2SecondaryStructure):
     assert empty_secondary_structure.sequence == ''
     assert empty_secondary_structure.structure == ''
-    assert empty_secondary_structure.freeEnergy == 0
-    assert empty_secondary_structure.stackEnergy == 0
+    assert empty_secondary_structure.free_energy == 0
+    assert empty_secondary_structure.stack_energy == 0
     assert empty_secondary_structure.nuc_count == 0
 
 def test_set_secondary_struct(secondary_structure_1:Sara2SecondaryStructure):
     assert secondary_structure_1.sequence == 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCACAAGACAUGAGGAUCACCCAUGUAGAUAAGAUGGCA'
     assert secondary_structure_1.structure == '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
-    assert secondary_structure_1.freeEnergy == -30
-    assert secondary_structure_1.stackEnergy == -10
+    assert secondary_structure_1.free_energy == -30
+    assert secondary_structure_1.stack_energy == -10
     assert secondary_structure_1.nuc_count == 84
 
 def test_setting_secondary_stuct_sequence(empty_secondary_structure:Sara2SecondaryStructure):
@@ -31,12 +31,12 @@ def test_setting_secondary_stuct_structure(empty_secondary_structure:Sara2Second
     assert empty_secondary_structure.structure == '((((((.((((......((((((((...)))))))).....))))((.....(((((.((....))))))).))...)))))).'
 
 def test_setting_secondary_stuct_free_energy(empty_secondary_structure:Sara2SecondaryStructure):
-    empty_secondary_structure.freeEnergy = -10
-    assert empty_secondary_structure.freeEnergy == -10
+    empty_secondary_structure.free_energy = -10
+    assert empty_secondary_structure.free_energy == -10
 
 def test_setting_secondary_stuct_stack_energy(empty_secondary_structure:Sara2SecondaryStructure):
-    empty_secondary_structure.stackEnergy = -20
-    assert empty_secondary_structure.stackEnergy == -20
+    empty_secondary_structure.stack_energy = -20
+    assert empty_secondary_structure.stack_energy == -20
 
 def test_setting_secondary_stuct_nuc_count(empty_secondary_structure:Sara2SecondaryStructure):
     empty_secondary_structure.sequence = 'GCC'
@@ -55,6 +55,6 @@ def test_set_kcal_range(empty_kcal_range:KcalRanges):
 def test_secondary_structure_5(secondary_structure_5:Sara2SecondaryStructure):
     assert secondary_structure_5.sequence == 'GCCAUA'
     assert secondary_structure_5.structure == '(...))'
-    assert secondary_structure_5.freeEnergy == -40
-    assert secondary_structure_5.stackEnergy == -30
+    assert secondary_structure_5.free_energy == -40
+    assert secondary_structure_5.stack_energy == -30
     assert secondary_structure_5.nuc_count == 6

@@ -44,8 +44,8 @@ def secondary_structure_1():
     stack_energgy:float = -10
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_2():
@@ -58,8 +58,8 @@ def secondary_structure_2():
     stack_energgy:float = -20
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_3():
@@ -72,8 +72,8 @@ def secondary_structure_3():
     stack_energgy:float = -10
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_3_1():
@@ -86,8 +86,8 @@ def secondary_structure_3_1():
     stack_energgy:float = -10
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_4():
@@ -100,8 +100,8 @@ def secondary_structure_4():
     stack_energgy:float = -20
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture()
 def secondary_structure_5():
@@ -114,8 +114,8 @@ def secondary_structure_5():
     stack_energgy:float = -30
     return Sara2SecondaryStructure(sequence=sequence,
                                    structure=structure,
-                                   freeEnergy=free_energy,
-                                   stackEnergy=stack_energgy)
+                                   free_energy=free_energy,
+                                   stack_energy=stack_energgy)
 
 @pytest.fixture
 def empty_secondary_structure_list():

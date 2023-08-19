@@ -22,14 +22,14 @@ class EnsembleSwitchStateMFEStructs():
         Sets the unbound mfe secondary structure
         """
         self.non_switch_mfe_struct = Sara2SecondaryStructure(structure=struct,
-                                                             freeEnergy=kcal)
+                                                             free_energy=kcal)
 
     def set_switch_mfe(self, kcal:float, struct:str):
         """
         Sets the folded mfe secondary structure.
         """
         self.switched_mfe_struct = Sara2SecondaryStructure(structure=struct,
-                                                             freeEnergy=kcal)
+                                                             free_energy=kcal)
 
 #need to turn into a dataclass or attrs.define
 class SingleEnsembleGroup():#pylint: disable=too-many-instance-attributes
