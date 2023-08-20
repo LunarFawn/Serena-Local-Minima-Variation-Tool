@@ -1,3 +1,19 @@
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "serena_rna_tool"
+version = "1.0.1"
+description = "Serena RNA toolset for ensemble analysis"
+readme = "README.md"
+authors = [{ name = "Jennifer Pearl", email = "jenpearl5@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+requires-python = "<3.10"
+
+[project.urls]
+Homepage = "https://lunarfawn.github.io/serena_documentation/"
