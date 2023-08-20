@@ -263,4 +263,6 @@ def test_get_folded_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     assert result.ev_values[3].ev_normalized == 30.068627450980394
     assert result.ev_values[4].ev_normalized == 28.786666666666676
     
-    
+def test_demo():
+    sequence='ACGUACAUGAC'
+    structure='((.......))'
