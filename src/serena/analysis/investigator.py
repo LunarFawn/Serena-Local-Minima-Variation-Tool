@@ -153,8 +153,6 @@ class ComparisonInvestigator():
             except:
                 pass
 
-
-
             unbound_to_total_ratio = unbound/nuc_count
             bound_to_total_ratio = bound/nuc_count
             both_nuc_total= both_nuc/nuc_count
@@ -199,8 +197,6 @@ class ComparisonInvestigator():
                                                                                first_BUratio=first_BUratio)
         return comparison_eval_results
     
-
-
 class LocalMinimaVariationInvestigator():
 
     def __init__(self) -> None:
@@ -239,7 +235,7 @@ class LocalMinimaVariationInvestigator():
             mfe_pronounced.append(mfe_asserted)
             is_on_off_switch.append(is_on_off_)
         
-        ev_comp_to_mfe_list:List[str] = self.bound_comared_unbound_lmv(lmv_data=lmv_data)
+        ev_comp_to_mfe_list:List[str] = self.bound_compared_unbound_lmv(lmv_data=lmv_data)
 
         lmv_presence_result: LMVAssertionResult = LMVAssertionResult(bound_compare_to_unbound=ev_comp_to_mfe_list,
                                                                         unbouund_pronounced=mfe_pronounced,
@@ -248,7 +244,7 @@ class LocalMinimaVariationInvestigator():
 
         return lmv_presence_result
     
-    def bound_comared_unbound_lmv(self, lmv_data:ComparisonLMVResponse):
+    def bound_compared_unbound_lmv(self, lmv_data:ComparisonLMVResponse):
         
         ev_comp_to_mfe_list:List[str] = []
 

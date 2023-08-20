@@ -6,9 +6,8 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         Sara2StructureList, 
                                         KcalRanges)
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups,EnsembleSwitchStateMFEStructs
-from test_sara_secondary_structure_lists import test_default_new_secondary_struct_list
-from test_sara_secondary_structure import test_empty_secondary_struct
-from conftest import single_ensemble_group, single_ensemble_group_2
+from src.tests.test_sara_secondary_structure_lists import test_default_new_secondary_struct_list
+from src.tests.test_sara_secondary_structure import test_empty_secondary_struct
 
 #@attrs.define
 #class ListEnsembleGroups():
