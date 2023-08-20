@@ -195,9 +195,9 @@ def test_get_mfe_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
     result:EVResult = lmv.get_mfe_multi_group_lmv_nupack(sequence=sequence,
                                                          material_param=material_param,
-                                                         temp_C=temp_C,
+                                                         temp_c=temp_C,
                                                          kcal_span_from_mfe=kcal_span_from_mfe,
-                                                         Kcal_unit_increments=Kcal_unit_increments)
+                                                         kcal_unit_increments=Kcal_unit_increments)
     
     assert result.ev_values[0].ev_normalized == 1
     assert result.ev_values[1].ev_normalized == 4.555555555555555
@@ -215,9 +215,9 @@ def test_get_comp_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
     result:EVResult = lmv.get_comp_multi_group_lmv_nupack(sequence=sequence,
                                                         material_param=material_param,
-                                                        temp_C=temp_C,
+                                                        temp_c=temp_C,
                                                         kcal_span_from_mfe=kcal_span_from_mfe,
-                                                        Kcal_unit_increments=Kcal_unit_increments)
+                                                        kcal_unit_increments=Kcal_unit_increments)
     assert result.ev_values[0].ev_normalized == 1
     assert result.ev_values[1].ev_normalized == 6.222222222222221
     assert result.ev_values[2].ev_normalized == 6.19047619047619
@@ -233,9 +233,9 @@ def test_get_relative_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
     result:EVResult = lmv.get_relative_multi_group_lmv_nupack(sequence=sequence,
                                                         material_param=material_param,
-                                                        temp_C=temp_C,
+                                                        temp_c=temp_C,
                                                         kcal_span_from_mfe=kcal_span_from_mfe,
-                                                        Kcal_unit_increments=Kcal_unit_increments)
+                                                        kcal_unit_increments=Kcal_unit_increments)
     assert result.ev_values[0].ev_normalized == 1
     assert result.ev_values[1].ev_normalized == 5.666666666666666
     assert result.ev_values[2].ev_normalized == 6.523809523809522
@@ -253,9 +253,9 @@ def test_get_folded_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
     result:EVResult = lmv.get_folded_multi_group_lmv_nupack(ensemble_sequence=sequence,
                                                         material_param=material_param,
-                                                        temp_C=temp_C,
+                                                        temp_c=temp_C,
                                                         kcal_span_from_mfe=kcal_span_from_mfe,
-                                                        Kcal_unit_increments=Kcal_unit_increments,
+                                                        kcal_unit_increments=Kcal_unit_increments,
                                                         folded_structure=folded_structure)
     assert result.ev_values[0].ev_normalized == 32.0
     assert result.ev_values[1].ev_normalized == 33.22222222222222
