@@ -11,9 +11,12 @@ from serena.analysis.investigator import (SettingsAssertionLMV,
                                           LMVAssertionResult,
                                           RatioResults,
                                           ComparisonEvalResults,
-                                          InvestigatorResults)
+                                          InvestigatorResults
+                                          )
 
-from serena.analysis.judge_pool import (JudgesResults)
+from serena.analysis.judge_pool import (JudgesResults,
+                                        CompSwitchJudgeResult,
+                                        LMVSwitchJudgeResult)
 
 
 
@@ -42,7 +45,7 @@ def initialized_lmv_assertion_results_2():
     return LMVAssertionResult(bound_pronounced=[True, True, False],
                               unbouund_pronounced=[False, False, True],
                               comp_compare_to_mfe=['<', '>', '='],
-                              is_on_off_switch=True)
+                              is_on_off_switch=[False,True,True])
 
 @pytest.fixture
 def default_ratio_results():
@@ -134,14 +137,23 @@ def intantiated_investigator_results(realish_comparison_eval_results:ComparisonE
 """
 Fixtures for judge pool
 """
+
 @pytest.fixture
-def initialized_judge_result():
-    return JudgesResults(is_good_count=1,
-                         is_good_switch=True,
-                         is_on_off_count=2,
-                         is_on_off_switch=False,
-                         is_powerful_count=3,
-                         is_powerful_switch=True,
-                         switchable_groups_list=[1,2,3],
-                         powerfull_groups_list=[2,3,4],
-                         on_off_groups_list=[3,4,5])
+def comp_swtich_judge_result():
+    return CompSwitchJudgeResult(is_good_count=1,
+                                    is_good_switch=True,
+                                    is_powerful_count=3,
+                                    is_powerful_switch=True,
+                                    switchable_groups_list=[1,2,3],
+                                    powerfull_groups_list=[2,3,4])
+
+@pytest.fixture
+def lmv_switch_judge_result():
+    return LMVSwitchJudgeResult(is_on_off_count=2,
+                                is_on_off_switch=False,
+                                on_off_groups_list=[3,4,5])
+
+@pytest.fixture
+def initialized_judge_result(comp_swtich_judge_result:CompSwitchJudgeResult, lmv_switch_judge_result:LMVSwitchJudgeResult):
+    return JudgesResults(comp_switch_judge=comp_swtich_judge_result,
+                         lmv_switch_judge=lmv_switch_judge_result)

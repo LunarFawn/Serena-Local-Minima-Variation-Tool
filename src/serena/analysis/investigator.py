@@ -34,7 +34,7 @@ class LMVAssertionResult():
     """ A bool that indicates if that energy group has the unbound state pronounced via lmv comparisons """
     bound_pronounced: List[bool] = []
     """ A bool that indicates if that energy group has the bound state pronounced via lmv comparisons """
-    is_on_off_switch:List[bool] = False
+    is_on_off_switch:List[bool] = []
     """ List of Bools that indicates if that energy group has indications that it is a on/off switch based on lmv comparisons in enemble
         A list is sued so tath the amount of on/off can be judged
     """
@@ -253,7 +253,7 @@ class LocalMinimaVariationInvestigator():
         diff_limit_comp:float = setting.diff_limit_comp
 
         comp_pronounced:List[bool] = []
-        is_on_off_switch:bool = False
+        is_on_off_switch:List[bool] = []
         mfe_pronounced:List[bool] = []
 
         for group_index in range(len(lmv_data.lmv_comps)):#pylint: disable=consider-using-enumerate
@@ -271,7 +271,9 @@ class LocalMinimaVariationInvestigator():
 
             if group_index > 0  and comp_asserted is True:
                 if mfe_pronounced[0] is True:
-                    is_on_off_switch = True
+                    is_on_off_switch.append(True)
+            else:
+                is_on_off_switch.append(False)
 
             diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
             if round(ev_mfe,2) <= round(ev_comp,2) and (diff_mfe >= diff_limit_mfe):

@@ -31,7 +31,7 @@ def test_initialized_settings_assertion_lmv(initialized_settings_assertion_lmv:S
 def test_empty_lmv_assertion_result(empty_lmv_assertion_result:LMVAssertionResult):
     assert empty_lmv_assertion_result.comp_compare_to_mfe == []
     assert empty_lmv_assertion_result.bound_pronounced == []
-    assert empty_lmv_assertion_result.is_on_off_switch == False
+    assert empty_lmv_assertion_result.is_on_off_switch == []
     assert empty_lmv_assertion_result.unbouund_pronounced == []
 
 def test_initialized_lmv_assertion_results(initialized_lmv_assertion_results:LMVAssertionResult):
@@ -149,7 +149,7 @@ def test_evaluate_lmv_for_structure_presence_no_lmv_switch(comparison_lmv_respon
     investigator:LocalMinimaVariationInvestigator = LocalMinimaVariationInvestigator()
     result:LMVAssertionResult = investigator.evaluate_lmv_for_structure_presence(lmv_data=comparison_lmv_response_no_switch,
                                                                                 setting=default_settings_assertions_lmv)
-    assert result.is_on_off_switch is False
+    assert result.is_on_off_switch == [False,False,False]
     assert result.comp_compare_to_mfe == ['<','>','=']
     assert result.bound_pronounced == [True,False,False]
     assert result.unbouund_pronounced == [False, True, True]
@@ -158,7 +158,7 @@ def test_evaluate_lmv_for_structure_presence_yes_lmv_switch(comparison_lmv_respo
     investigator:LocalMinimaVariationInvestigator = LocalMinimaVariationInvestigator()
     result:LMVAssertionResult = investigator.evaluate_lmv_for_structure_presence(lmv_data=comparison_lmv_response_yes_switch,
                                                                                 setting=default_settings_assertions_lmv)
-    assert result.is_on_off_switch is True
+    assert result.is_on_off_switch == [False,True,False]
     assert result.comp_compare_to_mfe == ['>','<','=']
     assert result.bound_pronounced == [False,True,False]
     assert result.unbouund_pronounced == [True, False, True]

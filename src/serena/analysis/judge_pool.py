@@ -4,11 +4,13 @@ File to hold the code to judge if RNA is a switch
 
 from dataclasses import dataclass
 from typing import List
+import attrs
 
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult
 from serena.utilities.ensemble_variation import EV, EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV
-from src.serena.analysis.investigator import InvestigatorResults
+from src.serena.analysis.investigator import (InvestigatorResults,
+                                              LMVAssertionResult)
 
 #@dataclass
 #class SwitchabilitySettings():
@@ -18,23 +20,30 @@ from src.serena.analysis.investigator import InvestigatorResults
 #    """
 #    limit: float = 1.5 
 
-@dataclass
+@attrs.define
+class CompSwitchJudgeResult():
+    is_good_switch:bool = False
+    switchable_groups_list:List[int] = []
+    is_good_count:int = 0
+    is_powerful_switch:bool  =False 
+    powerfull_groups_list:List[int] = []
+    is_powerful_count:int = 0
+
+@attrs.define
+class LMVSwitchJudgeResult():
+    is_on_off_count: int = 0
+    is_on_off_switch:bool = False
+    on_off_groups_list:List[int] = []
+
+@attrs.define
 class JudgesResults():
     """
     Class to hold the results from
     the judge decisions
     """
-    is_good_switch:bool
-    is_powerful_switch:bool
-    is_on_off_switch:bool
+    comp_switch_judge:CompSwitchJudgeResult = CompSwitchJudgeResult()
+    lmv_switch_judge:LMVSwitchJudgeResult = LMVSwitchJudgeResult()
 
-    is_good_count:int
-    is_powerful_count:int
-    is_on_off_count: int 
-    
-    switchable_groups_list:List[int]
-    powerfull_groups_list:List[int]
-    on_off_groups_list:List[int]
 
 class AnalysisJudgePool():
     """
@@ -48,8 +57,22 @@ class AnalysisJudgePool():
         #is_excelent_count:int = 0
         #current_group_index:int = -1
 
-    def is_switch_judge(self, investigator:InvestigatorResults)->JudgesResults:
-                
+    def run_all_judges(self, investigator:InvestigatorResults):
+        """
+        Main entry point to judges to run all the judges currently
+        """
+        comp_judge_results: CompSwitchJudgeResult = self.is_comp_switch_judge(investigator=investigator)
+        lmv_judge_results: LMVSwitchJudgeResult = self.is_lmv_switch_judge(investigator=investigator)
+        results:JudgesResults = JudgesResults(comp_switch_judge=comp_judge_results,
+                                              lmv_switch_judge=lmv_judge_results)
+        return results 
+    
+    def is_comp_switch_judge(self, investigator:InvestigatorResults)->CompSwitchJudgeResult:
+        """
+        Judge the comp nuc comparison results from the investigator
+        and return a judgment on its switchyness based on comp nuc ratios
+        per energy group in the ensemble
+        """        
         num_groups: int = investigator.num_groups
         
         limit: float = 1.5 
@@ -119,14 +142,34 @@ class AnalysisJudgePool():
                 powerfull_groups_list.append(current_group_index)
 
 
-        results: JudgesResults = JudgesResults(is_powerful_count=is_excelent_count,
+        results: JudgesResults = CompSwitchJudgeResult(is_powerful_count=is_excelent_count,
                                                is_good_count=is_good_count,
                                                is_good_switch=is_good_switch,
                                                is_powerful_switch=is_powerful_switch,
-                                               is_on_off_count=
-                                               is_on_off_switch=,
-                                               on_off_groups_list=
                                                switchable_groups_list=switchable_groups_list,
                                                powerfull_groups_list=powerfull_groups_list)
 
         return results
+
+    def is_lmv_switch_judge(self, investigator:InvestigatorResults)->LMVSwitchJudgeResult:
+        """
+        Judge the lmv comparison results from the investigator
+        and return a judgment on its switchyness based on lmv assertions
+        per energy group in the ensemble
+        """
+        lmv_data:LMVAssertionResult = investigator.lmv_assertions
+        result:LMVSwitchJudgeResult = LMVSwitchJudgeResult()
+        #determine if on/off switch
+        on_off_switch_list:List[bool] = lmv_data.is_on_off_switch
+        if True in on_off_switch_list:
+            result.is_on_off_switch = True
+        
+        #now the count
+        result.is_on_off_count = lmv_data.is_on_off_switch.count(True)
+    
+        #decide which groups are on-off switch groups that meet the criteria
+        #the investigator used
+        for group_index,value in enumerate(lmv_data.is_on_off_switch):
+            if value == True:
+                result.on_off_groups_list.append(group_index)
+        return result
