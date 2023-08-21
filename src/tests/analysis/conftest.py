@@ -29,8 +29,8 @@ def empty_lmv_assertion_result():
 def initialized_lmv_assertion_results():
     return LMVAssertionResult(bound_pronounced=[True, True, False],
                               unbouund_pronounced=[False, False, True],
-                              bound_compare_to_unbound=['a', 'b', 'c'],
-                              is_on_off_switch=[True,True,True])
+                              comp_compare_to_mfe=['a', 'b', 'c'],
+                              is_on_off_switch=True)
 
 @pytest.fixture
 def default_ratio_results():
@@ -45,7 +45,8 @@ def initialized_ratio_results():
                         bound_to_total_ratio=5,
                         last_both_ratio=6,
                         last_bound_ratio=7,
-                        last_unbound_ratio=8)
+                        last_unbound_ratio=8,
+                        dot_to_total_ratio=9)
 
 @pytest.fixture
 def empty_comparison_eval_results():

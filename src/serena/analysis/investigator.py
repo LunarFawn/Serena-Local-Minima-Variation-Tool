@@ -1,16 +1,14 @@
-#pylint: disable=line-too-long, too-few-public-methods, too-many-instance-attributes
+#pylint: disable=line-too-long, too-few-public-methods, too-many-instance-attributes, too-many-locals,bare-except,invalid-name
 """
 File for class for analysis stuff
 """
 
-import attrs
 from typing import List
 from dataclasses import dataclass
+import attrs
 
-from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult, ComparisonNucResults
-from serena.utilities.ensemble_variation import EV, EVResult
-from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse
-from serena.utilities.weighted_structures import WeightedNucCounts
+from serena.utilities.comparison_structures import  ComparisonNucResults
+from serena.utilities.local_minima_variation import  ComparisonLMVResponse
 
 @dataclass
 class SettingsAssertionLMV():
@@ -30,13 +28,13 @@ class LMVAssertionResult():
     """
     Results from LVM comparisons
     """
-    bound_compare_to_unbound:List[str] = []
+    comp_compare_to_mfe:List[str] = []
     """ the lmv_c to lmv_m comparision as a <, >, or = symbol for each energy group"""
     unbouund_pronounced:List[bool] = []
     """ A bool that indicates if that energy group has the unbound state pronounced via lmv comparisons """
     bound_pronounced: List[bool] = []
     """ A bool that indicates if that energy group has the bound state pronounced via lmv comparisons """
-    is_on_off_switch:List[bool] = []
+    is_on_off_switch:bool = False
     """ Bool that indicates if that energy group has indications that it is a on/off switch based on lmv comparisons in enemble """
 
 #@dataclass
@@ -63,6 +61,7 @@ class RatioResults():
     bound_to_both_ratio: float = -1
     bound_to_total_ratio:float = -1
     both_nuc_total:float = -1
+    dot_to_total_ratio: float = -1
 
 @attrs.define
 class ComparisonEvalResults():
@@ -103,7 +102,7 @@ class ComparisonInvestigator():
     def __init__(self) -> None:
         pass
 
-    def evalulate_comparison_nucs(self, comparison_nucs:ComparisonNucResults)->ComparisonEvalResults:
+    def evalulate_comparison_nucs(self, comparison_nucs:ComparisonNucResults)->ComparisonEvalResults:#pylint: disable=too-many-branches,too-many-statements
         """
         Evaluate the results from the comparison nucs steps and return
         the findings
@@ -114,7 +113,7 @@ class ComparisonInvestigator():
         unbound_total_list: List[int] = []
         ratios:List[RatioResults] = []
         nuc_penatly_count:int = 0
-        for group_index in range(len(comparison_nucs.comparison_nuc_counts)):
+        for group_index in range(len(comparison_nucs.comparison_nuc_counts)):#pylint: disable=consider-using-enumerate
             last_index:int = 0
             if group_index > 0:
                 last_index = group_index -1
@@ -199,7 +198,7 @@ class ComparisonInvestigator():
             last_bound_ratio = round(last_bound_ratio,2)
             unbound_to_total_ratio = round(unbound_to_total_ratio,2)
             bound_ratio = round(bound_ratio,2)
-            bound_stats: str = f'BURatio:{round(bound_ratio,2)},both_Raise:{round(last_both_ratio,2)} BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)},BothTotal:{round(both_nuc_total,2)}, BoundTotal:{round(bound_to_total_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)}, bound_both:{round(bound_to_both_ratio,2)} B:{bound}, U:{unbound}. both:{both_nuc}'
+            #bound_stats: str = f'BURatio:{round(bound_ratio,2)},both_Raise:{round(last_both_ratio,2)} BRaise:{round(last_bound_ratio,2)}, UDrop:{round(last_unbound_ratio,2)},BothTotal:{round(both_nuc_total,2)}, BoundTotal:{round(bound_to_total_ratio,2)}, UTotal:{round(unbound_to_total_ratio,2)}, bound_both:{round(bound_to_both_ratio,2)} B:{bound}, U:{unbound}. both:{both_nuc}'
 
 
             #this is only for the fist kcal group
@@ -217,7 +216,8 @@ class ComparisonInvestigator():
                                                       last_both_ratio=last_both_ratio,
                                                       bound_to_both_ratio=bound_to_both_ratio,
                                                       bound_to_total_ratio=bound_to_total_ratio,
-                                                      both_nuc_total=both_nuc_total
+                                                      both_nuc_total=both_nuc_total,
+                                                      dot_to_total_ratio=dot_nuc_total
                                                       )
             ratios.append(ratio_results)
 
@@ -239,30 +239,37 @@ class LocalMinimaVariationInvestigator():
     def __init__(self) -> None:
         pass
 
-    def evaluate_lmv_for_structure_presence(self, lmv_data:ComparisonLMVResponse, setting:SettingsAssertionLMV):
-
-        ev_comp_limit: float = 25
+    def evaluate_lmv_for_structure_presence(self, lmv_data:ComparisonLMVResponse, setting:SettingsAssertionLMV)->LMVAssertionResult:
+        """
+        Evalute the comparison structures lmv values and determine
+        if the enembled groups indicate a on/off switch. return the proof for
+        this determination as well for the judges to review
+        """
+        #ev_comp_limit: float = 25
 
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
 
         comp_pronounced:List[bool] = []
-        is_on_off_switch:List[bool] = []
+        is_on_off_switch:bool = False
         mfe_pronounced:List[bool] = []
 
-        for group_index in range(len(lmv_data.lmv_comps)):
-            ev_comp:float = lmv_data.lmv_comps[group_index].lmv_comp
-            ev_mfe:float = lmv_data.lmv_comps[group_index].lmv_mfe
+        for group_index in range(len(lmv_data.lmv_comps)):#pylint: disable=consider-using-enumerate
+            ev_comp:float = lmv_data.lmv_comps[group_index].lmv_comp.ev_normalized
+            ev_mfe:float = lmv_data.lmv_comps[group_index].lmv_mfe.ev_normalized
 
             comp_asserted:bool = False
-            is_on_off_:bool = False
+
             mfe_asserted:bool = False
 
 
             diff_comp:float = round(ev_mfe,2) - round(ev_comp,2)
             if round(ev_comp,2) < round(ev_mfe,2) and diff_comp >= diff_limit_comp:
                 comp_asserted = True
-                is_on_off_ = True
+
+            if group_index == 1 and comp_asserted is True:
+                if mfe_pronounced[0] is True:
+                    is_on_off_switch = True
 
             diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
             if round(ev_mfe,2) <= round(ev_comp,2) and (diff_mfe >= diff_limit_mfe):
@@ -270,25 +277,25 @@ class LocalMinimaVariationInvestigator():
 
             comp_pronounced.append(comp_asserted)
             mfe_pronounced.append(mfe_asserted)
-            #need to fix this
-            is_on_off_switch.append(is_on_off_)
 
-        ev_comp_to_mfe_list:List[str] = self.bound_compared_unbound_lmv(lmv_data=lmv_data)
+        ev_comp_to_mfe_list:List[str] = self.comp_compared_mfe_lmv(lmv_data=lmv_data)
 
-        lmv_presence_result: LMVAssertionResult = LMVAssertionResult(bound_compare_to_unbound=ev_comp_to_mfe_list,
+        lmv_presence_result: LMVAssertionResult = LMVAssertionResult(comp_compare_to_mfe=ev_comp_to_mfe_list,
                                                                         unbouund_pronounced=mfe_pronounced,
                                                                         bound_pronounced=comp_pronounced,
                                                                         is_on_off_switch=is_on_off_switch)
 
         return lmv_presence_result
 
-    def bound_compared_unbound_lmv(self, lmv_data:ComparisonLMVResponse):
-
+    def comp_compared_mfe_lmv(self, lmv_data:ComparisonLMVResponse)->List[str]:
+        """
+        Determine if the lmv_c or lmv_m is asserted per group
+        """
         ev_comp_to_mfe_list:List[str] = []
 
-        for group_index in range(len(lmv_data.lmv_comps)):
-            ev_comp:float = lmv_data.lmv_comps[group_index].lmv_comp
-            ev_mfe:float = lmv_data.lmv_comps[group_index].lmv_mfe
+        for group_index in range(len(lmv_data.lmv_comps)):#pylint: disable=consider-using-enumerate
+            ev_comp:float = lmv_data.lmv_comps[group_index].lmv_comp.ev_normalized
+            ev_mfe:float = lmv_data.lmv_comps[group_index].lmv_mfe.ev_normalized
             if ev_comp < ev_mfe:
                 ev_comp_to_mfe_list.append('<')
             elif ev_comp == ev_mfe:
