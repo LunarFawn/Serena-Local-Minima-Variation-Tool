@@ -34,8 +34,10 @@ class LMVAssertionResult():
     """ A bool that indicates if that energy group has the unbound state pronounced via lmv comparisons """
     bound_pronounced: List[bool] = []
     """ A bool that indicates if that energy group has the bound state pronounced via lmv comparisons """
-    is_on_off_switch:bool = False
-    """ Bool that indicates if that energy group has indications that it is a on/off switch based on lmv comparisons in enemble """
+    is_on_off_switch:List[bool] = False
+    """ List of Bools that indicates if that energy group has indications that it is a on/off switch based on lmv comparisons in enemble
+        A list is sued so tath the amount of on/off can be judged
+    """
 
 #@dataclass
 #class SwitchabilitySettings():
@@ -267,7 +269,7 @@ class LocalMinimaVariationInvestigator():
             if round(ev_comp,2) < round(ev_mfe,2) and diff_comp >= diff_limit_comp:
                 comp_asserted = True
 
-            if group_index == 1 and comp_asserted is True:
+            if group_index > 0  and comp_asserted is True:
                 if mfe_pronounced[0] is True:
                     is_on_off_switch = True
 

@@ -119,10 +119,13 @@ class AnalysisJudgePool():
                 powerfull_groups_list.append(current_group_index)
 
 
-        results: JudgesResults = JudgesResults(is_excelent_count=is_excelent_count,
+        results: JudgesResults = JudgesResults(is_powerful_count=is_excelent_count,
                                                is_good_count=is_good_count,
                                                is_good_switch=is_good_switch,
                                                is_powerful_switch=is_powerful_switch,
+                                               is_on_off_count=
+                                               is_on_off_switch=,
+                                               on_off_groups_list=
                                                switchable_groups_list=switchable_groups_list,
                                                powerfull_groups_list=powerfull_groups_list)
 

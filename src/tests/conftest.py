@@ -194,6 +194,17 @@ def comparison_nuc_count_2():
                                 unbound_count=3,
                                 both_count=4,
                                 dot_count=5,
+                                num_nucs=5) 
+
+@pytest.fixture
+def comparison_nuc_count_3():
+    """
+    Returns populated comparions nuc pair dataclass
+    """
+    return ComparisonNucCounts(bound_count = 4,
+                                unbound_count=3,
+                                both_count=2,
+                                dot_count=1,
                                 num_nucs=5)                            
 
 @pytest.fixture
@@ -204,6 +215,17 @@ def comparison_nuc_result(comparison_nuc_count:ComparisonNucCounts, comparison_n
     comp_list:List[ComparisonNucResults] = []
     comp_list.append(comparison_nuc_count)
     comp_list.append(comparison_nuc_count_2)
+    return ComparisonNucResults(comparison_nuc_counts=comp_list)
+
+@pytest.fixture
+def comparison_nuc_result_2(comparison_nuc_count:ComparisonNucCounts, comparison_nuc_count_2:ComparisonNucCounts, comparison_nuc_count_3:ComparisonNucCounts):
+    """
+    Returns a comparison nuc result
+    """
+    comp_list:List[ComparisonNucResults] = []
+    comp_list.append(comparison_nuc_count)
+    comp_list.append(comparison_nuc_count_2)
+    comp_list.append(comparison_nuc_count_3)
     return ComparisonNucResults(comparison_nuc_counts=comp_list)
 
 @pytest.fixture

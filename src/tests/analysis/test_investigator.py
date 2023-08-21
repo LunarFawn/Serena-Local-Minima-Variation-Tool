@@ -88,17 +88,17 @@ def test_initialized_comparison_eval_results(initialized_comparison_eval_results
     assert initialized_comparison_eval_results.nuc_penatly_count == 3
     assert initialized_comparison_eval_results.first_BUratio == 5
     
-def test_instantiated_investigator_results(initialized_comparison_eval_results:ComparisonEvalResults, comparison_nuc_result:ComparisonNucResults, initialized_comparison_lmv_response:ComparisonLMVResponse, initialized_lmv_assertion_results:LMVAssertionResult):
+def test_instantiated_investigator_results(initialized_comparison_eval_results:ComparisonEvalResults, comparison_nuc_result_2:ComparisonNucResults, comparison_lmv_response_yes_switch:ComparisonLMVResponse, initialized_lmv_assertion_results_2:LMVAssertionResult):
     investigator_results:InvestigatorResults = InvestigatorResults(comparison_eval_results=initialized_comparison_eval_results,
-                                                                   comp_nuc_counts=comparison_nuc_result,
-                                                                   lmv_values=initialized_comparison_lmv_response,
-                                                                   lmv_assertions=initialized_lmv_assertion_results,
+                                                                   comp_nuc_counts=comparison_nuc_result_2,
+                                                                   lmv_values=comparison_lmv_response_yes_switch,
+                                                                   lmv_assertions=initialized_lmv_assertion_results_2,
                                                                    num_groups=3,
                                                                    total_structures_ensemble=5)
     assert investigator_results.comparison_eval_results == initialized_comparison_eval_results
-    assert investigator_results.comp_nuc_counts == comparison_nuc_result
-    assert investigator_results.lmv_values == initialized_comparison_lmv_response
-    assert investigator_results.lmv_assertions == initialized_lmv_assertion_results
+    assert investigator_results.comp_nuc_counts == comparison_nuc_result_2
+    assert investigator_results.lmv_values == comparison_lmv_response_yes_switch
+    assert investigator_results.lmv_assertions == initialized_lmv_assertion_results_2
     assert investigator_results.num_groups == 3
     assert investigator_results.total_structures_ensemble == 5
 
@@ -118,15 +118,15 @@ def test_evalulate_comparison_nucs(comparison_nuc_result:ComparisonNucResults):
                                             last_bound_ratio=0, #need better test coverage here
                                             last_unbound_ratio=1.0,
                                             dot_to_total_ratio=0.8),
-                             RatioResults(unbound_to_total_ratio=0.6,
-                                            both_nuc_total=0.8,
-                                            bound_ratio=0.67,
-                                            bound_to_both_ratio=2.0,
-                                            bound_to_total_ratio=0.4,
-                                            last_both_ratio=1.3333333333333333,
-                                            last_bound_ratio=0, #need better test coverage here
-                                            last_unbound_ratio=0.67,
-                                            dot_to_total_ratio=1.0)] 
+                            RatioResults(unbound_to_total_ratio=0.6,
+                                        both_nuc_total=0.8,
+                                        bound_ratio=0.67,
+                                        bound_to_both_ratio=2.0,
+                                        bound_to_total_ratio=0.4,
+                                        last_both_ratio=1.3333333333333333,
+                                        last_bound_ratio=0, #need better test coverage here
+                                        last_unbound_ratio=0.67,
+                                        dot_to_total_ratio=1.0)] 
     assert result.BRaise_list == [1,2] 
     assert result.BUratio_list == [0.5, 0.67] 
     assert result.bound_total_list == [0.2,0.4] 
