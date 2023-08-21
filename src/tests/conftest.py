@@ -464,3 +464,11 @@ def initiailized_comparison_lmv():
                                    ev_structure=8,
                                    ev_threshold_norm=9))
 
+@pytest.fixture
+def empty_comparison_lmv_response():
+    return ComparisonLMVResponse()
+
+@pytest.fixture
+def initialized_comparison_lmv_response(initiailized_comparison_lmv:ComparisonLMV):
+    return ComparisonLMVResponse(lmv_comps=[initiailized_comparison_lmv])
+

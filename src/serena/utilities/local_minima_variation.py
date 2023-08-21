@@ -1,6 +1,7 @@
 """
 File to hold the local minima variation code
 """
+import attrs
 from typing import List
 from dataclasses import dataclass
 
@@ -19,13 +20,13 @@ class ComparisonLMV():
     lmv_mfe:EV = EV()
     lmv_rel:EV = EV()
 
-@dataclass
+@attrs.define
 class ComparisonLMVResponse():
     """
     Holds the LMV's responses for the comparison structure
     algorithm
     """
-    lmv_comps:List[ComparisonLMV]
+    lmv_comps:List[ComparisonLMV] = []
 
 class LocalMinimaVariation():
     """

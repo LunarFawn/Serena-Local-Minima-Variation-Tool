@@ -54,6 +54,25 @@ def test_set_comparison_lmv(empty_comparison_lmv:ComparisonLMV):
     assert empty_comparison_lmv.lmv_rel.ev_threshold_norm == 9
 
 """
+Do comparison LMV stuff
+"""
+
+def test_empty_comparison_lmv_response(empty_comparison_lmv_response:ComparisonLMVResponse):
+    assert empty_comparison_lmv_response.lmv_comps == []
+
+def test_initialized_comparison_lmv_response(initialized_comparison_lmv_response:ComparisonLMVResponse):
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_comp.ev_normalized == 1
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_comp.ev_structure == 2
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_comp.ev_threshold_norm == 3
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_mfe.ev_normalized == 4
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_mfe.ev_structure == 5
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_mfe.ev_threshold_norm == 6
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_rel.ev_normalized == 7
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_rel.ev_structure == 8
+    assert initialized_comparison_lmv_response.lmv_comps[0].lmv_rel.ev_threshold_norm == 9
+    
+
+"""
 LMV stuff
 """
 
