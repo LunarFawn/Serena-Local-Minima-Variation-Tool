@@ -132,4 +132,4 @@ Test the Local Minima Investigator
 """
 
 def test_evaluate_lmv_for_structure_presence():
-    
+    pass
