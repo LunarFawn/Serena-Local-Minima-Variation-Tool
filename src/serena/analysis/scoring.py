@@ -8,32 +8,11 @@ from typing import List
 from src.serena.analysis.judge_pool import JudgesResults
 from src.serena.analysis.investigator import InvestigatorResults
 
-class SpecialPenalties():
-
-    def __init__(self) -> None:
-        pass
-
-    def excessive_structures(self, num_structures: int, excess_divisor:float,excess_limit:float):
-        #excess_divisor:float = 2000#2500
-        score:float = 0
-        factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
-        message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points '
-        #result_messages = self.log_message(message, result_messages)
-        sixty_range_num:float = 50000#15000
-        #penalize for too many structs
-        score = score - factor
-        if num_structures > sixty_range_num:
-            message:str = f'Significant excess structures found: found {num_structures - sixty_range_num} structures over limit of {sixty_range_num}'
-            #result_messages = self.log_message(message, result_messages)
-            message:str = f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty'
-            #result_messages = self.log_message(message, result_messages)
-            score = score - .5
-        
-        return score
-
-
 @dataclass
 class BasicScoreResults():
+    """
+    Basic scores for switchyness
+    """
     total_score:float = 0
     functional_switch_score:float = 0
     powerful_switch_score:float = 0
@@ -43,6 +22,9 @@ class BasicScoreResults():
 
 @dataclass
 class AdvancedScoreResults():
+    """
+    Bonuses that amplify ability to decern switchyness
+    """
     lmv_bonus:float =0
     lmv_penalty:float = 0    
     comp_bonus:float = 0
@@ -52,20 +34,26 @@ class AdvancedScoreResults():
 
 
 class SerenaScoring():
+    """
+    Scoring the results from the judges decisions
+    """
     def __init__(self) -> None:
         pass
 
     def basic_score_groups(self, judge_results:JudgesResults, investigator: InvestigatorResults)->BasicScoreResults:
+        """
+        Perform basic scoring functions that determine switchyness of rna sequence
+        """
         #inititalization data
-        found_functional_switch: List[int] = judge_results.switchable_groups_list 
-        found_powerful_switch: List[int] = judge_results.powerfull_groups_list
-        found_on_off_switch: List[int] = judge_results.on_off_groups_list
+        found_functional_switch: List[int] = judge_results.comp_switch_judge.switchable_groups_list 
+        found_powerful_switch: List[int] = judge_results.comp_switch_judge.powerfull_groups_list
+        found_on_off_switch: List[int] = judge_results.lmv_switch_judge.on_off_groups_list
 
 
-        bound_range_index_plus_one:List[int] = judge_results.switchable_groups_list
-        is_powerful_switch:bool = judge_results.is_powerful_switch
-        is_functional_switch:bool = judge_results.is_good_switch
-        is_off_on_switch:bool = judge_results.is_on_off_switch
+        bound_range_index_plus_one:List[int] = judge_results.comp_switch_judge.switchable_groups_list
+        is_powerful_switch:bool = judge_results.comp_switch_judge.is_powerful_switch
+        is_functional_switch:bool = judge_results.comp_switch_judge.is_good_switch
+        is_off_on_switch:bool = judge_results.lmv_switch_judge.is_on_off_switch
 
         #SetupScores
         total_score:float = 0
@@ -135,6 +123,10 @@ class SerenaScoring():
         return basic_score_results
       
     def excessive_structures_penalties(self, num_structures: int, excess_divisor:float,excess_limit:float):
+        """
+        Algorithm for determining the penalty for excessive number of secondary structures in the 
+        whole ensemble
+        """
         #excess_divisor:float = 2000#2500
         penalty:float = 0
         factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
@@ -153,15 +145,17 @@ class SerenaScoring():
         return penalty
     
     def advanced_score_groups(self, judge_results:JudgesResults, investigator: InvestigatorResults):
-
+        """
+        Bonuses and penalties that affect the fine tunning of swithyness determinations
+        """
         lmv_bonus:float =0
         lmv_penalty:float = 0    
         comp_bonus:float = 0
         comp_penalty:float = 0
         total_score:float = 0
 
-        comp_less_ratio: float = investigator.lmv_assertions.bound_compare_to_unbound.count('<') / investigator.num_groups
-        com_great_ratio: float = investigator.lmv_assertions.bound_compare_to_unbound.count('>')  / investigator.num_groups
+        comp_less_ratio: float = investigator.lmv_assertions.comp_compare_to_mfe.count('<') / investigator.num_groups
+        com_great_ratio: float = investigator.lmv_assertions.comp_compare_to_mfe.count('>')  / investigator.num_groups
         message:str = f'ev comp great:{com_great_ratio}, ev comp less:{comp_less_ratio}'
         #result_messages = self.log_message(message, result_messages)
         if com_great_ratio < comp_less_ratio and comp_less_ratio >= .7:

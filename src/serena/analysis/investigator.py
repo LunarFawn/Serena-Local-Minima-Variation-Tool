@@ -308,4 +308,3 @@ class LocalMinimaVariationInvestigator():
                 ev_comp_to_mfe_list.append('>')
 
         return ev_comp_to_mfe_list
-    

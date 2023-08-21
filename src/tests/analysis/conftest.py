@@ -8,15 +8,17 @@ from serena.utilities.comparison_structures import (ComparisonNucResults)
 from serena.utilities.local_minima_variation import (ComparisonLMV,
                                                     ComparisonLMVResponse)
 from serena.analysis.investigator import (SettingsAssertionLMV,
-                                          LMVAssertionResult,
-                                          RatioResults,
-                                          ComparisonEvalResults,
-                                          InvestigatorResults
-                                          )
-
+                                            LMVAssertionResult,
+                                            RatioResults,
+                                            ComparisonEvalResults,
+                                            InvestigatorResults
+                                            )
 from serena.analysis.judge_pool import (JudgesResults,
                                         CompSwitchJudgeResult,
                                         LMVSwitchJudgeResult)
+from serena.analysis.scoring import (BasicScoreResults,
+                                     AdvancedScoreResults,
+                                     SerenaScoring) 
 
 
 
@@ -157,3 +159,35 @@ def lmv_switch_judge_result():
 def initialized_judge_result(comp_swtich_judge_result:CompSwitchJudgeResult, lmv_switch_judge_result:LMVSwitchJudgeResult):
     return JudgesResults(comp_switch_judge=comp_swtich_judge_result,
                          lmv_switch_judge=lmv_switch_judge_result)
+
+
+"""
+fixtures for scoring
+"""
+
+@pytest.fixture
+def empty_basic_score_results():
+    return BasicScoreResults()
+
+@pytest.fixture
+def initialized_basic_score_results():
+    return BasicScoreResults(total_score=1,
+                             functional_switch_score=2,
+                             powerful_switch_score=3,
+                             on_off_switch_score=4,
+                             bonuses=5,
+                             penalties=6)
+
+@pytest.fixture
+def empty_advanced_score_results():
+    return AdvancedScoreResults()
+
+@pytest.fixture
+def initialized_advanced_score_results():
+    return AdvancedScoreResults(lmv_bonus=1,
+                                lmv_penalty=2,
+                                comp_bonus=3,
+                                comp_penalty=4,
+                                excess_struct_penalty=5,
+                                total_score=6)
+    
