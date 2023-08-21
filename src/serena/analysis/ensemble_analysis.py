@@ -28,23 +28,32 @@ class ReferenceStructures():
 
 
 class ProcessEnsemble():
-
+    """
+    Process a MulitEnsembleGroup representation of the ensemble for various features
+    This information is then given to the investigator to collect the data and hand off
+    to the judges and later on scoring
+    """
     def __init__(self) -> None:
         pass
 
     def process_ensemble_for_weighted_structures(self, ensemble:MultipleEnsembleGroups) -> WeightedEnsembleResult:
+        """
+        Finds and returns the weighted structures for each ensemble group and outputs it as a list of 
+        weighted structures in sara2secondarystructure form.
+        """
         ensemble_weighted_structures: List[Sara2SecondaryStructure] = []
-        
         for singel_group in ensemble.groups:
             structs_list: Sara2StructureList = singel_group.group
             weighted:WeightedStructure =  WeightedStructure()
             ensemble_weighted_structures.append(weighted.make_weighted_struct(structure_list=structs_list))
         
-        ensemble_result:WeightedEnsembleResult = WeightedEnsembleResult(weighted_structs=ensemble_weighted_structures)
+        ensemble_result:WeightedEnsembleResult = WeightedEnsembleResult(structs=ensemble_weighted_structures)
         return ensemble_result
     
-    def process_ensemble_for_lmv(self, ensemble: MultipleEnsembleGroups, ref_structures:ReferenceStructures):
-        
+    def process_ensemble_for_lmv(self, ensemble: MultipleEnsembleGroups, ref_structures:ReferenceStructures)->ComparisonLMVResponse:
+        """
+        Finds and returns the lmv flavors for the ensemble groups and outputs it as a ComparisonLMVResonse
+        """
         #first get mfe lmv then weighted for groups
         lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
         mfe_result:EVResult = lmv.get_mfe_mult_group_lmv(ensemble=ensemble)
@@ -57,9 +66,9 @@ class ProcessEnsemble():
         comparisons_lmv_response: List[ComparisonLMV] = []
         for group_index in range(len(ensemble.groups)):
             lmv_data:ComparisonLMV = ComparisonLMV()
-            lmv_data.lmv_comp = weight_result[group_index]
-            lmv_data.lmv_mfe = mfe_result[group_index]
-            lmv_data.lmv_rel = rel_result[group_index]
+            lmv_data.lmv_comp = weight_result.ev_values[group_index]
+            lmv_data.lmv_mfe = mfe_result.ev_values[group_index]
+            lmv_data.lmv_rel = rel_result.ev_values[group_index]
             comparisons_lmv_response.append(lmv_data)
         
         serena_lmv_respone: ComparisonLMVResponse = ComparisonLMVResponse(lmv_comps=comparisons_lmv_response)
@@ -67,13 +76,16 @@ class ProcessEnsemble():
 
     # need to feed the ensemble to this and then process it
     #compaire each weighted struct against the unbound mfe and bound structs
-    def process_ensemble_for_comparison_structures(self, raw_ensemble:MultipleEnsembleGroups, weighted_ensemble:WeightedEnsembleResult):
-        #need to return a 
-
+    def process_ensemble_for_comparison_structures(self, raw_ensemble:MultipleEnsembleGroups, weighted_ensemble:WeightedEnsembleResult)->ComparisonNucResults:
+        """
+        Find and return the comparison structures for the ensemble groups. This compares the
+        weighted structure for each group with the unbound mfe and the folded mfe to get a compariosn
+        structure for each group and returns ComparisonNucResults
+        """
         nuc_count:int = raw_ensemble.groups[0].group.nuc_count
 
         comparison_nucs_list:List[ComparisonNucCounts]= []
-        for group_index in range(len(raw_ensemble.num_groups)):
+        for group_index in range(raw_ensemble.num_groups):
             unbound_mfe_struct:Sara2SecondaryStructure = raw_ensemble.non_switch_state_structure
             bound_mfe_struct: Sara2SecondaryStructure = raw_ensemble.switched_state_structure
             weighted_struct:Sara2SecondaryStructure = weighted_ensemble.structs[group_index]
@@ -86,7 +98,7 @@ class ProcessEnsemble():
             comparison_nuc_counts: ComparisonNucCounts = comparison_data.comp_counts
             comparison_nucs_list.append(comparison_nuc_counts)
         
-        result: ComparisonNucResults = ComparisonNucResults(comparison_nuc_counts=comparison_nuc_counts)
+        result: ComparisonNucResults = ComparisonNucResults(comparison_nuc_counts=comparison_nucs_list)
         return result
     
 @dataclass

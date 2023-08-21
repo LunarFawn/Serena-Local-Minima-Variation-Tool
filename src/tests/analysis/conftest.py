@@ -18,7 +18,16 @@ from serena.analysis.judge_pool import (JudgesResults,
                                         LMVSwitchJudgeResult)
 from serena.analysis.scoring import (BasicScoreResults,
                                      AdvancedScoreResults,
-                                     SerenaScoring) 
+                                     SerenaScoring)
+from serena.utilities.ensemble_structures import (Sara2SecondaryStructure, 
+                                        Sara2StructureList, 
+                                        KcalRanges)
+from serena.utilities.weighted_structures import WeightedEnsembleResult
+from serena.analysis.ensemble_analysis import (ReferenceStructures,
+                                               ProcessEnsemble,
+                                               InvestigateEnsembleResults,
+                                               InvestigateEnsemble)
+from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 
 
 
@@ -190,4 +199,18 @@ def initialized_advanced_score_results():
                                 comp_penalty=4,
                                 excess_struct_penalty=5,
                                 total_score=6)
-    
+
+"""
+Doing ensemble analysis now
+"""
+
+@pytest.fixture
+def initialized_reference_structure(secondary_structure_5:Sara2SecondaryStructure, weighted_ensemble_result:WeightedEnsembleResult):
+    return ReferenceStructures(mfe_structure=secondary_structure_5,
+                               weighted_structures=weighted_ensemble_result)
+
+@pytest.fixture
+def process_ensemble_weighted_result(multiple_ensemble_groups:MultipleEnsembleGroups):
+    process_ensemble:ProcessEnsemble = ProcessEnsemble()
+    result: WeightedEnsembleResult = process_ensemble.process_ensemble_for_weighted_structures(ensemble=multiple_ensemble_groups)
+    return result
