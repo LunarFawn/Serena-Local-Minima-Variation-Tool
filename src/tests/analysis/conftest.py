@@ -4,11 +4,16 @@ Pytest fixtures for the analysis folder
 import pytest
 
 #from tests.conftest import *
+from serena.utilities.comparison_structures import (ComparisonNucResults)
+from serena.utilities.local_minima_variation import (ComparisonLMV,
+                                                    ComparisonLMVResponse)
 from serena.analysis.investigator import (SettingsAssertionLMV,
                                           LMVAssertionResult,
                                           RatioResults,
                                           ComparisonEvalResults,
                                           InvestigatorResults)
+
+from serena.analysis.judge_pool import (JudgesResults)
 
 
 
@@ -65,3 +70,27 @@ def initialized_comparison_eval_results(initialized_ratio_results:RatioResults):
 @pytest.fixture
 def initialized_investigator_results(initialized_comparison_eval_results:ComparisonEvalResults):
     return InvestigatorResults(comparison_eval_results=initialized_comparison_eval_results)
+
+@pytest.fixture
+def intantiated_investigator_results(initialized_comparison_eval_results:ComparisonEvalResults, comparison_nuc_result:ComparisonNucResults, initialized_comparison_lmv_response:ComparisonLMVResponse, initialized_lmv_assertion_results:LMVAssertionResult):
+    return InvestigatorResults(comparison_eval_results=initialized_comparison_eval_results,
+                                                                   comp_nuc_counts=comparison_nuc_result,
+                                                                   lmv_values=initialized_comparison_lmv_response,
+                                                                   lmv_assertions=initialized_lmv_assertion_results,
+                                                                   num_groups=3,
+                                                                   total_structures_ensemble=5)
+
+"""
+Fixtures for judge pool
+"""
+@pytest.fixture
+def initialized_judge_result():
+    return JudgesResults(is_good_count=1,
+                         is_good_switch=True,
+                         is_on_off_count=2,
+                         is_on_off_switch=False,
+                         is_powerful_count=3,
+                         is_powerful_switch=True,
+                         switchable_groups_list=[1,2,3],
+                         powerfull_groups_list=[2,3,4],
+                         on_off_groups_list=[3,4,5])

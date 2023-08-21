@@ -13,12 +13,16 @@ from serena.utilities.ensemble_variation import EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse, LocalMinimaVariation
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult, ComparisonNucResults, ComparisonStructures
 
-from src.serena.analysis.investigator import ComparisonInvestigator, ComparisonEvalResults, LocalMinimaVariationInvestigator, LMVAssertionResult, SettingsAssertionLMV,InvestigatorResults
-from src.serena.analysis.judge_pool import AnalysisJudgePool, JudgesResults
-from src.serena.analysis.scoring import SerenaScoring, BasicScoreResults, AdvancedScoreResults
+from serena.analysis.investigator import ComparisonInvestigator, ComparisonEvalResults, LocalMinimaVariationInvestigator, LMVAssertionResult, SettingsAssertionLMV,InvestigatorResults
+from serena.analysis.judge_pool import AnalysisJudgePool, JudgesResults
+from serena.analysis.scoring import SerenaScoring, BasicScoreResults, AdvancedScoreResults
+from serena.local_minima_variation import RunLocalMinimaVariation
 
 @dataclass
 class ReferenceStructures():
+    """
+    Reference structures to use throught the analysis
+    """
     mfe_structure:Sara2SecondaryStructure
     weighted_structures: WeightedEnsembleResult
 
@@ -41,17 +45,15 @@ class ProcessEnsemble():
     
     def process_ensemble_for_lmv(self, ensemble: MultipleEnsembleGroups, ref_structures:ReferenceStructures):
         
-        
         #first get mfe lmv then weighted for groups
-        lmv:LocalMinimaVariation = LocalMinimaVariation()
-        mfe_result:EVResult = lmv.get_multi_group_lmv(ensemble=ensemble,
-                                                        reference_structure=ref_structures.mfe_structure)
+        lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
+        mfe_result:EVResult = lmv.get_mfe_mult_group_lmv(ensemble=ensemble)
         #now get ref ev
         rel_result:EVResult = lmv.get_relative_mutli_group_lmv(ensemble=ensemble)
 
         #now get weightedEV
-        weight_result:EVResult = lmv.get_weighted_multi_group_lmv(ensemble=ensemble, 
-                                                                   weighted_structures=ref_structures.weighted_structures)
+        weight_result:EVResult = lmv.get_comp_multi_group_lmv(ensemble=ensemble, 
+                                                                weighted_structures=ref_structures.weighted_structures)
         comparisons_lmv_response: List[ComparisonLMV] = []
         for group_index in range(len(ensemble.groups)):
             lmv_data:ComparisonLMV = ComparisonLMV()
