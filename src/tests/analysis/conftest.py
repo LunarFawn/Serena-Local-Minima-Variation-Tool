@@ -214,3 +214,9 @@ def process_ensemble_weighted_result(multiple_ensemble_groups:MultipleEnsembleGr
     process_ensemble:ProcessEnsemble = ProcessEnsemble()
     result: WeightedEnsembleResult = process_ensemble.process_ensemble_for_weighted_structures(ensemble=multiple_ensemble_groups)
     return result
+
+@pytest.fixture
+def initialized_investigate_ensemble_results(initialized_basic_score_results:BasicScoreResults, initialized_advanced_score_results:AdvancedScoreResults):
+    return InvestigateEnsembleResults(basic_scores=initialized_basic_score_results,
+                                      advanced_scores=initialized_advanced_score_results,
+                                      number_structures=10)

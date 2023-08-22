@@ -103,17 +103,27 @@ class ProcessEnsemble():
     
 @dataclass
 class InvestigateEnsembleResults():
+    """
+    Container for all the scores that are returned by the 
+    scoring algorithms
+    """
     basic_scores:BasicScoreResults
     advanced_scores:AdvancedScoreResults
     number_structures:int
 
 class InvestigateEnsemble():
-
+    """
+    Entry point for automated analysis of the ensemble for
+    switchyness scores
+    """
     def __init__(self) -> None:
         pass
 
     def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups):
-
+        """
+        Does what it says. Process and investigate the MultipleEnsembleGroup
+        for switchyness and report the score after judging.
+        """
         process_ensemble: ProcessEnsemble = ProcessEnsemble()
 
         #first get weighted structs
@@ -126,13 +136,13 @@ class InvestigateEnsemble():
                                                                                       ref_structures=lmv_references)
 
         #now get comparison structures
-        comparison_result:ComparisonNucResults = process_ensemble.process_ensemble_for_comparison_structures(raw_ensembl=ensemble,
-                                                                                                             weighted_ensemble=WeightedEnsembleResult)
+        comparison_result:ComparisonNucResults = process_ensemble.process_ensemble_for_comparison_structures(raw_ensemble=ensemble,
+                                                                                                             weighted_ensemble=weighted_result)
         
         #now do the investigation
         comparison_investigator:ComparisonInvestigator = ComparisonInvestigator()
 
-        comparison_eval_result: ComparisonEvalResults = comparison_investigator.evalulate_comparison_nucs(comparison_nucss=comparison_result)
+        comparison_eval_result: ComparisonEvalResults = comparison_investigator.evalulate_comparison_nucs(comparison_nucs=comparison_result)
 
         #use default values
         lmv_eval_settings:SettingsAssertionLMV = SettingsAssertionLMV()
@@ -150,7 +160,7 @@ class InvestigateEnsemble():
         
         #now judge the investigation
         judges:AnalysisJudgePool = AnalysisJudgePool()
-        judges_decisions: JudgesResults = judges.is_switch_judge(investigator=investigation_results)
+        judges_decisions: JudgesResults = judges.run_all_judges(investigator=investigation_results)
 
         #now apply scoreing to the decisions
         scoring:SerenaScoring = SerenaScoring()

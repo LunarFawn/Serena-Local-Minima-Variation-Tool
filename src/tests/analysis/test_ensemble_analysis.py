@@ -44,4 +44,26 @@ def test_process_ensemble_for_comparison_structures(multiple_ensemble_groups:Mul
     assert result.comparison_nuc_counts[1].num_nucs == 6
     assert result.comparison_nuc_counts[1].unbound_count == 0
 
+def test_initialized_investigate_ensemble_results(initialized_investigate_ensemble_results:InvestigateEnsembleResults):
+    assert initialized_investigate_ensemble_results.advanced_scores.total_score == 6
+    assert initialized_investigate_ensemble_results.basic_scores.total_score == 1
+    assert initialized_investigate_ensemble_results.number_structures == 10
+
+def test_investigate_and_score_ensemble_simple(multiple_ensemble_groups:MultipleEnsembleGroups):
+    investiagtion:InvestigateEnsemble = InvestigateEnsemble()
+    result:InvestigateEnsembleResults= investiagtion.investigate_and_score_ensemble(ensemble=multiple_ensemble_groups)
+    assert result.basic_scores.bonuses == 0
+    assert result.basic_scores.functional_switch_score == 0
+    assert result.basic_scores.on_off_switch_score == 1
+    assert result.basic_scores.penalties == 0
+    assert result.basic_scores.powerful_switch_score == 0
+    assert result.basic_scores.total_score == 1
+    assert result.advanced_scores.comp_bonus == 0.5
+    assert result.advanced_scores.comp_penalty == 0
+    assert result.advanced_scores.excess_struct_penalty == -4.999
+    assert result.advanced_scores.lmv_bonus == 5.499
+    assert result.advanced_scores.lmv_penalty == 0
+    assert result.advanced_scores.total_score == 5.499
+    
+    
     
