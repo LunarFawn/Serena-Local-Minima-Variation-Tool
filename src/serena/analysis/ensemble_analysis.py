@@ -13,51 +13,62 @@ from serena.utilities.ensemble_variation import EVResult
 from serena.utilities.local_minima_variation import ComparisonLMV, ComparisonLMVResponse, LocalMinimaVariation
 from serena.utilities.comparison_structures import ComparisonNucCounts, ComparisonResult, ComparisonNucResults, ComparisonStructures
 
-from src.serena.analysis.investigator import ComparisonInvestigator, ComparisonEvalResults, LocalMinimaVariationInvestigator, LMVAssertionResult, SettingsAssertionLMV,InvestigatorResults
-from src.serena.analysis.judge_pool import AnalysisJudgePool, JudgesResults
-from src.serena.analysis.scoring import SerenaScoring, BasicScoreResults, AdvancedScoreResults
+from serena.analysis.investigator import ComparisonInvestigator, ComparisonEvalResults, LocalMinimaVariationInvestigator, LMVAssertionResult, SettingsAssertionLMV,InvestigatorResults
+from serena.analysis.judge_pool import AnalysisJudgePool, JudgesResults
+from serena.analysis.scoring import SerenaScoring, BasicScoreResults, AdvancedScoreResults
+from serena.local_minima_variation import RunLocalMinimaVariation
 
 @dataclass
 class ReferenceStructures():
+    """
+    Reference structures to use throughout the analysis
+    """
     mfe_structure:Sara2SecondaryStructure
     weighted_structures: WeightedEnsembleResult
 
 
 class ProcessEnsemble():
-
+    """
+    Process a MulitEnsembleGroup representation of the ensemble for various features
+    This information is then given to the investigator to collect the data and hand off
+    to the judges and later on scoring
+    """
     def __init__(self) -> None:
         pass
 
     def process_ensemble_for_weighted_structures(self, ensemble:MultipleEnsembleGroups) -> WeightedEnsembleResult:
+        """
+        Finds and returns the weighted structures for each ensemble group and outputs it as a list of 
+        weighted structures in sara2secondarystructure form.
+        """
         ensemble_weighted_structures: List[Sara2SecondaryStructure] = []
-        
         for singel_group in ensemble.groups:
             structs_list: Sara2StructureList = singel_group.group
             weighted:WeightedStructure =  WeightedStructure()
             ensemble_weighted_structures.append(weighted.make_weighted_struct(structure_list=structs_list))
         
-        ensemble_result:WeightedEnsembleResult = WeightedEnsembleResult(weighted_structs=ensemble_weighted_structures)
+        ensemble_result:WeightedEnsembleResult = WeightedEnsembleResult(structs=ensemble_weighted_structures)
         return ensemble_result
     
-    def process_ensemble_for_lmv(self, ensemble: MultipleEnsembleGroups, ref_structures:ReferenceStructures):
-        
-        
+    def process_ensemble_for_lmv(self, ensemble: MultipleEnsembleGroups, ref_structures:ReferenceStructures)->ComparisonLMVResponse:
+        """
+        Finds and returns the lmv flavors for the ensemble groups and outputs it as a ComparisonLMVResonse
+        """
         #first get mfe lmv then weighted for groups
-        lmv:LocalMinimaVariation = LocalMinimaVariation()
-        mfe_result:EVResult = lmv.get_multi_group_lmv(ensemble=ensemble,
-                                                        reference_structure=ref_structures.mfe_structure)
+        lmv:RunLocalMinimaVariation = RunLocalMinimaVariation()
+        mfe_result:EVResult = lmv.get_mfe_mult_group_lmv(ensemble=ensemble)
         #now get ref ev
         rel_result:EVResult = lmv.get_relative_mutli_group_lmv(ensemble=ensemble)
 
         #now get weightedEV
-        weight_result:EVResult = lmv.get_weighted_multi_group_lmv(ensemble=ensemble, 
-                                                                   weighted_structures=ref_structures.weighted_structures)
+        weight_result:EVResult = lmv.get_comp_multi_group_lmv(ensemble=ensemble, 
+                                                                weighted_structures=ref_structures.weighted_structures)
         comparisons_lmv_response: List[ComparisonLMV] = []
         for group_index in range(len(ensemble.groups)):
             lmv_data:ComparisonLMV = ComparisonLMV()
-            lmv_data.lmv_comp = weight_result[group_index]
-            lmv_data.lmv_mfe = mfe_result[group_index]
-            lmv_data.lmv_rel = rel_result[group_index]
+            lmv_data.lmv_comp = weight_result.ev_values[group_index]
+            lmv_data.lmv_mfe = mfe_result.ev_values[group_index]
+            lmv_data.lmv_rel = rel_result.ev_values[group_index]
             comparisons_lmv_response.append(lmv_data)
         
         serena_lmv_respone: ComparisonLMVResponse = ComparisonLMVResponse(lmv_comps=comparisons_lmv_response)
@@ -65,13 +76,16 @@ class ProcessEnsemble():
 
     # need to feed the ensemble to this and then process it
     #compaire each weighted struct against the unbound mfe and bound structs
-    def process_ensemble_for_comparison_structures(self, raw_ensemble:MultipleEnsembleGroups, weighted_ensemble:WeightedEnsembleResult):
-        #need to return a 
-
+    def process_ensemble_for_comparison_structures(self, raw_ensemble:MultipleEnsembleGroups, weighted_ensemble:WeightedEnsembleResult)->ComparisonNucResults:
+        """
+        Find and return the comparison structures for the ensemble groups. This compares the
+        weighted structure for each group with the unbound mfe and the folded mfe to get a compariosn
+        structure for each group and returns ComparisonNucResults
+        """
         nuc_count:int = raw_ensemble.groups[0].group.nuc_count
 
         comparison_nucs_list:List[ComparisonNucCounts]= []
-        for group_index in range(len(raw_ensemble.num_groups)):
+        for group_index in range(raw_ensemble.num_groups):
             unbound_mfe_struct:Sara2SecondaryStructure = raw_ensemble.non_switch_state_structure
             bound_mfe_struct: Sara2SecondaryStructure = raw_ensemble.switched_state_structure
             weighted_struct:Sara2SecondaryStructure = weighted_ensemble.structs[group_index]
@@ -84,22 +98,32 @@ class ProcessEnsemble():
             comparison_nuc_counts: ComparisonNucCounts = comparison_data.comp_counts
             comparison_nucs_list.append(comparison_nuc_counts)
         
-        result: ComparisonNucResults = ComparisonNucResults(comparison_nuc_counts=comparison_nuc_counts)
+        result: ComparisonNucResults = ComparisonNucResults(comparison_nuc_counts=comparison_nucs_list)
         return result
     
 @dataclass
 class InvestigateEnsembleResults():
+    """
+    Container for all the scores that are returned by the 
+    scoring algorithms
+    """
     basic_scores:BasicScoreResults
     advanced_scores:AdvancedScoreResults
     number_structures:int
 
 class InvestigateEnsemble():
-
+    """
+    Entry point for automated analysis of the ensemble for
+    switchyness scores
+    """
     def __init__(self) -> None:
         pass
 
-    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups):
-
+    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups)->InvestigateEnsembleResults:
+        """
+        Does what it says. Process and investigate the MultipleEnsembleGroup
+        for switchyness and report the score after judging.
+        """
         process_ensemble: ProcessEnsemble = ProcessEnsemble()
 
         #first get weighted structs
@@ -112,13 +136,13 @@ class InvestigateEnsemble():
                                                                                       ref_structures=lmv_references)
 
         #now get comparison structures
-        comparison_result:ComparisonNucResults = process_ensemble.process_ensemble_for_comparison_structures(raw_ensembl=ensemble,
-                                                                                                             weighted_ensemble=WeightedEnsembleResult)
+        comparison_result:ComparisonNucResults = process_ensemble.process_ensemble_for_comparison_structures(raw_ensemble=ensemble,
+                                                                                                             weighted_ensemble=weighted_result)
         
         #now do the investigation
         comparison_investigator:ComparisonInvestigator = ComparisonInvestigator()
 
-        comparison_eval_result: ComparisonEvalResults = comparison_investigator.evalulate_comparison_nucs(comparison_nucss=comparison_result)
+        comparison_eval_result: ComparisonEvalResults = comparison_investigator.evalulate_comparison_nucs(comparison_nucs=comparison_result)
 
         #use default values
         lmv_eval_settings:SettingsAssertionLMV = SettingsAssertionLMV()
@@ -136,7 +160,7 @@ class InvestigateEnsemble():
         
         #now judge the investigation
         judges:AnalysisJudgePool = AnalysisJudgePool()
-        judges_decisions: JudgesResults = judges.is_switch_judge(investigator=investigation_results)
+        judges_decisions: JudgesResults = judges.run_all_judges(investigator=investigation_results)
 
         #now apply scoreing to the decisions
         scoring:SerenaScoring = SerenaScoring()
