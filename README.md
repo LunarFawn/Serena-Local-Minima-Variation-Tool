@@ -2,13 +2,19 @@
 This software was developed to run on Ubuntu 22.04 LTS and Python 3.9. Python 3.9 is used due to the fact that the NUPACK version I currenlty use 4.0.0.28 will not build with any python versions after 3.9. 
 
 # Installation 
-The package is pip installable so currently from the root of the project pass:
+The package is pip installable via Pypi.org as well via the Github repo:
+
+To install from Pypi:
+
+    pip install serena-rna-tool
+
+To install from cloned repo:
 
     pip install .
 
 # Algorithms, Tools, and Framework
 
-Currently Ensemble Variation and Local Minima Variation are the only algorithms with tools fully coded up and unit tested from the list of algorithms presented at the annual RNA design conference Eternacon9 at Stanford University. These utilize a new software framework I developed that enabled the processing and shuttling around of information on RNA stuctural ensembles. These ensembles are determined through thermodynamic modeling using University research software tools such as Nupack4 and Vienna2. 
+As of release 2.0.0 all tools are fully coded up and unit tested from the list of algorithms presented at the annual RNA design conference Eternacon9 at Stanford University. This includes all algorithms around determining the switchyness of a rna sequence. These utilize a new software framework I developed that enabled the processing and shuttling around of information on RNA stuctural ensembles. These ensembles are determined through thermodynamic modeling using University research software tools such as Nupack4 and Vienna2. 
 
 ## Framework
 The entry point into the framework is the Sara2SecondaryStructure. It is called this due to the fact that Serena is a toolset that runs on the brains and logic of the Sara algorithm and its predicesor Sara2 that designed one of the two featured RNA sequences in the peer-reviwe journal PNAS. This object contains all the information known about a single secondary structure found in the ensemble of a RNA sequence. This includes the structure in dot parentheses notation, total free energy, stack energy, RNA sequence and number of nucleotides. The full ensemble of a RNA sequence with all its seperate secondary structures is then represented through the Sara2StructureList to start with.
@@ -59,4 +65,7 @@ You can then feed this into the EnsembleVariation class that hold the algorithms
     from serena.utilities.ensemble_variation import EnsembleVariation, EV
     e_v = EnsembleVariation()
     ensemble_ev:EV = e_v.ensemble_variation_algorithm(kcal_group_structures_list=structure_list,
-                                                        ref_structure=mfe_structure)
+                                    ref_structure=mfe_structure)
+
+# Links:
+[Documentation](https://lunarfawn.github.io/serena_documentation/)
