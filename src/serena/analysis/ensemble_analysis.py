@@ -21,7 +21,7 @@ from serena.local_minima_variation import RunLocalMinimaVariation
 @dataclass
 class ReferenceStructures():
     """
-    Reference structures to use throught the analysis
+    Reference structures to use throughout the analysis
     """
     mfe_structure:Sara2SecondaryStructure
     weighted_structures: WeightedEnsembleResult
