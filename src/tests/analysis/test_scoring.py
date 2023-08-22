@@ -98,8 +98,8 @@ def test_advanced_score_groups(initialized_judge_result:JudgesResults,intantiate
                                                                           investigator=intantiated_investigator_results)
     assert basic_scores.comp_bonus == 0
     assert basic_scores.comp_penalty == 1.5
-    assert basic_scores.excess_struct_penalty == -4.99875
-    assert basic_scores.lmv_bonus == 3.4987500000000002
+    assert basic_scores.excess_struct_penalty == 0
+    assert basic_scores.lmv_bonus == 0
     assert basic_scores.lmv_penalty == 0
-    assert basic_scores.total_score == 3.4987500000000002
+    assert basic_scores.total_score == -1.5
     

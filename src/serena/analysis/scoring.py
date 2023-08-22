@@ -129,18 +129,19 @@ class SerenaScoring():
         """
         #excess_divisor:float = 2000#2500
         penalty:float = 0
-        factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
-        message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points '
-        #result_messages = self.log_message(message, result_messages)
-        sixty_range_num:float = 50000#15000
-        #penalize for too many structs
-        penalty += factor
-        if num_structures > sixty_range_num:
-            message:str = f'Significant excess structures found: found {num_structures - sixty_range_num} structures over limit of {sixty_range_num}'
+        if num_structures > excess_limit:
+            factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
+            message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points '
             #result_messages = self.log_message(message, result_messages)
-            message:str = f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty'
-            #result_messages = self.log_message(message, result_messages)
-            penalty += .5
+            sixty_range_num:float = 50000#15000
+            #penalize for too many structs
+            penalty += factor
+            if num_structures > sixty_range_num:
+                message:str = f'Significant excess structures found: found {num_structures - sixty_range_num} structures over limit of {sixty_range_num}'
+                #result_messages = self.log_message(message, result_messages)
+                message:str = f'Eterna_score should be ~60 for temp group and could be good design currently has high penalty for excess structures and now yet one more penalty'
+                #result_messages = self.log_message(message, result_messages)
+                penalty += .5
         
         return penalty
     
@@ -199,7 +200,7 @@ class SerenaScoring():
         excess_struct_penalty:float = self.excessive_structures_penalties(num_structures=investigator.total_structures_ensemble,
                                                                     excess_limit=excess_limit,
                                                                     excess_divisor=excess_divisor)
-        total_score = lmv_bonus = lmv_penalty + comp_bonus - comp_penalty - excess_struct_penalty
+        total_score = lmv_bonus - lmv_penalty + comp_bonus - comp_penalty - excess_struct_penalty
         advanced_score_response: AdvancedScoreResults = AdvancedScoreResults(lmv_bonus=lmv_bonus,
                                                                              lmv_penalty=lmv_penalty,
                                                                              comp_bonus=comp_bonus,
