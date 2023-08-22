@@ -119,7 +119,7 @@ class InvestigateEnsemble():
     def __init__(self) -> None:
         pass
 
-    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups):
+    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups)->InvestigateEnsembleResults:
         """
         Does what it says. Process and investigate the MultipleEnsembleGroup
         for switchyness and report the score after judging.
