@@ -6,8 +6,8 @@ from serena.utilities.ensemble_structures import (Sara2SecondaryStructure,
                                         Sara2StructureList, 
                                         KcalRanges)
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
-from src.tests.utilities.test_sara_secondary_structure_lists import test_default_new_secondary_struct_list
-from src.tests.utilities.test_sara_secondary_structure import test_empty_secondary_struct
+from serena.tests.utilities.test_sara_secondary_structure_lists import test_default_new_secondary_struct_list
+from serena.tests.utilities.test_sara_secondary_structure import test_empty_secondary_struct
 
 def test_empty_single_ensemble_group(empty_single_ensemble_group:SingleEnsembleGroup):
     #test that the ensemble list is empty default

@@ -18,3 +18,8 @@ requires-python = "<3.10"
 [project.urls]
 Homepage = "https://lunarfawn.github.io/serena_documentation/"
 Repository = "https://github.com/LunarFawn/Serena-Local-Minima-Variation-Tool.git"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
