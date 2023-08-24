@@ -4,8 +4,8 @@ from typing import List
 from serena.utilities.ensemble_variation import EVShuttle, EVResult, EV, EnsembleVariation, EVToken
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.thread_manager import EV_ThreadProcessor
-from src.tests.utilities.test_sara_secondary_structure_lists import test_secondary_structure_list_2_item
-from src.tests.utilities.test_sara_secondary_structure import test_secondary_structure_5, test_empty_secondary_struct
+from serena.tests.utilities.test_sara_secondary_structure_lists import test_secondary_structure_list_2_item
+from serena.tests.utilities.test_sara_secondary_structure import test_secondary_structure_5, test_empty_secondary_struct
 
 
 def test_empty_ev(empty_ev:EV):

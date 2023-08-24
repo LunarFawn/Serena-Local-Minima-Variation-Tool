@@ -146,7 +146,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         #self._structures.append(structure.structure)
         self._free_energy_list.append(structure.free_energy)
         self._stack_energy_list.append(structure.stack_energy)
-        self.process_energy()
+        #self.process_energy()
 
     def remove_structure(self, index:int):
         """
@@ -155,7 +155,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         del self._structures[index]
         del self._free_energy_list[index]
         del self._stack_energy_list[index]
-        self.process_energy()
+        #self.process_energy()
 
     @property
     def mfe_structure(self):
@@ -172,6 +172,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the mfe total free energy as float
         """
+        self.process_energy()
         energy: float = 0
         if len(self.sara_stuctures) > 0:
             energy = self.sara_stuctures[0].free_energy
@@ -182,6 +183,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the mfe stack energy as float
         """
+        self.process_energy()
         energy: float = 0
         if len(self.sara_stuctures) > 0:
             energy = self.sara_stuctures[0].stack_energy
@@ -220,6 +222,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the maximum free energy of the structures in the list
         """
+        self.process_energy()
         return self._max_free_energy
 
     @property
@@ -227,6 +230,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the minimum free energy of the structures in the list
         """
+        self.process_energy()
         return self._min_free_energy
 
     @property
@@ -234,6 +238,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the maximum stack energy of the structures in the list
         """
+        self.process_energy()
         return self._max_stack_energy
 
     @property
@@ -241,6 +246,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the minimum stack energy of the structures in the list
         """
+        self.process_energy()
         return self._min_stack_energy
 
     @property
@@ -248,6 +254,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the number of structures in the list
         """
+        self.process_energy()
         return self._num_structures
 
     @property
@@ -255,6 +262,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the span of the free energy of the structures in the list
         """
+        self.process_energy()
         return self._free_energy_span
 
     @property
@@ -262,6 +270,7 @@ class Sara2StructureList():#pylint: disable=too-many-instance-attributes
         """
         Returns the span of the stack energy of the structures in the list
         """
+        self.process_energy()
         return self._stack_energy_span
 
     @property

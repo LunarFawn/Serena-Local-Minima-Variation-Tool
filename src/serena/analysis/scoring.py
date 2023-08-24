@@ -5,8 +5,8 @@ File to handles teh calsses for dealing with scores
 from dataclasses import dataclass
 from typing import List
 
-from src.serena.analysis.judge_pool import JudgesResults
-from src.serena.analysis.investigator import InvestigatorResults
+from serena.analysis.judge_pool import JudgesResults
+from serena.analysis.investigator import InvestigatorResults
 
 @dataclass
 class BasicScoreResults():
@@ -131,7 +131,7 @@ class SerenaScoring():
         penalty:float = 0
         if num_structures > excess_limit:
             factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
-            message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points '
+            message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points'
             #result_messages = self.log_message(message, result_messages)
             sixty_range_num:float = 50000#15000
             #penalize for too many structs
@@ -195,7 +195,7 @@ class SerenaScoring():
         #    message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
         #    result_messages = self.log_message(message, result_messages)
         #    score= score + 1
-        excess_limit:float = 20000#this is based on new data 7500
+        excess_limit:float = 7000#this is based on new data 7500
         excess_divisor:float = 2000#2500
         excess_struct_penalty:float = self.excessive_structures_penalties(num_structures=investigator.total_structures_ensemble,
                                                                     excess_limit=excess_limit,

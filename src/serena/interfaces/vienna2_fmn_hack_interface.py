@@ -47,7 +47,7 @@ class Vienna2FMNInterface():
         
         sara_struct: Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=sequence,
                                                                        structure=structure,
-                                                                       freeEnergy=energy)
+                                                                       free_energy=energy)
 
         return sara_struct
 
@@ -79,7 +79,7 @@ class Vienna2FMNInterface():
                     sara_struct.structure = raw_struct[0]
                     try:
                         energy = float(raw_struct[1])
-                        sara_struct.freeEnergy = energy
+                        sara_struct.free_energy = energy
                     except ValueError as error:
                         energy = 0
                     struct_list_response.add_structure(sara_struct)
@@ -96,7 +96,7 @@ class Vienna2FMNInterface():
         return response
 
 
-new_viena: Vienna2FMNInterface = Vienna2FMNInterface()
-seq = 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCAUAAGACAUGAGGAUCACCCAUGUGGUUAAGAUGGCA'
-result = new_viena.rnasubopt_fmn(seq)
-print(result)
+#new_viena: Vienna2FMNInterface = Vienna2FMNInterface()
+#seq = 'GCCAUCGCAUGAGGAUAUGCUCCCGUUUCGGGAGCAGAAGGCAUGUCAUAAGACAUGAGGAUCACCCAUGUGGUUAAGAUGGCA'
+#result = new_viena.rnasubopt_fmn(seq)
+#print(result)

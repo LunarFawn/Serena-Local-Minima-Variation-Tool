@@ -115,6 +115,7 @@ class ComparisonInvestigator():
         unbound_total_list: List[int] = []
         ratios:List[RatioResults] = []
         nuc_penatly_count:int = 0
+        bound_hold:int = -1
         for group_index in range(len(comparison_nucs.comparison_nuc_counts)):#pylint: disable=consider-using-enumerate
             last_index:int = 0
             if group_index > 0:

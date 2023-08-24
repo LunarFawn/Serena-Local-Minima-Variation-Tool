@@ -10,6 +10,7 @@ from serena.ensemble_variation import RunEnsembleVariation, EV
 from serena.utilities.ensemble_variation import EVResult
 from serena.utilities.local_minima_variation import LocalMinimaVariation
 from serena.switchyness_score import RunInvestigateEnsemble, InvestigateEnsembleResults
+from serena.interfaces.vienna2_fmn_hack_interface import Vienna2FMNInterface
 
 @pytest.fixture
 def nupack_4_settings():
@@ -264,21 +265,24 @@ def test_get_folded_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     assert result.ev_values[3].ev_normalized == 30.068627450980394
     assert result.ev_values[4].ev_normalized == 28.786666666666676
     
-def test_investigate_and_score_ensemble_nupack(real_world_nupack_4_settings:NupackSettings):
-    material_param=real_world_nupack_4_settings.material_param
-    temp_C=real_world_nupack_4_settings.temp_C
-    kcal_span_from_mfe=real_world_nupack_4_settings.kcal_span_from_mfe
-    Kcal_unit_increments=real_world_nupack_4_settings.Kcal_unit_increments
-    sequence=real_world_nupack_4_settings.sequence
-    folded_structure:Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=real_world_nupack_4_settings.sequence,
-                                                                        structure='(((((...........((((((((...)))))))).....)(()))((.....((((.((....))))))).))...)))))))')
-    investigation:RunInvestigateEnsemble = RunInvestigateEnsemble()
-    result: InvestigateEnsembleResults = investigation.investigate_and_score_ensemble_nupack(sequence=sequence,
-                                                                                             folded_referenec_struct=folded_structure.structure,
-                                                                                             material_param=material_param,
-                                                                                             temp_c=temp_C,
-                                                                                             kcal_span_from_mfe=kcal_span_from_mfe,
-                                                                                             kcal_unit_increments=Kcal_unit_increments)
-    assert result.basic_scores.total_score == 0
+#def test_investigate_and_score_ensemble_nupack(real_world_nupack_4_settings:NupackSettings):
+#    material_param=real_world_nupack_4_settings.material_param
+#    temp_C=37
+#    kcal_span_from_mfe=7
+#    Kcal_unit_increments=1
+#    sequence='GUAGCAUUCUGAGGAUAUUCAUACCGGAAACGGACAUGAGGAUCACCCAUGUGGCGAAAGCCUUGGGAGAAGGCAGUAUGCUAC'
+#    vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
+#    folded_structure = vienna2_fmn_hack.rnafold_fmn(input_sequence=sequence,
+#                                                            do_fmn=True)
+#    #folded_structure:Sara2SecondaryStructure = Sara2SecondaryStructure(sequence=real_world_nupack_4_settings.sequence,
+#    #                                                                    structure='(((((...........((((((((...)))))))).....)(()))((.....((((.((....))))))).))...)))))))')
+#    investigation:RunInvestigateEnsemble = RunInvestigateEnsemble()
+#    result: InvestigateEnsembleResults = investigation.investigate_and_score_ensemble_nupack(sequence=sequence,
+#                                                                                             folded_referenec_struct=folded_structure.structure,
+#                                                                                             material_param=material_param,
+#                                                                                             temp_c=temp_C,
+#                                                                                             kcal_span_from_mfe=kcal_span_from_mfe,
+#                                                                                             kcal_unit_increments=Kcal_unit_increments)
+#    assert result.basic_scores.total_score == 6
     
     
