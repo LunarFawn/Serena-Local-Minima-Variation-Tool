@@ -86,13 +86,13 @@ class AnalysisJudgePool():
         is_good_switch:bool = False
 
         for current_group_index in range(num_groups):
-            last_index:int = 0
-            if current_group_index>1:
-                last_index = current_group_index-1
+            #last_index:int = 0
+            #if current_group_index>0:
+            #    last_index = current_group_index-1
 
-            last_unbound_ratio:float = investigator.comparison_eval_results.ratios[last_index].unbound_to_total_ratio
+            last_unbound_ratio:float = investigator.comparison_eval_results.ratios[current_group_index].last_unbound_ratio
             last_unbound_ratio = round(last_unbound_ratio,2)
-            last_bound_ratio: float = investigator.comparison_eval_results.ratios[last_index].bound_ratio
+            last_bound_ratio: float = investigator.comparison_eval_results.ratios[current_group_index].last_bound_ratio
             last_bound_ratio = round(last_bound_ratio,2)        
             unbound_to_total_ratio:float = investigator.comparison_eval_results.ratios[current_group_index].unbound_to_total_ratio
             unbound_to_total_ratio = round(unbound_to_total_ratio,2)     
@@ -110,7 +110,7 @@ class AnalysisJudgePool():
 
             if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.3 and ev_weigth_under_limit is True and bound > 2:
                 is_good_switch = True
-                #switchable_groups_list.append(current_group_index)
+                switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
 
             if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and ev_weight_asserted is True:
