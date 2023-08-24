@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "serena_rna_tool"
-version = "2.0.6"
+version = "2.0.6.1"
 description = "Serena RNA toolset for ensemble analysis"
 readme = "README.md"
 authors = [{ name = "Jennifer Pearl", email = "jenpearl5@gmail.com" }]

@@ -130,7 +130,7 @@ class SerenaScoring():
         #excess_divisor:float = 2000#2500
         penalty:float = 0
         if num_structures > excess_limit:
-            factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * 1
+            factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
             message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points'
             #result_messages = self.log_message(message, result_messages)
             sixty_range_num:float = 50000#15000
