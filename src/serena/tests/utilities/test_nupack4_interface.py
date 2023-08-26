@@ -169,7 +169,7 @@ def test_get_lmv_nupack_ensemble(initialized_nupack_4_settings:NupackSettings, n
                                                                                 switch_state=nupack_switch_states
                                                                                 )
     lmv:LocalMinimaVariation = LocalMinimaVariation()
-    groups_results: EVResult = lmv.get_multi_group_lmv(ensemble=ensemble,
+    groups_results: EVResult = lmv.get_multi_group_lmv_single_ref(ensemble=ensemble,
                                                        reference_structure=nupack_switch_states.non_switch_mfe_struct)
     assert groups_results.ev_values[0].ev_normalized == 6.0
     assert groups_results.ev_values[1].ev_normalized == 5.333333333333333

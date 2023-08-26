@@ -23,12 +23,19 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
         Function for getting the lmv_r for a RNA sequence for provided MultipleEnsembleGroups object
         """
         ev_values:List[EV] = []
+        ref_list:List[Sara2SecondaryStructure] = []
+        #for group in ensemble.groups:
+        #    ref_structure:Sara2SecondaryStructure = group.group.sara_stuctures[0]
+        #    ev_result:EVResult = self.get_single_group_lmv(ensemble_group=group,
+        #                                                reference_structure=ref_structure)
+        #    ev_values.append(ev_result.ev_values[0])
+        
         for group in ensemble.groups:
             ref_structure:Sara2SecondaryStructure = group.group.sara_stuctures[0]
-            ev_result:EVResult = self.get_single_group_lmv(ensemble_group=group,
-                                                        reference_structure=ref_structure)
-            ev_values.append(ev_result.ev_values[0])
-        result: EVResult = EVResult(ev_values=ev_values)
+            ref_list.append(ref_structure)
+        
+        result: EVResult = self.get_multi_group_lmv_list_ref(ensemble=ensemble,
+                                          reference_list=ref_list)
         return result
 
     def get_relative_multi_group_lmv_nupack(self, sequence:str, material_param:MaterialParameter, temp_c: int, kcal_span_from_mfe:int, kcal_unit_increments: float = 1)->EVResult:
@@ -55,13 +62,22 @@ class RunLocalMinimaVariation(LocalMinimaVariation):
         Function for getting the lmv_c for a RNA sequence for provided MultipleEnsembleGroups object and WeightedEnembleResult
         """
         ev_values:List[EV] = []
+        ref_list:List[Sara2SecondaryStructure] = []
+        #for group_index in range(len(ensemble.groups)):#pylint: disable=consider-using-enumerate
+        #
+        #    ref_structure:Sara2SecondaryStructure = weighted_structures.structs[group_index]
+        #    ev_result:EVResult = self.get_single_group_lmv(ensemble_group=ensemble.groups[group_index],
+        #                                                reference_structure=ref_structure)
+        #    ev_values.append(ev_result.ev_values[0])
+        
         for group_index in range(len(ensemble.groups)):#pylint: disable=consider-using-enumerate
 
             ref_structure:Sara2SecondaryStructure = weighted_structures.structs[group_index]
-            ev_result:EVResult = self.get_single_group_lmv(ensemble_group=ensemble.groups[group_index],
-                                                        reference_structure=ref_structure)
-            ev_values.append(ev_result.ev_values[0])
-        result: EVResult = EVResult(ev_values=ev_values)
+            ref_list.append(ref_structure)
+        
+        result: EVResult = self.get_multi_group_lmv_list_ref(ensemble=ensemble,
+                                                             reference_list=ref_list)
+        #result: EVResult = EVResult(ev_values=ev_values)
         return result
 
     def get_comp_multi_group_lmv_nupack(self, sequence:str, material_param:MaterialParameter, temp_c: int, kcal_span_from_mfe:int, kcal_unit_increments: float = 1)->EVResult:

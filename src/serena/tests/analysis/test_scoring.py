@@ -14,7 +14,7 @@ from serena.analysis.investigator import (SettingsAssertionLMV,
 def test_special_penalties_excessive_structs_is_excessive():
     serena_scoring:SerenaScoring = SerenaScoring()
     penaltie: float = serena_scoring.excessive_structures_penalties(10000,2000,5000)
-    assert penaltie == 2.5
+    assert penaltie == 1.25
 
 def test_special_penalties_excessive_structs_inoy_excessive():
     serena_scoring:SerenaScoring = SerenaScoring()

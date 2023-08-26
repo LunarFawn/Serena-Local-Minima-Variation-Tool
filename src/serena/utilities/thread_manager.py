@@ -137,7 +137,7 @@ class Temperature_ThreadProcessor():
 
 class EV_ThreadProcessor():
     
-    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure , comp_struct_list_option: List[Sara2SecondaryStructure] = []) -> None:
+    def __init__(self, stuctures: List[Sara2StructureList], comp_structure: Sara2SecondaryStructure = Sara2SecondaryStructure(), comp_struct_list_option: List[Sara2SecondaryStructure] = []) -> None:
         self._sara2_groups: List[Sara2StructureList] = stuctures
         num_groups:int = len(stuctures)
         self._num_groups: int =  num_groups
