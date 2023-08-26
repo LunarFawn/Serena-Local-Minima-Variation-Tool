@@ -161,6 +161,7 @@ class AnalysisJudgePool():
         result:LMVSwitchJudgeResult = LMVSwitchJudgeResult()
         #determine if on/off switch
         on_off_switch_list:List[bool] = lmv_data.is_on_off_switch
+        
         if True in on_off_switch_list:
             result.is_on_off_switch = True
         

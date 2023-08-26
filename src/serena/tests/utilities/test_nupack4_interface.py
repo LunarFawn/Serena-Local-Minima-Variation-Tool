@@ -266,11 +266,11 @@ def test_get_folded_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
     assert result.ev_values[4].ev_normalized == 28.786666666666676
     
 #def test_investigate_and_score_ensemble_nupack(real_world_nupack_4_settings:NupackSettings):
-#    material_param=real_world_nupack_4_settings.material_param
+#    material_param=MaterialParameter.rna06_nupack4
 #    temp_C=37
 #    kcal_span_from_mfe=7
 #    Kcal_unit_increments=1
-#    sequence='GUAGCAUUCUGAGGAUAUUCAUACCGGAAACGGACAUGAGGAUCACCCAUGUGGCGAAAGCCUUGGGAGAAGGCAGUAUGCUAC'
+#    sequence='GUAGCAUACGGAGGAUAUUCAUACCGGAAACGGACAUGAGGAUCACCCAUGUGGCGAAAGCCUUGGAAGAAGGCCGUAUGCUAC'
 #    vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 #    folded_structure = vienna2_fmn_hack.rnafold_fmn(input_sequence=sequence,
 #                                                            do_fmn=True)
@@ -283,6 +283,8 @@ def test_get_folded_lmv_nupack(real_world_nupack_4_settings:NupackSettings):
 #                                                                                             temp_c=temp_C,
 #                                                                                             kcal_span_from_mfe=kcal_span_from_mfe,
 #                                                                                             kcal_unit_increments=Kcal_unit_increments)
-#    assert result.basic_scores.total_score == 6
+#    assert result.basic_scores.total_score == 0.0
+#    assert result.advanced_scores.total_score == -5.526
+#    assert result.number_structures == 0
     
     

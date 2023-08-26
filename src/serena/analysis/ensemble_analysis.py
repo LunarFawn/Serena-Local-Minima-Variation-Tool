@@ -171,6 +171,13 @@ class InvestigateEnsemble():
         advanced_scores:AdvancedScoreResults = scoring.advanced_score_groups(judge_results=judges_decisions,
                                                                              investigator=investigation_results)
         
+        #add a tweak
+        if advanced_scores.total_score < 0:
+            #this is a suspect weak switch so half basic score
+            half = basic_scores.total_score / 2
+            basic_scores.penalties = basic_scores.penalties + half
+            basic_scores.total_score = basic_scores.total_score - half
+        
         analysis_results:InvestigateEnsembleResults = InvestigateEnsembleResults(basic_scores=basic_scores,
                                                                                  advanced_scores=advanced_scores,
                                                                                  number_structures=ensemble.total_structures)

@@ -80,7 +80,8 @@ class SerenaScoring():
             multiplier:int = 1
             message:str = "Potential  off/on leaning design via LMV"
             #result_messages = self.log_message(message, result_messages)
-            on_off_switch_score= on_off_switch_score + (len(found_on_off_switch) * multiplier)
+            #on_off_switch_score= on_off_switch_score + (len(found_on_off_switch) * multiplier)
+            on_off_switch_score = on_off_switch_score + 1
 
         
 
@@ -89,29 +90,34 @@ class SerenaScoring():
             if value >= 0 and value <= 1 and value != -1:
                 message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
                 #result_messages = self.log_message(message, result_messages)
-                functional_switch_score += 1
+                #functional_switch_score += 1
                 bonuses += 1
 
             if value in found_on_off_switch:
                 message:str = "Add bonus for functional being in range of on/off prediction"
                 #result_messages = self.log_message(message, result_messages)
-                functional_switch_score += 1
+                #functional_switch_score += 1
                 bonuses += 1
 
         for value in found_powerful_switch:
             if value >= 0 and value <= 1 and value != -1:
                 message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
                 #result_messages = self.log_message(message, result_messages)
-                powerful_switch_score += 1
+                #powerful_switch_score += 1
                 bonuses += 1
 
             if value in found_on_off_switch:
                 message:str = "Add bonus for high performing being in range of on/off prediction"
                 #result_messages = self.log_message(message, result_messages)
-                powerful_switch_score += 1
+                #powerful_switch_score += 1
                 bonuses += 1
         
-        total_score = powerful_switch_score + functional_switch_score + on_off_switch_score - penalties
+        #only count a design sas good if functionial has at leat 1 point if not
+        #it is probbaly flase powerfull
+        if functional_switch_score > 0:        
+            total_score = powerful_switch_score + functional_switch_score + on_off_switch_score + bonuses - penalties
+        else:
+            total_score = 0
 
         basic_score_results:BasicScoreResults = BasicScoreResults(total_score=total_score,
                                                                   functional_switch_score=functional_switch_score,
@@ -166,15 +172,15 @@ class SerenaScoring():
         elif com_great_ratio > comp_less_ratio and com_great_ratio >= .5:
             message:str = "EV for comparison struct is GREATER MORE OFTEN than unbound mfe so penatly"
             #result_messages = self.log_message(message, result_messages)
-            lmv_penalty += .5
+            lmv_penalty += 1
             if com_great_ratio >= .8:
                 message:str = "EV for comp is GREATER EXTRA MORE OFTEN then mfe so minus penalty point"
                 #result_messages = self.log_message(message, result_messages)
-                lmv_penalty += .5
+                lmv_penalty += 1
         
         if investigator.comparison_eval_results.nuc_penatly_count > 0:
-            if investigator.comparison_eval_results.BUratio_list[0] >= .75:
-                new_penalty: float = investigator.comparison_eval_results.nuc_penatly_count * .5
+            if investigator.comparison_eval_results.BUratio_list[0] >= .6:
+                new_penalty: float = investigator.comparison_eval_results.nuc_penatly_count * 1
                 message:str = f'Bound unbound ratio higher than 75% so it will most likely just fold into what should have been a switch so minus {new_penalty} points'
                 #result_messages = self.log_message(message, result_messages)
                 comp_penalty += new_penalty
@@ -182,12 +188,12 @@ class SerenaScoring():
             #    new_penalty: float = nuc_penatly_count * 1
             #    message:str = f'Bound unbound ratio higher than 50% and then the 2nd energy group less than 20% so it will likely be blocked from switching so minus {new_penalty} points'
             #    result_messages = self.log_message(message, result_messages)
-            #    score = score - new_penalty
+            #    score = score - new_penalty            
             else:
-                new_penalty: float = investigator.comparison_eval_results.nuc_penatly_count * .5                   
-                message:str = f'Bound nucs found in first energy group. Design is primed to switch so add bonus of {new_penalty} points'
+                bonus: float =  1           
+                message:str = f'Bound nucs found in first energy group. Design is primed to switch so add bonus of {bonus} points'
                 #result_messages = self.log_message(message, result_messages)
-                comp_bonus += new_penalty
+                comp_bonus += bonus
 
         #not sure if I want to use... i was ify about before and it seams not fully baked in implementatiuon. 
         # need to make a ticket for this funciton

@@ -86,10 +86,10 @@ def test_serena_scoring_basic_score_groups(initialized_judge_result:JudgesResult
     basic_scores:BasicScoreResults = serena_scoring.basic_score_groups(judge_results=initialized_judge_result,
                                                                        investigator=intantiated_investigator_results)
     assert basic_scores.bonuses == 4
-    assert basic_scores.functional_switch_score == 5
+    assert basic_scores.functional_switch_score == 3
     assert basic_scores.on_off_switch_score == 0
     assert basic_scores.penalties == 0
-    assert basic_scores.powerful_switch_score == 5
+    assert basic_scores.powerful_switch_score == 3
     assert basic_scores.total_score == 10
 
 def test_advanced_score_groups(initialized_judge_result:JudgesResults,intantiated_investigator_results:InvestigatorResults):
@@ -97,9 +97,9 @@ def test_advanced_score_groups(initialized_judge_result:JudgesResults,intantiate
     basic_scores:AdvancedScoreResults = serena_scoring.advanced_score_groups(judge_results=initialized_judge_result,
                                                                           investigator=intantiated_investigator_results)
     assert basic_scores.comp_bonus == 0
-    assert basic_scores.comp_penalty == 1.5
+    assert basic_scores.comp_penalty == 3
     assert basic_scores.excess_struct_penalty == 0
     assert basic_scores.lmv_bonus == 0
     assert basic_scores.lmv_penalty == 0
-    assert basic_scores.total_score == -1.5
+    assert basic_scores.total_score == -3
     
