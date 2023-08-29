@@ -113,7 +113,7 @@ class AnalysisJudgePool():
 
             #sweet spot for unbound to total ratio
             in_unbound_to_total_sweet:bool = False
-            if unbound_to_total_ratio <.3 and unbound_to_total_ratio > .15:
+            if unbound_to_total_ratio <.4 and unbound_to_total_ratio > .15:
                 in_unbound_to_total_sweet = True
             
             in_unbound_to_total_strong:bool = False
@@ -163,13 +163,13 @@ class AnalysisJudgePool():
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
 
-            if last_bound_ratio > 3 and ev_weight_asserted is True and in_unbound_to_total_sweet is True:
-                is_good_switch = True
-                is_powerful_switch = True
-                is_good_count = is_good_count + 1
-                is_excelent_count = is_excelent_count + 1
-                switchable_groups_list.append(current_group_index)
-                powerfull_groups_list.append(current_group_index)
+            #if last_bound_ratio > 3 and ev_weight_asserted is True and in_unbound_to_total_sweet is True:
+            #    is_good_switch = True
+            #    is_powerful_switch = True
+            #    is_good_count = is_good_count + 1
+            #    is_excelent_count = is_excelent_count + 1
+            #    switchable_groups_list.append(current_group_index)
+            #    powerfull_groups_list.append(current_group_index)
 
 
         results: JudgesResults = CompSwitchJudgeResult(is_powerful_count=is_excelent_count,

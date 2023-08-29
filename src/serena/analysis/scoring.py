@@ -93,11 +93,11 @@ class SerenaScoring():
                 #functional_switch_score += 1
                 bonuses += 1
 
-            if value in found_on_off_switch:
-                message:str = "Add bonus for functional being in range of on/off prediction"
-                #result_messages = self.log_message(message, result_messages)
-                #functional_switch_score += 1
-                bonuses += .5
+            #if value in found_on_off_switch:
+            #    message:str = "Add bonus for functional being in range of on/off prediction"
+            #    #result_messages = self.log_message(message, result_messages)
+            #    #functional_switch_score += 1
+            #    bonuses += .5
 
         for value in found_powerful_switch:
             if value >= 0 and value <= 1 and value != -1:
@@ -106,11 +106,11 @@ class SerenaScoring():
                 #powerful_switch_score += 1
                 bonuses += 1
 
-            if value in found_on_off_switch:
-                message:str = "Add bonus for high performing being in range of on/off prediction"
-                #result_messages = self.log_message(message, result_messages)
-                #powerful_switch_score += 1
-                bonuses += .5
+            #if value in found_on_off_switch:
+            #    message:str = "Add bonus for high performing being in range of on/off prediction"
+            #    #result_messages = self.log_message(message, result_messages)
+            #    #powerful_switch_score += 1
+            #    bonuses += .5
         
         #only count a design sas good if functionial has at leat 1 point if not
         #it is probbaly flase powerfull
@@ -166,15 +166,15 @@ class SerenaScoring():
         com_great_ratio: float = investigator.lmv_assertions.comp_compare_to_mfe.count('>')  / investigator.num_groups
         message:str = f'ev comp great:{com_great_ratio}, ev comp less:{comp_less_ratio}'
         #result_messages = self.log_message(message, result_messages)
-        if com_great_ratio < comp_less_ratio and comp_less_ratio >= .7:
-            message:str = "EV for comparison struct is LESS MORE OFTEN than unbound mfe so add bonus"
+        if com_great_ratio > comp_less_ratio and com_great_ratio >= .7:
+            message:str = "EV for comparison struct is Greater MORE OFTEN than unbound mfe so add bonus"
             #result_messages = self.log_message(message, result_messages)
-            lmv_bonus += 1
-        elif com_great_ratio > comp_less_ratio and com_great_ratio >= .5:
+            #lmv_bonus += 1
+        elif comp_less_ratio > com_great_ratio and comp_less_ratio >= .5:
             message:str = "EV for comparison struct is GREATER MORE OFTEN than unbound mfe so penatly"
             #result_messages = self.log_message(message, result_messages)
             lmv_penalty += 1
-            if com_great_ratio >= .8:
+            if comp_less_ratio >= .8:
                 message:str = "EV for comp is GREATER EXTRA MORE OFTEN then mfe so minus penalty point"
                 #result_messages = self.log_message(message, result_messages)
                 lmv_penalty += 1
@@ -197,14 +197,16 @@ class SerenaScoring():
                 comp_bonus += bonus
 
         #penalize for being too strong of a switch and only forms in the 2nd
-        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
-            if ratios.unbound_to_total_ratio <= .15:
-                comp_penalty += 1
-                #its probably too strong of a switch
+        #bound:float = investigator.comp_nuc_counts.comparison_nuc_counts[index].bound_count
+        #unbound: float = investigator.comp_nuc_counts.comparison_nuc_counts[index].unbound_count
+        #for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+        #    if ratios.unbound_to_total_ratio <= .15 and :
+        #        comp_penalty += 1
+        #        #its probably too strong of a switch
         
         for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
             if ratios.last_bound_ratio > 3.0 or ratios.last_unbound_ratio > 3.0:
-                comp_penalty +=1     
+                comp_penalty +=2     
         
         for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
             if ratios.both_nuc_total >= .75:
@@ -216,7 +218,7 @@ class SerenaScoring():
         #    message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
         #    result_messages = self.log_message(message, result_messages)
         #    score= score + 1
-        excess_limit:float = 30000#this is based on new data 7500
+        excess_limit:float = 35000#this is based on new data 7500
         excess_divisor:float = 2000#2500
         excess_struct_penalty:float = self.excessive_structures_penalties(num_structures=investigator.total_structures_ensemble,
                                                                     excess_limit=excess_limit,
