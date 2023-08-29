@@ -97,7 +97,7 @@ class SerenaScoring():
                 message:str = "Add bonus for functional being in range of on/off prediction"
                 #result_messages = self.log_message(message, result_messages)
                 #functional_switch_score += 1
-                bonuses += 1
+                bonuses += .5
 
         for value in found_powerful_switch:
             if value >= 0 and value <= 1 and value != -1:
@@ -110,7 +110,7 @@ class SerenaScoring():
                 message:str = "Add bonus for high performing being in range of on/off prediction"
                 #result_messages = self.log_message(message, result_messages)
                 #powerful_switch_score += 1
-                bonuses += 1
+                bonuses += .5
         
         #only count a design sas good if functionial has at leat 1 point if not
         #it is probbaly flase powerfull
@@ -197,11 +197,18 @@ class SerenaScoring():
                 comp_bonus += bonus
 
         #penalize for being too strong of a switch and only forms in the 2nd
-        for index, value in enumerate(investigator.comparison_eval_results.ratios):
-            if value.unbound_to_total_ratio <= .15:
+        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+            if ratios.unbound_to_total_ratio <= .15:
                 comp_penalty += 1
                 #its probably too strong of a switch
-                
+        
+        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+            if ratios.last_bound_ratio > 3.0 or ratios.last_unbound_ratio > 3.0:
+                comp_penalty +=1     
+        
+        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+            if ratios.both_nuc_total >= .75:
+                comp_penalty +=1 
         
         #not sure if I want to use... i was ify about before and it seams not fully baked in implementatiuon. 
         # need to make a ticket for this funciton

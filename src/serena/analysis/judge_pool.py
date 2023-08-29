@@ -75,7 +75,7 @@ class AnalysisJudgePool():
         """        
         num_groups: int = investigator.num_groups
         
-        limit: float = 2#1.5 
+        limit: float = 1.5 
         is_switchable_group:List[bool] = []
         switchable_groups_list:List[int] = []
         is_powerfull_switch_group:List[bool] = []
@@ -100,6 +100,7 @@ class AnalysisJudgePool():
             bound_ratio = round(bound_ratio,2)
             
             bound_to_both:float = investigator.comparison_eval_results.ratios[current_group_index].bound_to_both_ratio
+            both_to_total:float = investigator.comparison_eval_results.ratios[current_group_index].both_nuc_total
 
             bound: int = investigator.comp_nuc_counts.comparison_nuc_counts[current_group_index].bound_count
 
@@ -119,14 +120,22 @@ class AnalysisJudgePool():
             if unbound_to_total_ratio <=.2 and unbound_to_total_ratio > .15:
                 in_unbound_to_total_strong = True
             
+            last_unbound_ratio_sweet:bool = False
+            if (last_unbound_ratio >= limit and last_unbound_ratio < 3) or (last_bound_ratio >= limit and last_bound_ratio < 3):
+                last_unbound_ratio_sweet = True
 
-            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound > 2:
+            if last_unbound_ratio_sweet is True and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound > 2:
                 is_good_switch = True
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
             
-            #this is new
+            #this is new stuff
             if bound_to_both > 1.5 and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound > 2 and ev_weight_asserted is True:
+                is_good_switch = True
+                switchable_groups_list.append(current_group_index)
+                is_good_count = is_good_count+1
+
+            if both_to_total < .75 and both_to_total > .5 and bound_ratio > .1 and bound > 2:
                 is_good_switch = True
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
@@ -135,11 +144,12 @@ class AnalysisJudgePool():
                 is_powerful_switch = True
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
-
-            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and in_unbound_to_total_strong is True and ev_weight_asserted is True:
-                is_powerful_switch = True
-                powerfull_groups_list.append(current_group_index)
-                is_excelent_count = is_excelent_count +1
+           
+           #same as above basically 
+           # if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and in_unbound_to_total_strong is True and ev_weight_asserted is True:
+           #     is_powerful_switch = True
+           #     powerfull_groups_list.append(current_group_index)
+           #     is_excelent_count = is_excelent_count +1
             
             #this is dangerous I think as it will hit on way to strong of switches
             #maybe so nee to use not 
