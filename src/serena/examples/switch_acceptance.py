@@ -33,9 +33,9 @@ class SwitchAccetance():
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
         details:str= 'all'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
-        pnas_round101_sheet:str = 'R101 Filtered Switch All'#'R101 Filtered good bad'
+        pnas_round101_sheet:str = 'R101 Filtered good bad'
         same_state:str='2'
-        sublab_name:str = f'Same State NG {same_state}'
+        sublab_name:str = "bad"#f'Same State NG {same_state}'
         save_title:str = sublab_name
         run_name:str = "test"#f'SSNG{same_state}_{details}'
 

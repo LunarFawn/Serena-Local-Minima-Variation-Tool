@@ -135,10 +135,10 @@ class AnalysisJudgePool():
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
 
-            if both_to_total < .75 and both_to_total > .5 and bound_ratio > .1 and bound > 2:
-                is_good_switch = True
-                switchable_groups_list.append(current_group_index)
-                is_good_count = is_good_count+1
+            #if both_to_total < .75 and both_to_total > .5 and bound_ratio > .1 and bound > 2:
+            #    is_good_switch = True
+            #    switchable_groups_list.append(current_group_index)
+            #    is_good_count = is_good_count+1
 
             if last_unbound_ratio >= limit and last_bound_ratio >= limit and in_unbound_to_total_strong is True and ev_weight_asserted is True:
                 is_powerful_switch = True
