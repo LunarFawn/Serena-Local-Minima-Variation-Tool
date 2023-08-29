@@ -75,7 +75,7 @@ class AnalysisJudgePool():
         """        
         num_groups: int = investigator.num_groups
         
-        limit: float = 1.5 
+        limit: float = 2#1.5 
         is_switchable_group:List[bool] = []
         switchable_groups_list:List[int] = []
         is_powerfull_switch_group:List[bool] = []
@@ -98,42 +98,62 @@ class AnalysisJudgePool():
             unbound_to_total_ratio = round(unbound_to_total_ratio,2)     
             bound_ratio:float = investigator.comparison_eval_results.ratios[current_group_index].bound_ratio
             bound_ratio = round(bound_ratio,2)
+            
+            bound_to_both:float = investigator.comparison_eval_results.ratios[current_group_index].bound_to_both_ratio
 
             bound: int = investigator.comp_nuc_counts.comparison_nuc_counts[current_group_index].bound_count
 
             lmv_data:List[ComparisonLMV] = investigator.lmv_values.lmv_comps
-            ev_weight_asserted:bool = investigator.lmv_assertions.bound_pronounced#   [current_group_index].comp_pronounced
+            ev_weight_asserted:bool = investigator.lmv_assertions.bound_pronounced[current_group_index]#   [current_group_index].comp_pronounced
             ev_weigth_under_limit:bool = False
-            ev_weight_limit:int = 25
+            ev_weight_limit:int = 30
             if lmv_data[current_group_index].lmv_comp.ev_normalized < ev_weight_limit:
                 ev_weigth_under_limit = True 
 
-            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.3 and ev_weigth_under_limit is True and bound > 2:
+            #sweet spot for unbound to total ratio
+            in_unbound_to_total_sweet:bool = False
+            if unbound_to_total_ratio <.3 and unbound_to_total_ratio > .15:
+                in_unbound_to_total_sweet = True
+            
+            in_unbound_to_total_strong:bool = False
+            if unbound_to_total_ratio <=.2 and unbound_to_total_ratio > .15:
+                in_unbound_to_total_strong = True
+            
+
+            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound > 2:
+                is_good_switch = True
+                switchable_groups_list.append(current_group_index)
+                is_good_count = is_good_count+1
+            
+            #this is new
+            if bound_to_both > 1.5 and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound > 2 and ev_weight_asserted is True:
                 is_good_switch = True
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
 
-            if last_unbound_ratio >= limit and last_bound_ratio >= limit and bound_ratio >=2 and ev_weight_asserted is True:
+            if last_unbound_ratio >= limit and last_bound_ratio >= limit and in_unbound_to_total_strong is True and ev_weight_asserted is True:
                 is_powerful_switch = True
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
 
-            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and unbound_to_total_ratio <=.2 and ev_weight_asserted is True:
+            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and in_unbound_to_total_strong is True and ev_weight_asserted is True:
                 is_powerful_switch = True
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
-
+            
+            #this is dangerous I think as it will hit on way to strong of switches
+            #maybe so nee to use not 
             if bound_ratio >=  limit and unbound_to_total_ratio <=.15 and ev_weight_asserted is True:
                 is_powerful_switch = True
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
 
-            if last_bound_ratio >=  2 and unbound_to_total_ratio <=.2:
+            if last_bound_ratio >=  2 and in_unbound_to_total_strong is True:
                 is_powerful_switch = True
                 powerfull_groups_list.append(current_group_index)
                 is_excelent_count = is_excelent_count +1
 
-            if last_bound_ratio > 3 and ev_weight_asserted is True:
+            if last_bound_ratio > 3 and ev_weight_asserted is True and in_unbound_to_total_sweet is True:
                 is_good_switch = True
                 is_powerful_switch = True
                 is_good_count = is_good_count + 1

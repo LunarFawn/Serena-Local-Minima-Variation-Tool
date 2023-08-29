@@ -12,10 +12,10 @@ class PNASAnalysisLogging():
     def __init__(self) -> None:
         pass
 
-    def open_sublab_from_excel(self,path:str, sheet_name:str, sublab:str, all_designs:bool = False):
+    def open_sublab_from_excel(self,path:str, sheet_name:str, sublab:str):
         sheet:DataFrame = pd.read_excel(path, sheet_name=sheet_name)
         sublab_sheet:DataFrame = sheet
-        if all_designs is False:
+        if sublab != "":
             sublab_sheet:DataFrame  = sheet[sheet['Puzzle_Name'] == sublab]
         return sublab_sheet
     

@@ -248,11 +248,11 @@ class LocalMinimaVariationInvestigator():
         if the enembled groups indicate a on/off switch. return the proof for
         this determination as well for the judges to review
         """
-        ev_comp_limit: float = 25
+        ev_comp_limit: float = 30#25
 
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
-        ev_min_limit:float = 15
+        ev_min_limit:float = 20#15
 
         comp_pronounced:List[bool] = []
         is_on_off_switch:List[bool] = []

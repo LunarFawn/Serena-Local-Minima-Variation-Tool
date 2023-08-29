@@ -33,23 +33,24 @@ class SwitchAccetance():
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
         details:str= 'all'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
-        pnas_round101_sheet:str = 'Round 7 (R101)'
-        same_state:str='9'
-        sublab_name:str = f'Same State NG {same_state}'
-        run_name:str = f'SSNG{same_state}_{details}'
+        pnas_round101_sheet:str = 'R101 Filtered good bad'
+        same_state:str='1'
+        sublab_name:str = "bad"#f'Same State NG {same_state}'
+        save_title:str = sublab_name
+        run_name:str = "test"#f'SSNG{same_state}_{details}'
 
 
-        pnas_path:str = '/home/rnauser/test_data/pnas.2112979119.sd01_eternacon.xlsx'
+        pnas_path:str = '/home/rnauser/test_data/pnas_testing_tweak.xlsx'
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        save_path:str = f'/home/rnauser/test_data/run_data/{run_name}/pnas.2112979119.sd01_eternacon_{timestr}.xlsx'
+        save_path:str = f'/home/rnauser/test_data/run_data/{run_name}/pnas_eternacon_{timestr}.xlsx'
         
         new_sara:Sara2API = Sara2API()
         puzzle_data: puzzleData
         pandas_sheet: DataFrame
         puzzle_data, pandas_sheet = new_sara.ProcessLab(path=pnas_path,
                                                       designRound_sheet=pnas_round101_sheet,
-                                                      sublab_name=sublab_name,
-                                                      all_designs=True)
+                                                      sublab_name=sublab_name
+                                                      )
 
        
 
@@ -80,7 +81,7 @@ class SwitchAccetance():
             #make a new line of just this designs row
             
             
-            do_weighted:bool = True
+            do_weighted:bool = False
             struct_to_use:Sara2SecondaryStructure = ''
             if do_weighted is True:
             #this is the fmn bound mfe struct, subopt list and weighted struck
@@ -126,10 +127,10 @@ class SwitchAccetance():
                 investigation_results:InvestigateEnsembleResults = scoreing.investigate_and_score_ensemble(ensemble=ensemble_groups)
                 
                 total_scores: float = 0
-                if investigation_results.basic_scores.total_score > 0:
-                    total_scores: float = investigation_results.basic_scores.total_score + investigation_results.advanced_scores.total_score
-                else:
-                    total_scores = 0 - investigation_results.advanced_scores.excess_struct_penalty
+                #if investigation_results.basic_scores.total_score > 0:
+                total_scores: float = investigation_results.basic_scores.total_score + investigation_results.advanced_scores.total_score
+                #else:
+                #    total_scores = 0 - investigation_results.advanced_scores.excess_struct_penalty
                 
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'SerenaTotalScore'] = total_scores
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'SerenaTotalScore_NoExcessStructs'] = total_scores + investigation_results.advanced_scores.excess_struct_penalty
@@ -146,6 +147,8 @@ class SwitchAccetance():
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'Advanced_lmv_penalty'] = investigation_results.advanced_scores.lmv_penalty
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'Structure_Penalty'] = investigation_results.advanced_scores.excess_struct_penalty
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'NumStructs'] =  investigation_results.number_structures
+                
+                
             else:
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'SerenaTotalScore'] = -100
                 pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID, 'SerenaTotalScore_NoExcessStructs'] = -100
@@ -167,7 +170,7 @@ class SwitchAccetance():
             
             design_data_df:DataFrame = pandas_sheet.loc[pandas_sheet['DesignID']==design.design_info.DesignID]
             logging: PNASAnalysisLogging = PNASAnalysisLogging()
-            logging.save_excel_sheet(design_data_df, save_path, sublab_name)
+            logging.save_excel_sheet(design_data_df, save_path, save_title)
 
 switch_acceptance:SwitchAccetance = SwitchAccetance()
 switch_acceptance.run_eterna_pnas()

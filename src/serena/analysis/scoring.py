@@ -71,7 +71,7 @@ class SerenaScoring():
             powerful_switch_score = powerful_switch_score + (len(found_powerful_switch) * multiplier)
         
         if is_functional_switch is True: 
-            multiplier:int = 1
+            multiplier:int = 2
             message:str = "Potential  Functional Switch"
             #result_messages = self.log_message(message, result_messages)
             functional_switch_score = functional_switch_score + (len(found_functional_switch) * multiplier)
@@ -136,7 +136,8 @@ class SerenaScoring():
         #excess_divisor:float = 2000#2500
         penalty:float = 0
         if num_structures > excess_limit:
-            factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
+            #factor:float = ((float(num_structures) - excess_limit) / excess_divisor ) * .5
+            factor:float = (float(num_structures) / excess_divisor ) * .5
             message:str = f'Exsessive structs. Found:{num_structures} penalizing {factor} points'
             #result_messages = self.log_message(message, result_messages)
             sixty_range_num:float = 50000#15000
@@ -195,13 +196,20 @@ class SerenaScoring():
                 #result_messages = self.log_message(message, result_messages)
                 comp_bonus += bonus
 
+        #penalize for being too strong of a switch and only forms in the 2nd
+        for index, value in enumerate(investigator.comparison_eval_results.ratios):
+            if value.unbound_to_total_ratio <= .15:
+                comp_penalty += 1
+                #its probably too strong of a switch
+                
+        
         #not sure if I want to use... i was ify about before and it seams not fully baked in implementatiuon. 
         # need to make a ticket for this funciton
         #if is_good_switch is True and bound_to_both_ratio >= 0.08:
         #    message:str = "Low number of both and mfe nucs in relation to bound. Add bonus point"
         #    result_messages = self.log_message(message, result_messages)
         #    score= score + 1
-        excess_limit:float = 7000#this is based on new data 7500
+        excess_limit:float = 30000#this is based on new data 7500
         excess_divisor:float = 2000#2500
         excess_struct_penalty:float = self.excessive_structures_penalties(num_structures=investigator.total_structures_ensemble,
                                                                     excess_limit=excess_limit,
