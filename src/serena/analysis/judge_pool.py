@@ -113,7 +113,7 @@ class AnalysisJudgePool():
 
             #sweet spot for unbound to total ratio
             in_unbound_to_total_sweet:bool = False
-            if unbound_to_total_ratio <.4 and unbound_to_total_ratio > .15:
+            if unbound_to_total_ratio <.3 and unbound_to_total_ratio > .15:
                 in_unbound_to_total_sweet = True
             
             in_unbound_to_total_strong:bool = False

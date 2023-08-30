@@ -33,10 +33,10 @@ class SwitchAccetance():
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
         details:str= 'all'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
-        pnas_round101_sheet:str = "Round 7 (R101)"#'R101 Filtered Switch All'#'R101 Filtered good bad'
-        same_state:str='1'
-        sublab_name:str = ""#f'Same State NG {same_state}'
-        save_title:str = "all_designs"
+        pnas_round101_sheet:str = 'R101 Filtered Switch All'#'R101 Filtered good bad'
+        same_state:str='2'
+        sublab_name:str = f'Same State NG {same_state}'
+        save_title:str = sublab_name
         run_name:str = "test"#f'SSNG{same_state}_{details}'
 
 
@@ -114,7 +114,7 @@ class SwitchAccetance():
                                                                            sequence_string=sequence,
                                                                            energy_delta_from_MFE=kcal_span)
         
-            if sara2_list.num_structures < 150000:
+            if sara2_list.num_structures < 500000:
                 reference_structures:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(switched_mfe_struct=struct_to_use,
                                                                                                 non_switch_mfe_struct=sara2_list.sara_stuctures[0])
                 

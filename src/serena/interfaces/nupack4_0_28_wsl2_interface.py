@@ -72,7 +72,7 @@ class NUPACK4Interface():
         my_model = Model(material=param, celsius=temp_C)
         return my_model
 
-    def get_subopt_energy_gap(self, material_param:MaterialParameter, temp_C:int, sequence_string:str, energy_delta_from_MFE: int, bail_num:int=150000):
+    def get_subopt_energy_gap(self, material_param:MaterialParameter, temp_C:int, sequence_string:str, energy_delta_from_MFE: int, bail_num:int=500000):
         """
         Function to get the subopt result from nupack as a Sara2StructureList
         """

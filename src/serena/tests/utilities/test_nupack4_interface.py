@@ -270,7 +270,7 @@ def test_investigate_and_score_ensemble_nupack(real_world_nupack_4_settings:Nupa
     temp_C=37
     kcal_span_from_mfe=7
     Kcal_unit_increments=1
-    sequence='UUUUUAUUUGCAGGAUAUUGUUUUUUAUUACUUCAAGAAGGGCAUUACAUGAGGAUCACCCAUGUCAUCCUAUGGUUUACUAGU'
+    sequence='ACAUACUUGGGAGGAUAUAUGUUCGUACGCUCGAUAGAAGGCCCAGAAGUAUAAGACAUGAGGAUCACCCAUGUGGCAAGCGUU'
     vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
     folded_structure = vienna2_fmn_hack.rnafold_fmn(input_sequence=sequence,
                                                             do_fmn=True)
