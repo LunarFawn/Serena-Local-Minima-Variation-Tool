@@ -248,11 +248,12 @@ class LocalMinimaVariationInvestigator():
         if the enembled groups indicate a on/off switch. return the proof for
         this determination as well for the judges to review
         """
-        ev_comp_limit: float = 30#25
+        ev_comp_limit: float = 25#25
+        ev_mfe_limit:float = 30
 
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
-        ev_min_limit:float = 20#15
+        ev_min_limit:float = 30#15
 
         comp_pronounced:List[bool] = []
         is_on_off_switch:List[bool] = []
@@ -270,18 +271,23 @@ class LocalMinimaVariationInvestigator():
             diff_comp:float = round(ev_mfe,2) - round(ev_comp,2)
             if round(ev_comp,1) < round(ev_mfe,1):# and diff_comp >= diff_limit_mfe:
                 #new stuff
-                if round(ev_comp,2) < ev_min_limit and round(ev_mfe,2) < ev_min_limit:
-                    mfe_asserted = True
+                if group_index > 0:
+                    if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_mfe_limit:
+                        mfe_asserted = True  
+                else:
+                    if round(ev_comp,2) < 15 and round(ev_mfe,2) < 15:
+                        mfe_asserted = True
+                        
             elif round(ev_comp,1) == round(ev_mfe,1):# and diff_comp >= diff_limit_mfe:
                 #new stuff
-                if round(ev_comp,2) < ev_min_limit and round(ev_mfe,2) < ev_min_limit:
+                if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_mfe_limit:
                     mfe_asserted = True
                     comp_asserted = True
 
             diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
             if round(ev_mfe,2) < round(ev_comp,2):# and (diff_mfe >= diff_limit_comp):
                 #new stuff
-                if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_comp_limit:
+                if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_mfe_limit:
                     comp_asserted = True
                 
             if group_index > 0  and comp_asserted is True:
