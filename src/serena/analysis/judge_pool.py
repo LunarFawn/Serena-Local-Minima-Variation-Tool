@@ -94,8 +94,12 @@ class AnalysisJudgePool():
             last_unbound_ratio = round(last_unbound_ratio,2)
             last_bound_ratio: float = investigator.comparison_eval_results.ratios[current_group_index].last_bound_ratio
             last_bound_ratio = round(last_bound_ratio,2)        
+            
             unbound_to_total_ratio:float = investigator.comparison_eval_results.ratios[current_group_index].unbound_to_total_ratio
-            unbound_to_total_ratio = round(unbound_to_total_ratio,2)     
+            unbound_to_total_ratio = round(unbound_to_total_ratio,2)   
+            bound_to_total_ratio:float = investigator.comparison_eval_results.ratios[current_group_index].bound_to_total_ratio
+            bound_to_total_ratio = round(bound_to_total_ratio,2) 
+              
             bound_ratio:float = investigator.comparison_eval_results.ratios[current_group_index].bound_ratio
             bound_ratio = round(bound_ratio,2)
             
@@ -109,7 +113,7 @@ class AnalysisJudgePool():
             ev_weight_asserted:bool = investigator.lmv_assertions.bound_pronounced[current_group_index]#   [current_group_index].comp_pronounced
             ev_weigth_under_limit:bool = False
             ev_weight_limit_upper:int = 30
-            ev_weight_limit_lower:int = 5
+            ev_weight_limit_lower:int = 2
             if lmv_data[current_group_index].lmv_comp.ev_normalized < ev_weight_limit_upper and lmv_data[current_group_index].lmv_comp.ev_normalized > ev_weight_limit_lower:
                 ev_weigth_under_limit = True 
 
@@ -124,10 +128,10 @@ class AnalysisJudgePool():
             
             last_unbound_ratio_sweet:bool = False
             #if (last_unbound_ratio >= limit and last_unbound_ratio < 3) or (last_bound_ratio >= limit and last_bound_ratio < 3):
-            if (last_unbound_ratio >= limit) or (last_bound_ratio >= limit):
+            if (last_unbound_ratio >= limit or last_bound_ratio >= limit):# and bound_ratio < .3:
                 last_unbound_ratio_sweet = True
 
-            if last_unbound_ratio_sweet is True and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound >= 2 and bound_to_both >= .4:
+            if last_unbound_ratio_sweet is True and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound > 2:# and bound_to_both >= .4:
                 is_good_switch = True
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
@@ -138,6 +142,12 @@ class AnalysisJudgePool():
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
 
+            if bound_ratio >= .5 and bound_ratio <.9 and bound_to_total_ratio > 0.09 and unbound_to_total_ratio < .2 and bound > 2:
+                is_good_switch = True
+                switchable_groups_list.append(current_group_index)
+                is_good_count = is_good_count+1
+            
+            
             #if both_to_total < .75 and both_to_total > .5 and bound_ratio > .1 and bound > 2:
             #    is_good_switch = True
             #    switchable_groups_list.append(current_group_index)

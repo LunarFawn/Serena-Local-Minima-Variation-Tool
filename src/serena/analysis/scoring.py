@@ -114,10 +114,10 @@ class SerenaScoring():
         
         #only count a design sas good if functionial has at leat 1 point if not
         #it is probbaly flase powerfull
-        if functional_switch_score > 0:        
-            total_score = powerful_switch_score + functional_switch_score + on_off_switch_score + bonuses - penalties
-        else:
-            total_score = 0
+        #if functional_switch_score > 0:        
+        total_score = powerful_switch_score + functional_switch_score + on_off_switch_score + bonuses - penalties
+        #else:
+        #    total_score = 0
 
         basic_score_results:BasicScoreResults = BasicScoreResults(total_score=total_score,
                                                                   functional_switch_score=functional_switch_score,
@@ -181,7 +181,7 @@ class SerenaScoring():
         
         if investigator.comparison_eval_results.nuc_penatly_count > 0:
             if investigator.comparison_eval_results.BUratio_list[0] >= .6:
-                new_penalty: float = investigator.comparison_eval_results.nuc_penatly_count * 1
+                new_penalty: float = 1#investigator.comparison_eval_results.nuc_penatly_count * 1
                 message:str = f'Bound unbound ratio higher than 75% so it will most likely just fold into what should have been a switch so minus {new_penalty} points'
                 #result_messages = self.log_message(message, result_messages)
                 comp_penalty += new_penalty
@@ -240,7 +240,11 @@ class SerenaScoring():
             #else:
             #    if lmv_comps.lmv_comp.ev_normalized < 10 and lmv_comps.lmv_mfe.ev_normalized < 10:
             #        lmv_penalty +=1
-            
+        
+        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+            if ratios.bound_ratio > .3:
+                comp_penalty +=1
+                    
         #not sure if I want to use... i was ify about before and it seams not fully baked in implementatiuon. 
         # need to make a ticket for this funciton
         #if is_good_switch is True and bound_to_both_ratio >= 0.08:
