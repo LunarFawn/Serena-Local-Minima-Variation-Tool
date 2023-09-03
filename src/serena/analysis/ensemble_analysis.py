@@ -119,7 +119,7 @@ class InvestigateEnsemble():
     def __init__(self) -> None:
         pass
 
-    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups)->InvestigateEnsembleResults:
+    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups, is_aggressive:bool = False)->InvestigateEnsembleResults:
         """
         Does what it says. Process and investigate the MultipleEnsembleGroup
         for switchyness and report the score after judging.
@@ -160,7 +160,8 @@ class InvestigateEnsemble():
         
         #now judge the investigation
         judges:AnalysisJudgePool = AnalysisJudgePool()
-        judges_decisions: JudgesResults = judges.run_all_judges(investigator=investigation_results)
+        judges_decisions: JudgesResults = judges.run_all_judges(investigator=investigation_results,
+                                                                is_aggressive=is_aggressive)
 
         #now apply scoreing to the decisions
         scoring:SerenaScoring = SerenaScoring()

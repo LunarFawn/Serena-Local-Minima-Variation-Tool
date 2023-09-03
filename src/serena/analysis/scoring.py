@@ -86,12 +86,12 @@ class SerenaScoring():
         
 
         #now bonuses
-        for value in found_functional_switch:
-            if value >= 0 and value <= 1 and value != -1:
-                message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
-                #result_messages = self.log_message(message, result_messages)
-                #functional_switch_score += 1
-                bonuses += 1
+        #for value in found_functional_switch:
+        #    if value >= 0 and value <= 1 and value != -1:
+        #        message:str = "Confirmned good. Add bonus point for point for functional being in first two groups"
+        #        #result_messages = self.log_message(message, result_messages)
+        #        #functional_switch_score += 1
+        #        bonuses += 1
 
             #if value in found_on_off_switch:
             #    message:str = "Add bonus for functional being in range of on/off prediction"
@@ -99,12 +99,12 @@ class SerenaScoring():
             #    #functional_switch_score += 1
             #    bonuses += .5
 
-        for value in found_powerful_switch:
-            if value >= 0 and value <= 1 and value != -1:
-                message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
-                #result_messages = self.log_message(message, result_messages)
-                #powerful_switch_score += 1
-                bonuses += 1
+        #for value in found_powerful_switch:
+        #    if value >= 0 and value <= 1 and value != -1:
+        #        message:str = "Confirmned good. Add bonus point for high performing being in first two groups"
+        #        #result_messages = self.log_message(message, result_messages)
+        #        #powerful_switch_score += 1
+        #        bonuses += 1
 
             #if value in found_on_off_switch:
             #    message:str = "Add bonus for high performing being in range of on/off prediction"
@@ -204,16 +204,7 @@ class SerenaScoring():
         #        comp_penalty += 1
         #        #its probably too strong of a switch
         is_good_actually:bool = False
-        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
-            if ratios.last_bound_ratio > 5.0 or ratios.last_unbound_ratio > 5.0:
-                if investigator.lmv_values.lmv_comps[0].lmv_comp.ev_normalized > 15 and investigator.lmv_values.lmv_comps[index].lmv_comp.ev_normalized > 25:
-                    comp_penalty +=1   
-                elif investigator.lmv_values.lmv_comps[0].lmv_comp.ev_normalized < 15 and investigator.lmv_values.lmv_comps[index].lmv_comp.ev_normalized < 25:
-                    is_good_actually = True
-        
-        for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
-            if ratios.both_nuc_total >= .9:
-                comp_penalty +=1 
+       
         
         #for index, ratios in enumerate(investigator.lmv_values.lmv_comps):
         #    if ratios.lmv_rel.ev_normalized >= 40:
@@ -235,16 +226,27 @@ class SerenaScoring():
         #    lmv_penalty +=1
         
         for index, lmv_comps in enumerate(investigator.lmv_values.lmv_comps):
-                if lmv_comps.lmv_comp.ev_normalized < 5 and lmv_comps.lmv_mfe.ev_normalized < 5 and lmv_comps.lmv_rel.ev_normalized < 5:
+                if lmv_comps.lmv_comp.ev_normalized < 5 and lmv_comps.lmv_mfe.ev_normalized < 5 and lmv_comps.lmv_rel.ev_normalized < 5 and index != 0:
                     lmv_penalty +=1
             #else:
             #    if lmv_comps.lmv_comp.ev_normalized < 10 and lmv_comps.lmv_mfe.ev_normalized < 10:
             #        lmv_penalty +=1
         
         for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
-            if ratios.bound_ratio > .3:
+            if ratios.bound_ratio > .3 and ratios.bound_ratio < 1:
                 comp_penalty +=1
-                    
+            #if ratios.bound_to_both_ratio < 0:
+                #comp_penalty +=1
+        #for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+            if ratios.last_bound_ratio > 5.0 or ratios.last_unbound_ratio > 5.0:
+                if investigator.lmv_values.lmv_comps[0].lmv_comp.ev_normalized > 15 and investigator.lmv_values.lmv_comps[index].lmv_comp.ev_normalized > 25:
+                    comp_penalty +=1   
+                elif investigator.lmv_values.lmv_comps[0].lmv_comp.ev_normalized < 15 and investigator.lmv_values.lmv_comps[index].lmv_comp.ev_normalized < 25:
+                    is_good_actually = True
+        #for index, ratios in enumerate(investigator.comparison_eval_results.ratios):
+            if ratios.both_nuc_total >= .9:
+                comp_penalty +=1 
+                
         #not sure if I want to use... i was ify about before and it seams not fully baked in implementatiuon. 
         # need to make a ticket for this funciton
         #if is_good_switch is True and bound_to_both_ratio >= 0.08:

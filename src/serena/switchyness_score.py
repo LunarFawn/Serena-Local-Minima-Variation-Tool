@@ -13,7 +13,7 @@ class RunInvestigateEnsemble(InvestigateEnsemble):
     Class that is the main entry point for ensemble investigation
     """
     
-    def investigate_and_score_ensemble_nupack(self,sequence:str, folded_referenec_struct:str, material_param:MaterialParameter, temp_c: int, kcal_span_from_mfe:int, kcal_unit_increments: float = 1)->InvestigateEnsembleResults:
+    def investigate_and_score_ensemble_nupack(self,sequence:str, folded_referenec_struct:str, material_param:MaterialParameter, temp_c: int, kcal_span_from_mfe:int, kcal_unit_increments: float = 1, aggressive:bool= False)->InvestigateEnsembleResults:
         """
         Use the nupack folding enginer to generate a MultipleEnsembleGroups from a sequence 
         and refence folded structure (folded mfe maybe?) and analyze it for switchyness score
@@ -32,5 +32,6 @@ class RunInvestigateEnsemble(InvestigateEnsemble):
                                                                                     Kcal_unit_increments=kcal_unit_increments,
                                                                                     switch_state=switch_states
                                                                                     )
-        results:InvestigateEnsembleResults = self.investigate_and_score_ensemble(ensemble=ensemble)
+        results:InvestigateEnsembleResults = self.investigate_and_score_ensemble(ensemble=ensemble,
+                                                                                 is_aggressive=aggressive)
         return results

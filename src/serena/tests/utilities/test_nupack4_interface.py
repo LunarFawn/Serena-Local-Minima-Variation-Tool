@@ -270,7 +270,8 @@ def test_investigate_and_score_ensemble_nupack(real_world_nupack_4_settings:Nupa
     temp_C=37
     kcal_span_from_mfe=7
     Kcal_unit_increments=1
-    sequence='GCCAUCGCAUGAGGAUAUGCUCCGGUUUCCGGAGCAGAAGGCAUGUCAUAAGACAUGAGGAUCACCCAUGUAGUUAAGAUGGCA'
+    sequence='AUCAACCAGGCAGGAUAUCAAUGUGGCCUCAUCGUACACCCUCGCAACAUGAGGAUCACCCAUGUUGAGAAGGGCCAAUUAAGA'
+    aggressive:bool = True
     vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
     folded_structure = vienna2_fmn_hack.rnafold_fmn(input_sequence=sequence,
                                                             do_fmn=True)
@@ -282,7 +283,8 @@ def test_investigate_and_score_ensemble_nupack(real_world_nupack_4_settings:Nupa
                                                                                              material_param=material_param,
                                                                                              temp_c=temp_C,
                                                                                              kcal_span_from_mfe=kcal_span_from_mfe,
-                                                                                             kcal_unit_increments=Kcal_unit_increments)
+                                                                                             kcal_unit_increments=Kcal_unit_increments,
+                                                                                             aggressive=aggressive)
     assert result.basic_scores.total_score == 0.0
     assert result.advanced_scores.total_score == -5.526
     assert result.number_structures == 0

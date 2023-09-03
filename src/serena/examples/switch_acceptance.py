@@ -33,10 +33,10 @@ class SwitchAccetance():
         vienna2_fmn_hack: Vienna2FMNInterface = Vienna2FMNInterface()
 
         details:str= 'all'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
-        pnas_round101_sheet:str = 'Round 7 (R101)'#'R101 Filtered Switch All'#'R101 Filtered good bad'
+        pnas_round101_sheet:str = 'R101 Filtered good bad'
         same_state:str='3'
-        sublab_name:str = f'Same State NG {same_state}'
-        save_title:str = sublab_name
+        sublab_name:str = "good"#f'Same State NG {same_state}'
+        save_title:str = sublab_name + "_aggressive"
         run_name:str = "test"#f'SSNG{same_state}_{details}'
 
 
@@ -113,7 +113,7 @@ class SwitchAccetance():
                                                                            temp_C=temp,
                                                                            sequence_string=sequence,
                                                                            energy_delta_from_MFE=kcal_span)
-        
+            is_aggressive:bool = True
             if sara2_list.num_structures < 500000:
                 reference_structures:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(switched_mfe_struct=struct_to_use,
                                                                                                 non_switch_mfe_struct=sara2_list.sara_stuctures[0])
@@ -124,7 +124,8 @@ class SwitchAccetance():
                                                                                                 switch_state=reference_structures
                                                                                                 )
                 
-                investigation_results:InvestigateEnsembleResults = scoreing.investigate_and_score_ensemble(ensemble=ensemble_groups)
+                investigation_results:InvestigateEnsembleResults = scoreing.investigate_and_score_ensemble(ensemble=ensemble_groups,
+                                                                                                           is_aggressive=is_aggressive)
                 
                 total_scores: float = 0
                 #if investigation_results.basic_scores.total_score > 0:
