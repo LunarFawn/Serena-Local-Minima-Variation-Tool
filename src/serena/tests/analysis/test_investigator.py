@@ -117,7 +117,8 @@ def test_evalulate_comparison_nucs(comparison_nuc_result:ComparisonNucResults):
                                             last_both_ratio=1.0,
                                             last_bound_ratio=1.0, #need better test coverage here
                                             last_unbound_ratio=1.0,
-                                            dot_to_total_ratio=0.8),
+                                            dot_to_total_ratio=0.8,
+                                            unbound_to_both=0.6666666666666666),
                             RatioResults(unbound_to_total_ratio=0.6,
                                         both_nuc_total=0.8,
                                         bound_ratio=0.67,
@@ -126,7 +127,8 @@ def test_evalulate_comparison_nucs(comparison_nuc_result:ComparisonNucResults):
                                         last_both_ratio=1.3333333333333333,
                                         last_bound_ratio=2.0, #need better test coverage here
                                         last_unbound_ratio=0.67,
-                                        dot_to_total_ratio=1.0)] 
+                                        dot_to_total_ratio=1.0,
+                                        unbound_to_both=0.75)] 
     assert result.BRaise_list == [1,2] 
     assert result.BUratio_list == [0.5, 0.67] 
     assert result.bound_total_list == [0.2,0.4] 

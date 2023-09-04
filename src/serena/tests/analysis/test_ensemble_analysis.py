@@ -62,8 +62,8 @@ def test_investigate_and_score_ensemble_simple(multiple_ensemble_groups:Multiple
     assert result.advanced_scores.comp_penalty == 1
     assert result.advanced_scores.excess_struct_penalty == 0
     assert result.advanced_scores.lmv_bonus == 0
-    assert result.advanced_scores.lmv_penalty == 2
-    assert result.advanced_scores.total_score == -2
+    assert result.advanced_scores.lmv_penalty == 1
+    assert result.advanced_scores.total_score == -1
     
     
     
