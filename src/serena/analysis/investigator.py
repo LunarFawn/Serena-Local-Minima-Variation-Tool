@@ -64,6 +64,7 @@ class RatioResults():
     bound_to_total_ratio:float = -1
     both_nuc_total:float = -1
     dot_to_total_ratio: float = -1
+    unbound_to_both:float = -1
 
 @attrs.define
 class ComparisonEvalResults():
@@ -141,6 +142,7 @@ class ComparisonInvestigator():
             last_bound_ratio = 0
             last_both_ratio = 0
             bound_to_both_ratio = 0
+            unbound_to_both_ratio = 0
             try:
                 last_unbound_ratio = last_unbound/unbound
             except:
@@ -182,7 +184,12 @@ class ComparisonInvestigator():
                 last_both_ratio = both_nuc/last_both
             except:
                 pass
-
+            
+            try:
+                unbound_to_both_ratio = unbound/both_nuc
+            except:
+                pass
+            
             try:
                 bound_to_both_ratio = bound/(both_nuc - unbound)
             except:
@@ -220,7 +227,8 @@ class ComparisonInvestigator():
                                                       bound_to_both_ratio=bound_to_both_ratio,
                                                       bound_to_total_ratio=bound_to_total_ratio,
                                                       both_nuc_total=both_nuc_total,
-                                                      dot_to_total_ratio=dot_nuc_total
+                                                      dot_to_total_ratio=dot_nuc_total,
+                                                      unbound_to_both=unbound_to_both_ratio
                                                       )
             ratios.append(ratio_results)
 
@@ -248,10 +256,12 @@ class LocalMinimaVariationInvestigator():
         if the enembled groups indicate a on/off switch. return the proof for
         this determination as well for the judges to review
         """
-        #ev_comp_limit: float = 25
+        ev_comp_limit: float = 25#25
+        ev_mfe_limit:float = 30
 
         diff_limit_mfe:float = setting.diff_limit_mfe
         diff_limit_comp:float = setting.diff_limit_comp
+        ev_min_limit:float = 30#15
 
         comp_pronounced:List[bool] = []
         is_on_off_switch:List[bool] = []
@@ -265,20 +275,34 @@ class LocalMinimaVariationInvestigator():
 
             mfe_asserted:bool = False
 
-
+            """"""
             diff_comp:float = round(ev_mfe,2) - round(ev_comp,2)
-            if round(ev_comp,2) < round(ev_mfe,2) and diff_comp >= diff_limit_comp:
-                comp_asserted = True
+            if round(ev_comp,1) < round(ev_mfe,1):# and diff_comp >= diff_limit_mfe:
+                #new stuff
+                if group_index > 0:
+                    if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_mfe_limit:
+                        mfe_asserted = True  
+                else:
+                    if round(ev_comp,2) < 15 and round(ev_mfe,2) < 15:
+                        mfe_asserted = True
+                        
+            elif round(ev_comp,1) == round(ev_mfe,1):# and diff_comp >= diff_limit_mfe:
+                #new stuff
+                if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_mfe_limit:
+                    mfe_asserted = True
+                    comp_asserted = True
 
+            diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
+            if round(ev_mfe,2) < round(ev_comp,2):# and (diff_mfe >= diff_limit_comp):
+                #new stuff
+                if round(ev_comp,2) < ev_comp_limit and round(ev_mfe,2) < ev_mfe_limit:
+                    comp_asserted = True
+                
             if group_index > 0  and comp_asserted is True:
                 if mfe_pronounced[0] is True:
                     is_on_off_switch.append(True)
             else:
                 is_on_off_switch.append(False)
-
-            diff_mfe = round(ev_comp,2) - round(ev_mfe,2)
-            if round(ev_mfe,2) <= round(ev_comp,2) and (diff_mfe >= diff_limit_mfe):
-                mfe_asserted = True
 
             comp_pronounced.append(comp_asserted)
             mfe_pronounced.append(mfe_asserted)

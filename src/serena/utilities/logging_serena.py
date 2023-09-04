@@ -14,7 +14,9 @@ class PNASAnalysisLogging():
 
     def open_sublab_from_excel(self,path:str, sheet_name:str, sublab:str):
         sheet:DataFrame = pd.read_excel(path, sheet_name=sheet_name)
-        sublab_sheet:DataFrame  = sheet[sheet['Puzzle_Name'] == sublab]
+        sublab_sheet:DataFrame = sheet
+        if sublab != "":
+            sublab_sheet:DataFrame  = sheet[sheet['Puzzle_Name'] == sublab]
         return sublab_sheet
     
     def save_excel_sheet(self, df:DataFrame, excel_path:str, sheet_name:str):

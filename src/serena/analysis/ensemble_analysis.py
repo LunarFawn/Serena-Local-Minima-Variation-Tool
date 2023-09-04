@@ -119,7 +119,7 @@ class InvestigateEnsemble():
     def __init__(self) -> None:
         pass
 
-    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups)->InvestigateEnsembleResults:
+    def investigate_and_score_ensemble(self, ensemble:MultipleEnsembleGroups, is_aggressive:bool = False)->InvestigateEnsembleResults:
         """
         Does what it says. Process and investigate the MultipleEnsembleGroup
         for switchyness and report the score after judging.
@@ -160,7 +160,8 @@ class InvestigateEnsemble():
         
         #now judge the investigation
         judges:AnalysisJudgePool = AnalysisJudgePool()
-        judges_decisions: JudgesResults = judges.run_all_judges(investigator=investigation_results)
+        judges_decisions: JudgesResults = judges.run_all_judges(investigator=investigation_results,
+                                                                is_aggressive=is_aggressive)
 
         #now apply scoreing to the decisions
         scoring:SerenaScoring = SerenaScoring()
@@ -171,8 +172,16 @@ class InvestigateEnsemble():
         advanced_scores:AdvancedScoreResults = scoring.advanced_score_groups(judge_results=judges_decisions,
                                                                              investigator=investigation_results)
         
+        #add a tweak
+        #if advanced_scores.total_score < 0 and ensemble.total_structures > 1000:
+        #    #this is a suspect weak switch so half basic score
+        #    half = basic_scores.total_score / 2
+        #    basic_scores.penalties = basic_scores.penalties + half
+        #    basic_scores.total_score = basic_scores.total_score - half
+        
         analysis_results:InvestigateEnsembleResults = InvestigateEnsembleResults(basic_scores=basic_scores,
                                                                                  advanced_scores=advanced_scores,
-                                                                                 number_structures=ensemble.total_structures)
+                                                                                 number_structures=ensemble.total_structures,
+                                                                                 )
 
         return analysis_results

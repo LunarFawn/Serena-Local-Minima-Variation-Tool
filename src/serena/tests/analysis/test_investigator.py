@@ -117,7 +117,8 @@ def test_evalulate_comparison_nucs(comparison_nuc_result:ComparisonNucResults):
                                             last_both_ratio=1.0,
                                             last_bound_ratio=1.0, #need better test coverage here
                                             last_unbound_ratio=1.0,
-                                            dot_to_total_ratio=0.8),
+                                            dot_to_total_ratio=0.8,
+                                            unbound_to_both=0.6666666666666666),
                             RatioResults(unbound_to_total_ratio=0.6,
                                         both_nuc_total=0.8,
                                         bound_ratio=0.67,
@@ -126,7 +127,8 @@ def test_evalulate_comparison_nucs(comparison_nuc_result:ComparisonNucResults):
                                         last_both_ratio=1.3333333333333333,
                                         last_bound_ratio=2.0, #need better test coverage here
                                         last_unbound_ratio=0.67,
-                                        dot_to_total_ratio=1.0)] 
+                                        dot_to_total_ratio=1.0,
+                                        unbound_to_both=0.75)] 
     assert result.BRaise_list == [1,2] 
     assert result.BUratio_list == [0.5, 0.67] 
     assert result.bound_total_list == [0.2,0.4] 
@@ -141,16 +143,16 @@ Test the Local Minima Investigator
 def test_bound_compared_unbound_lmv(comparison_lmv_response_no_switch:ComparisonLMVResponse):
     investigator:LocalMinimaVariationInvestigator = LocalMinimaVariationInvestigator()
     result:List[str] = investigator.comp_compared_mfe_lmv(lmv_data=comparison_lmv_response_no_switch)
-    assert result[0] == '<'
-    assert result[1] == '>'
-    assert result[2] == '='
+    assert result[0] == '>'
+    assert result[1] == '<'
+    assert result[2] == '<'
     
 def test_evaluate_lmv_for_structure_presence_no_lmv_switch(comparison_lmv_response_no_switch:ComparisonLMVResponse,default_settings_assertions_lmv:SettingsAssertionLMV):
     investigator:LocalMinimaVariationInvestigator = LocalMinimaVariationInvestigator()
     result:LMVAssertionResult = investigator.evaluate_lmv_for_structure_presence(lmv_data=comparison_lmv_response_no_switch,
                                                                                 setting=default_settings_assertions_lmv)
     assert result.is_on_off_switch == [False,False,False]
-    assert result.comp_compare_to_mfe == ['<','>','=']
+    assert result.comp_compare_to_mfe == ['>','<','<']
     assert result.bound_pronounced == [True,False,False]
     assert result.unbouund_pronounced == [False, True, True]
 
@@ -158,7 +160,7 @@ def test_evaluate_lmv_for_structure_presence_yes_lmv_switch(comparison_lmv_respo
     investigator:LocalMinimaVariationInvestigator = LocalMinimaVariationInvestigator()
     result:LMVAssertionResult = investigator.evaluate_lmv_for_structure_presence(lmv_data=comparison_lmv_response_yes_switch,
                                                                                 setting=default_settings_assertions_lmv)
-    assert result.is_on_off_switch == [False,True,False]
-    assert result.comp_compare_to_mfe == ['>','<','=']
-    assert result.bound_pronounced == [False,True,False]
-    assert result.unbouund_pronounced == [True, False, True]
+    assert result.is_on_off_switch == [False,True,True]
+    assert result.comp_compare_to_mfe == ['<','>','>']
+    assert result.bound_pronounced == [False,True,True]
+    assert result.unbouund_pronounced == [True, False, False]

@@ -52,18 +52,18 @@ def test_initialized_investigate_ensemble_results(initialized_investigate_ensemb
 def test_investigate_and_score_ensemble_simple(multiple_ensemble_groups:MultipleEnsembleGroups):
     investiagtion:InvestigateEnsemble = InvestigateEnsemble()
     result:InvestigateEnsembleResults= investiagtion.investigate_and_score_ensemble(ensemble=multiple_ensemble_groups)
-    assert result.basic_scores.bonuses == 4
-    assert result.basic_scores.functional_switch_score == 3
-    assert result.basic_scores.on_off_switch_score == 1
+    assert result.basic_scores.bonuses == 0
+    assert result.basic_scores.functional_switch_score == 0
+    assert result.basic_scores.on_off_switch_score == 0
     assert result.basic_scores.penalties == 0
-    assert result.basic_scores.powerful_switch_score == 3
-    assert result.basic_scores.total_score == 7
-    assert result.advanced_scores.comp_bonus == 0.5
-    assert result.advanced_scores.comp_penalty == 0
+    assert result.basic_scores.powerful_switch_score == 0
+    assert result.basic_scores.total_score == 0
+    assert result.advanced_scores.comp_bonus == 1
+    assert result.advanced_scores.comp_penalty == 1
     assert result.advanced_scores.excess_struct_penalty == 0
     assert result.advanced_scores.lmv_bonus == 0
-    assert result.advanced_scores.lmv_penalty == 0
-    assert result.advanced_scores.total_score == 0.5
+    assert result.advanced_scores.lmv_penalty == 1
+    assert result.advanced_scores.total_score == -1
     
     
     

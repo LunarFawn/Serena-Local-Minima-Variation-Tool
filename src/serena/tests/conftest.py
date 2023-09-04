@@ -500,8 +500,14 @@ def comparison_lmv_2():
 
 @pytest.fixture
 def comparison_lmv_3():
-    return ComparisonLMV(lmv_comp=EV(ev_normalized=4),
-                        lmv_mfe=EV(ev_normalized=4),
+    return ComparisonLMV(lmv_comp=EV(ev_normalized=3),
+                        lmv_mfe=EV(ev_normalized=5),
+                        lmv_rel=EV(ev_normalized=7))
+
+@pytest.fixture
+def comparison_lmv_4():
+    return ComparisonLMV(lmv_comp=EV(ev_normalized=5),
+                        lmv_mfe=EV(ev_normalized=3),
                         lmv_rel=EV(ev_normalized=7))
 
 
@@ -516,9 +522,9 @@ def initialized_comparison_lmv_response(initiailized_comparison_lmv:ComparisonLM
     return ComparisonLMVResponse(lmv_comps=[initiailized_comparison_lmv])
 
 @pytest.fixture
-def comparison_lmv_response_no_switch(comparison_lmv_1, comparison_lmv_2, comparison_lmv_3):
-    return ComparisonLMVResponse(lmv_comps=[comparison_lmv_1,comparison_lmv_2,comparison_lmv_3])
+def comparison_lmv_response_no_switch(comparison_lmv_2, comparison_lmv_1, comparison_lmv_3):
+    return ComparisonLMVResponse(lmv_comps=[comparison_lmv_2,comparison_lmv_1,comparison_lmv_3])
 
 @pytest.fixture
-def comparison_lmv_response_yes_switch(comparison_lmv_1, comparison_lmv_2, comparison_lmv_3):
-    return ComparisonLMVResponse(lmv_comps=[comparison_lmv_2,comparison_lmv_1,comparison_lmv_3])
+def comparison_lmv_response_yes_switch(comparison_lmv_1, comparison_lmv_2, comparison_lmv_4):
+    return ComparisonLMVResponse(lmv_comps=[comparison_lmv_1,comparison_lmv_2,comparison_lmv_4])

@@ -36,7 +36,7 @@ class LocalMinimaVariation():
     def __init__(self) -> None:
         pass
 
-    def get_multi_group_lmv(self, ensemble: MultipleEnsembleGroups, reference_structure:Sara2SecondaryStructure):#pylint: disable=line-too-long
+    def get_multi_group_lmv_single_ref(self, ensemble: MultipleEnsembleGroups, reference_structure:Sara2SecondaryStructure):#pylint: disable=line-too-long
         """
         Return the lmv for a provided MultipleEnsemble Groups with seconfary structure as reference
         """
@@ -46,12 +46,22 @@ class LocalMinimaVariation():
         lmv_results: EVResult = result_thread_lmv.ev_results
         return lmv_results
 
-    def get_single_group_lmv(self, ensemble_group: SingleEnsembleGroup, reference_structure:Sara2SecondaryStructure):#pylint: disable=line-too-long
+    def get_single_group_lmv_single_ref(self, ensemble_group: SingleEnsembleGroup, reference_structure:Sara2SecondaryStructure):#pylint: disable=line-too-long
         """
         Return the lmv for a provided SingleEnsembleGroup with seconfary structure as reference
         """
         lmv_thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=[ensemble_group.group],
                                                               comp_structure=reference_structure)
+        result_thread_lmv:EVToken = lmv_thread.run_EV()
+        lmv_results: EVResult = result_thread_lmv.ev_results
+        return lmv_results
+    
+    def get_multi_group_lmv_list_ref(self, ensemble: MultipleEnsembleGroups, reference_list:List[Sara2SecondaryStructure]):#pylint: disable=line-too-long
+        """
+        Return the lmv for a provided MultipleEnsemble Groups with seconfary structure as reference
+        """
+        lmv_thread: EV_ThreadProcessor = EV_ThreadProcessor(stuctures=ensemble.raw_groups,
+                                                            comp_struct_list_option=reference_list)
         result_thread_lmv:EVToken = lmv_thread.run_EV()
         lmv_results: EVResult = result_thread_lmv.ev_results
         return lmv_results
