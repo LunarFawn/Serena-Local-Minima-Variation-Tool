@@ -31,6 +31,7 @@ class AdvancedScoreResults():
     comp_penalty:float = 0
     excess_struct_penalty:float=0
     total_score:float = 0
+    
 
 
 class SerenaScoring():
@@ -83,7 +84,10 @@ class SerenaScoring():
             #on_off_switch_score= on_off_switch_score + (len(found_on_off_switch) * multiplier)
             on_off_switch_score = on_off_switch_score + 1
 
-        
+        #now do penalties for assertion of unbound
+        if judge_results.comp_switch_judge.is_unbound_asserted is True:
+            multiplier:int = 1
+            penalties = penalties + (len(judge_results.comp_switch_judge.unbound_asserted_groups_list)* multiplier)
 
         #now bonuses
         #for value in found_functional_switch:
@@ -173,11 +177,11 @@ class SerenaScoring():
         elif comp_less_ratio > com_great_ratio and comp_less_ratio >= .5:
             message:str = "EV for mfe struct is GREATER MORE OFTEN than unbound mfe so penatly"
             #result_messages = self.log_message(message, result_messages)
-            lmv_penalty += 1
+            #lmv_penalty += 1
             if comp_less_ratio >= .8:
                 message:str = "EV for mfe is GREATER EXTRA MORE OFTEN then mfe so minus penalty point"
                 #result_messages = self.log_message(message, result_messages)
-                lmv_penalty += 1
+            #    lmv_penalty += 1
         
         if investigator.comparison_eval_results.nuc_penatly_count > 0:
             if investigator.comparison_eval_results.BUratio_list[0] >= .6:
@@ -224,9 +228,26 @@ class SerenaScoring():
         #if investigator.lmv_values.lmv_comps[0].lmv_mfe.ev_normalized < 5 and investigator.lmv_values.lmv_comps[0].lmv_comp.ev_normalized < 5:
         #    #not likely to pull out of the single state as the first group is too strong for the mfe
         #    lmv_penalty +=1
-        
+        index_0_mfe:float = 0
         for index, lmv_comps in enumerate(investigator.lmv_values.lmv_comps):
-                if lmv_comps.lmv_comp.ev_normalized < 5 and lmv_comps.lmv_mfe.ev_normalized < 5 and lmv_comps.lmv_rel.ev_normalized < 5 and index != 0:
+            if index == 0:
+                index_0_mfe = lmv_comps.lmv_mfe.ev_normalized
+            if index_0_mfe == 1:
+                #it probably has a very low struct count as this indicates group 1 has no variation from mfe
+                if lmv_comps.lmv_mfe.ev_normalized < 3 and index > 0:
+                    lmv_penalty +=1
+                if lmv_comps.lmv_mfe.ev_normalized < 5 and index > 3:
+                    lmv_penalty +=1
+                if investigator.total_structures_ensemble > 1000:
+                    #too high of struct count for mfe to be so low so penalty I think
+                    lmv_penalty +=1
+            elif index_0_mfe > 1:
+                #it probably has a very low struct count
+                if lmv_comps.lmv_mfe.ev_normalized < 2 and index == 0:
+                    lmv_penalty +=1
+                if lmv_comps.lmv_mfe.ev_normalized < 8 and index > 0:
+                    lmv_penalty +=1
+                if lmv_comps.lmv_mfe.ev_normalized < 12 and index > 2:
                     lmv_penalty +=1
             #else:
             #    if lmv_comps.lmv_comp.ev_normalized < 10 and lmv_comps.lmv_mfe.ev_normalized < 10:

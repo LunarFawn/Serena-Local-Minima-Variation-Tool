@@ -64,6 +64,7 @@ class RatioResults():
     bound_to_total_ratio:float = -1
     both_nuc_total:float = -1
     dot_to_total_ratio: float = -1
+    unbound_to_both:float = -1
 
 @attrs.define
 class ComparisonEvalResults():
@@ -141,6 +142,7 @@ class ComparisonInvestigator():
             last_bound_ratio = 0
             last_both_ratio = 0
             bound_to_both_ratio = 0
+            unbound_to_both_ratio = 0
             try:
                 last_unbound_ratio = last_unbound/unbound
             except:
@@ -182,7 +184,12 @@ class ComparisonInvestigator():
                 last_both_ratio = both_nuc/last_both
             except:
                 pass
-
+            
+            try:
+                unbound_to_both_ratio = unbound/both_nuc
+            except:
+                pass
+            
             try:
                 bound_to_both_ratio = bound/(both_nuc - unbound)
             except:
@@ -220,7 +227,8 @@ class ComparisonInvestigator():
                                                       bound_to_both_ratio=bound_to_both_ratio,
                                                       bound_to_total_ratio=bound_to_total_ratio,
                                                       both_nuc_total=both_nuc_total,
-                                                      dot_to_total_ratio=dot_nuc_total
+                                                      dot_to_total_ratio=dot_nuc_total,
+                                                      unbound_to_both=unbound_to_both_ratio
                                                       )
             ratios.append(ratio_results)
 

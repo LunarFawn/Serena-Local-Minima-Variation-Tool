@@ -34,10 +34,12 @@ class SwitchAccetance():
 
         details:str= 'all'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
         pnas_round101_sheet:str = 'R101 Filtered good bad'
+        #Round 7 (R101)
         same_state:str='3'
-        sublab_name:str = "good"#f'Same State NG {same_state}'
-        save_title:str = sublab_name + "_aggressive"
-        run_name:str = "test"#f'SSNG{same_state}_{details}'
+        sublab_name:str = "bad"#f'Same State NG {same_state}'
+        is_aggressive:bool = False
+        save_title:str = sublab_name + "_open"
+        run_name:str = "tune"#f'SSNG{same_state}_{details}'
 
 
         pnas_path:str = '/home/rnauser/test_data/pnas_testing_tweak.xlsx'
@@ -113,7 +115,7 @@ class SwitchAccetance():
                                                                            temp_C=temp,
                                                                            sequence_string=sequence,
                                                                            energy_delta_from_MFE=kcal_span)
-            is_aggressive:bool = True
+            
             if sara2_list.num_structures < 500000:
                 reference_structures:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(switched_mfe_struct=struct_to_use,
                                                                                                 non_switch_mfe_struct=sara2_list.sara_stuctures[0])

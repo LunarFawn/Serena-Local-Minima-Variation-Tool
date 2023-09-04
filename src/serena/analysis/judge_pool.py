@@ -25,9 +25,14 @@ class CompSwitchJudgeResult():
     is_good_switch:bool = False
     switchable_groups_list:List[int] = []
     is_good_count:int = 0
+    
     is_powerful_switch:bool  =False 
     powerfull_groups_list:List[int] = []
     is_powerful_count:int = 0
+    
+    is_unbound_asserted:bool = False
+    unbound_asserted_groups_list: List[int]=[]
+    unbound_asserted_count:int = 0
 
 @attrs.define
 class LMVSwitchJudgeResult():
@@ -85,6 +90,9 @@ class AnalysisJudgePool():
         is_excelent_count:int = 0
         is_powerful_switch:bool = False
         is_good_switch:bool = False
+        is_unbound_asserted:bool = False
+        unbound_asserted_list:List[int] = []
+        unbound_asserted_count:int = 0
 
         for current_group_index in range(num_groups):
             #last_index:int = 0
@@ -134,11 +142,12 @@ class AnalysisJudgePool():
             
             last_unbound_ratio_sweet:bool = False
             #if (last_unbound_ratio >= limit and last_unbound_ratio < 3) or (last_bound_ratio >= limit and last_bound_ratio < 3):
-            if (last_unbound_ratio >= limit or last_bound_ratio >= limit) and bound_to_both > 0:
+            if (last_unbound_ratio >= limit or last_bound_ratio >= limit):# and bound_to_both > 0:
                 last_unbound_ratio_sweet = True
-
+            
+            
             bound_is_sweet:bool = False
-            if bound > 2 and bound_to_both > 0:
+            if bound > 2:# and bound_to_both > 0:
                 bound_is_sweet = True
             
             if last_unbound_ratio_sweet is True and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound_is_sweet is True:#bound > 2:# and bound_to_both >= .4:
@@ -146,6 +155,11 @@ class AnalysisJudgePool():
                 switchable_groups_list.append(current_group_index)
                 is_good_count = is_good_count+1
 
+            if last_bound_ratio >=2 and unbound_to_total_ratio < .5 and ev_weigth_under_limit is True and bound_is_sweet is True:
+                is_powerful_switch = True
+                powerfull_groups_list.append(current_group_index)
+                is_excelent_count = is_excelent_count +1
+                
             #this is new stuff
             if bound_to_both > 1.5 and in_unbound_to_total_sweet is True and ev_weigth_under_limit is True and bound >= 2:# and ev_weight_asserted is True:
                 is_powerful_switch = True
@@ -202,6 +216,14 @@ class AnalysisJudgePool():
             #    is_excelent_count = is_excelent_count + 1
             #    switchable_groups_list.append(current_group_index)
             #    powerfull_groups_list.append(current_group_index)
+            
+            
+            #do unbound assertions now
+            #unbound_to_both:float = round(investigator.comparison_eval_results.ratios[current_group_index].unbound_to_both,2)
+            #if unbound_to_both > 1.5 and both_to_total < .4:
+                #is_unbound_asserted = True
+                #unbound_asserted_list.append(current_group_index)
+                #unbound_asserted_count += 1
 
 
         results: JudgesResults = CompSwitchJudgeResult(is_powerful_count=is_excelent_count,
@@ -209,7 +231,10 @@ class AnalysisJudgePool():
                                                is_good_switch=is_good_switch,
                                                is_powerful_switch=is_powerful_switch,
                                                switchable_groups_list=switchable_groups_list,
-                                               powerfull_groups_list=powerfull_groups_list)
+                                               powerfull_groups_list=powerfull_groups_list,
+                                               unbound_asserted_count=unbound_asserted_count,
+                                               is_unbound_asserted=is_unbound_asserted,
+                                               unbound_asserted_groups_list=unbound_asserted_list)
 
         return results
 
