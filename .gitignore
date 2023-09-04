@@ -162,3 +162,9 @@ cython_debug/
 #ignore vienarna stuff
 rna.ps
 
+#ignore .vscode stuff
+.vscode/
+
+#ignore design checkpoint
+design-checkpoint/
+
