@@ -1,0 +1,107 @@
+  
+  
+NUT:  
+  !NutStructure
+    db_info:
+      !NutDatabaseInfo
+        db_name: test_db
+    nut_container_declarations: 
+      - !NutDeclaration
+        name: Sara2StructureList
+      - !NutDeclaration
+        name: Sara2SecondaryStructure
+    nut_main_struct:
+      !NutContainer
+        name: RNAStrand
+        object_list:
+          - !NutObject
+            name: structs
+            object_type: !NutObjectType CONTAINER
+            object_info: Sara2StructureList
+          - !NutObject
+            name: sara2
+            object_type: !NutObjectType CONTAINER
+            object_info: Sara2SecondaryStructure
+         
+
+
+DEFINITIONS:
+  !NutContainerDefinitions
+    nut_containers_definitions:
+      - !NutContainer
+        name: Sara2SecondaryStructure
+        object_list:
+          - !NutObject
+            name: sequence
+            object_type: !NutObjectType VALUE
+            object_info: str
+          - !NutObject
+            name: structure
+            object_type: !NutObjectType VALUE
+            object_info: str
+          - !NutObject
+            name: free_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: stack_energy
+            object_type: !NutObjectType VALUE
+            object_info: float      
+      - !NutContainer
+        name: Sara2StructureList
+        object_list:
+          - !NutObject
+            name: mfe_structure
+            object_type: !NutObjectType VALUE
+            object_info: str
+          - !NutObject
+            name: mfe_free_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: mfe_stack_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: nuc_count
+            object_type: !NutObjectType VALUE
+            object_info: int
+          - !NutObject
+            name: sara_stuctures
+            object_type: !NutObjectType LIST
+            object_info: [Sara2SecondaryStructure, CLASS]
+          - !NutObject
+            name: max_free_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: min_free_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: max_stack_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: min_stack_energy
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: num_structures
+            object_type: !NutObjectType VALUE
+            object_info: int
+          - !NutObject
+            name: free_energy_span
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: stack_energy_span
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: weighted_structure
+            object_type: !NutObjectType VALUE
+            object_info: str
+
+  
+            
