@@ -5,11 +5,13 @@ NUT:
     db_info:
       !NutDatabaseInfo
         db_name: test_db
+    external_imports:
+      - !ExternalAttribute
+        module: serena.utilities.ensemble_structures
+        attribute: Sara2SecondaryStructure
     nut_container_declarations: 
       - !NutDeclaration
         name: Sara2StructureList
-      - !NutDeclaration
-        name: Sara2SecondaryStructure
     nut_main_struct:
       !NutContainer
         name: RNAStrand
@@ -17,36 +19,12 @@ NUT:
           - !NutObject
             name: structs
             object_type: !NutObjectType CONTAINER
-            object_info: Sara2StructureList
-          - !NutObject
-            name: sara2
-            object_type: !NutObjectType CONTAINER
-            object_info: Sara2SecondaryStructure
-         
+            object_info: Sara2StructureList         
 
 
 DEFINITIONS:
   !NutContainerDefinitions
-    nut_containers_definitions:
-      - !NutContainer
-        name: Sara2SecondaryStructure
-        object_list:
-          - !NutObject
-            name: sequence
-            object_type: !NutObjectType VALUE
-            object_info: str
-          - !NutObject
-            name: structure
-            object_type: !NutObjectType VALUE
-            object_info: str
-          - !NutObject
-            name: free_energy
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
-            name: stack_energy
-            object_type: !NutObjectType VALUE
-            object_info: float      
+    nut_containers_definitions:  
       - !NutContainer
         name: Sara2StructureList
         object_list:

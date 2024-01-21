@@ -18,9 +18,10 @@ from data_squirrel.config.dynamic_data_nut import (
 )
 
 
+from serena.utilities.ensemble_structures import Sara2SecondaryStructure
+
 class Nut_Attributes(Enum):
 	Sara2StructureList = "structs_db"
-	Sara2SecondaryStructure = "sara2_db"
 
 
 class RNAStrand(Nut):
@@ -85,72 +86,6 @@ class RNAStrand(Nut):
 			attribute="weighted_structure_db",
 			atr_type=str))
 
-		self.sara2_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="sequence_db",
-			atr_type=str))
-
-		self.sara2_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="structure_db",
-			atr_type=str))
-
-		self.sara2_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="free_energy_db",
-			atr_type=float))
-
-		self.sara2_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="stack_energy_db",
-			atr_type=float))
-
-class Sara2SecondaryStructure(CustomAttribute):
-	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
-		self.parent = parent
-		self.current = current
-		self.do_save = save_value
-
-	@property
-	def sequence(self)->str:
-		return self.parent.sequence_db
-
-	@sequence.setter
-	def sequence(self, value:str):
-		if isinstance(value, str) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.sequence_db = value
-
-
-	@property
-	def structure(self)->str:
-		return self.parent.structure_db
-
-	@structure.setter
-	def structure(self, value:str):
-		if isinstance(value, str) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.structure_db = value
-
-
-	@property
-	def free_energy(self)->float:
-		return self.parent.free_energy_db
-
-	@free_energy.setter
-	def free_energy(self, value:float):
-		if isinstance(value, float) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.free_energy_db = value
-
-
-	@property
-	def stack_energy(self)->float:
-		return self.parent.stack_energy_db
-
-	@stack_energy.setter
-	def stack_energy(self, value:float):
-		if isinstance(value, float) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.stack_energy_db = value
-
-
 class Sara2StructureList(CustomAttribute):
 	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
 		self.parent = parent
@@ -203,28 +138,8 @@ class Sara2StructureList(CustomAttribute):
 
 	@property
 	def sara_stuctures(self)->List[Sara2SecondaryStructure]:
-		new_list:List[Sara2SecondaryStructure] = []
-
-		temp_list = self.parent.sara_stuctures_db
-
-		for index, item in enumerate(temp_list):
-			temp_parent:str = f'entry{index}'
-			new_parent:CustomAttribute = self.parent.new_attr(GenericAttribute(atr_class=AtrClass.PARENT,
-				attribute=temp_parent,
-				atr_type=None))
-
-			temp_attr2 = getattr(new_parent, temp_parent)
-			temp_name:str = 'temp'
-			setattr(self, temp_name, Sara2SecondaryStructure(parent=temp_attr2,
-				current=None,
-				save_value=True))
-
-			for key, value in item.items():
-				setattr(temp_attr2, key, value)
-			new_primary_struct:Sara2SecondaryStructure = getattr(self, temp_name)
-			new_list.append(new_primary_struct)
-
-		return new_list
+		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2SecondaryStructure)
+		return self.parent.sara_stuctures_db
 
 	@sara_stuctures.setter
 	def sara_stuctures(self, value:List[Sara2SecondaryStructure]):
@@ -236,6 +151,7 @@ class Sara2StructureList(CustomAttribute):
 		for item in value:
 			if isinstance(item, Sara2SecondaryStructure) == False:
 				raise ValueError("Invalid value assignment")
+		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2SecondaryStructure)
 		self.parent.sara_stuctures_db = value
 
 
@@ -327,7 +243,7 @@ class Sara2StructureList(CustomAttribute):
 		self.parent.weighted_structure_db = value
 
 
-class BackupSerena(RNAStrand):
+class ArchiveSecondaryStructureList(RNAStrand):
 
 	def __init__(self, working_folder:str, var_name:str, use_db:bool = False) -> None:
 		super().__init__(use_db=use_db,
@@ -339,10 +255,6 @@ class BackupSerena(RNAStrand):
 			current=None,
 			parent=self.structs_db)
 
-		self._sara2: Sara2SecondaryStructure = Sara2SecondaryStructure(save_value=True,
-			current=None,
-			parent=self.sara2_db)
-
 	@property
 	def structs(self)->Sara2StructureList:
 		return self._structs
@@ -352,16 +264,5 @@ class BackupSerena(RNAStrand):
 		if isinstance(struct, Sara2StructureList) == False:
 			raise ValueError("Invalid value assignment")
 		self._structs = struct
-
-
-	@property
-	def sara2(self)->Sara2SecondaryStructure:
-		return self._sara2
-
-	@sara2.setter
-	def sara2(self, struct:Sara2SecondaryStructure):
-		if isinstance(struct, Sara2SecondaryStructure) == False:
-			raise ValueError("Invalid value assignment")
-		self._sara2 = struct
 
 

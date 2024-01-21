@@ -3,16 +3,49 @@ Main entry for the algorithm to determine the swithchyness
 of a sequence baed on analysis of the ensemble
 """
 
+from pathlib import Path
+from typing import List
+
 from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults
 from serena.interfaces.nupack4_0_28_wsl2_interface import MaterialParameter, NUPACK4Interface
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
 
+from serena.bin.backup_serena import ArchiveSecondaryStructureList
+import serena.bin.backup_serena
+
 class RunInvestigateEnsemble(InvestigateEnsemble):
     """
     Class that is the main entry point for ensemble investigation
     """
-    
+    def get_and_store_ensemble_data(self,sequence:str, material_param:MaterialParameter, temp_c: int, kcal_span_from_mfe:int, backup_folder:Path, record_name:str):
+        nupack4:NUPACK4Interface = NUPACK4Interface()
+        structs:Sara2StructureList = nupack4.get_subopt_energy_gap(material_param=material_param,
+                                                                    temp_C=temp_c,
+                                                                    sequence_string=sequence,
+                                                                    energy_delta_from_MFE=kcal_span_from_mfe,
+                                                                    )
+       
+        backup_records:ArchiveSecondaryStructureList = ArchiveSecondaryStructureList(working_folder=backup_folder,
+                                             var_name=record_name,
+                                             use_db=True)
+        
+        backup_records.structs.mfe_free_energy = structs.mfe_free_energy
+        backup_records.structs.mfe_structure = structs.mfe_structure
+        backup_records.structs.mfe_stack_energy = structs.mfe_stack_energy
+        backup_records.structs.nuc_count = structs.nuc_count                    
+        backup_records.structs.sara_stuctures = structs.sara_stuctures
+        backup_records.structs.max_free_energy = structs.max_free_energy
+        backup_records.structs.min_free_energy = structs.min_free_energy
+        backup_records.structs.max_stack_energy = structs.max_stack_energy
+        backup_records.structs.min_stack_energy = structs.min_stack_energy
+        backup_records.structs.num_structures = structs.num_structures
+        backup_records.structs.free_energy_span = structs.free_energy_span
+        backup_records.structs.stack_energy_span = structs.stack_energy_span
+        backup_records.structs.weighted_structure = structs.weighted_structure
+
+        
+        
     def investigate_and_score_ensemble_nupack(self,sequence:str, folded_referenec_struct:str, material_param:MaterialParameter, temp_c: int, kcal_span_from_mfe:int, kcal_unit_increments: float = 1, aggressive:bool= False)->InvestigateEnsembleResults:
         """
         Use the nupack folding enginer to generate a MultipleEnsembleGroups from a sequence 
