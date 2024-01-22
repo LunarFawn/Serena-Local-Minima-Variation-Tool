@@ -13,7 +13,13 @@ class PNASAnalysisLogging():
         pass
 
     def open_sublab_from_excel(self,path:str, sheet_name:str, sublab:str):
-        sheet:DataFrame = pd.read_excel(path, sheet_name=sheet_name)
+        sheet:DataFrame = pd.DataFrame()
+        
+        try:            
+            sheet:DataFrame = pd.read_excel(path, sheet_name=sheet_name)
+        except:
+            raise FileExistsError(f'Unable to open {path} to grab sublab info')
+        
         sublab_sheet:DataFrame = sheet
         if sublab != "":
             sublab_sheet:DataFrame  = sheet[sheet['Puzzle_Name'] == sublab]

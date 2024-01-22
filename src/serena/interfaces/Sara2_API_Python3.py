@@ -164,7 +164,7 @@ class Sara2API():
         return designInfo
         
 
-    def ProcessLab(self, path, designRound_sheet, sublab_name:str) -> puzzleData:
+    def ProcessLab(self, path:str, designRound_sheet:str, sublab_name:str) -> puzzleData:
         logging: PNASAnalysisLogging = PNASAnalysisLogging()
         sheet = logging.open_sublab_from_excel(path=path,
                                        sheet_name=designRound_sheet,
