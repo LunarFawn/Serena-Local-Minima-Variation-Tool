@@ -9,75 +9,104 @@ NUT:
       - !ExternalAttribute
         module: serena.utilities.ensemble_structures
         attribute: Sara2SecondaryStructure
+      - !ExternalAttribute
+        module: serena.interfaces.nupack4_0_28_wsl2_interface
+        attribute: NupackSettings
+      - !ExternalAttribute
+        module: serena.interfaces.nupack4_0_28_wsl2_interface
+        attribute: MaterialParameter        
     nut_container_declarations: 
       - !NutDeclaration
         name: Sara2StructureList
+      - !NutDeclaration
+        name: NupackSettings
+      - !NutDeclaration
+        name: DesignComments
+      - !NutDeclaration
+        name: FmnFolds 
     nut_main_struct:
       !NutContainer
-        name: RNAStrand
+        name: PNASData
         object_list:
           - !NutObject
             name: structs
             object_type: !NutObjectType CONTAINER
-            object_info: Sara2StructureList         
+            object_info: Sara2StructureList
+          - !NutObject
+            name: nupack_settings
+            object_type: !NutObjectType CONTAINER
+            object_info: NupackSettings 
+          - !NutObject
+            name: fmn_folds
+            object_type: !NutObjectType CONTAINER
+            object_info: FmnFolds        
 
 
 DEFINITIONS:
   !NutContainerDefinitions
-    nut_containers_definitions:  
+    nut_containers_definitions:
       - !NutContainer
-        name: Sara2StructureList
+        name: DesignComments
         object_list:
           - !NutObject
-            name: mfe_structure
+            name: design_id
             object_type: !NutObjectType VALUE
             object_info: str
           - !NutObject
-            name: mfe_free_energy
+            name: round
             object_type: !NutObjectType VALUE
-            object_info: float
+            object_info: str
           - !NutObject
-            name: mfe_stack_energy
+            name: sublab
             object_type: !NutObjectType VALUE
-            object_info: float
+            object_info: str
+      - !NutContainer
+        name: NupackSettings
+        object_list:
           - !NutObject
-            name: nuc_count
+            name: material_param
+            object_type: !NutObjectType LIST
+            object_info: [MaterialParameter, CLASS]
+          - !NutObject
+            name: temp_C
             object_type: !NutObjectType VALUE
             object_info: int
+          - !NutObject
+            name: kcal_span_from_mfe
+            object_type: !NutObjectType VALUE
+            object_info: int
+          - !NutObject
+            name: Kcal_unit_increments
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: sequence
+            object_type: !NutObjectType VALUE
+            object_info: str
+          - !NutObject
+            name: sequence
+            object_type: !NutObjectType CONTAINER
+            object_info: DesignComments
+      - !NutContainer
+        name: Sara2StructureList
+        object_list:          
           - !NutObject
             name: sara_stuctures
             object_type: !NutObjectType LIST
             object_info: [Sara2SecondaryStructure, CLASS]
           - !NutObject
-            name: max_free_energy
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
-            name: min_free_energy
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
-            name: max_stack_energy
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
-            name: min_stack_energy
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
-            name: num_structures
-            object_type: !NutObjectType VALUE
-            object_info: int
-          - !NutObject
-            name: free_energy_span
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
-            name: stack_energy_span
-            object_type: !NutObjectType VALUE
-            object_info: float
-          - !NutObject
             name: weighted_structure
+            object_type: !NutObjectType VALUE
+            object_info: str
+      - !NutContainer
+        name: FmnFolds
+        object_list:
+          - !NutObject
+            name: fmn_folded_mfe
+            object_type: !NutObjectType VALUE
+            object_info: str
+          - !NutObject
+            name: fmn_folded_weighted
             object_type: !NutObjectType VALUE
             object_info: str
 
