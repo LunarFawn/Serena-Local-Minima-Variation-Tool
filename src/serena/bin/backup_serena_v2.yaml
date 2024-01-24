@@ -1,0 +1,88 @@
+  
+  
+NUT:  
+  !NutStructure
+    db_info:
+      !NutDatabaseInfo
+        db_name: test_db
+    external_imports:
+      - !ExternalAttribute
+        module: serena.utilities.ensemble_structures
+        attribute: Sara2SecondaryStructure
+      - !ExternalAttribute
+        module: serena.utilities.ensemble_structures
+        attribute: Sara2StructureList
+      - !ExternalAttribute
+        module: serena.interfaces.Sara2_API_Python3
+        attribute: DesignPerformanceData
+      - !ExternalAttribute
+        module: serena.interfaces.Sara2_API_Python3
+        attribute: DesignInformation 
+      - !ExternalAttribute
+        module: serena.interfaces.Sara2_API_Python3
+        attribute: WetlabData 
+      - !ExternalAttribute
+        module: serena.interfaces.nupack4_0_28_wsl2_interface
+        attribute: NupackSettings
+      - !ExternalAttribute
+        module: serena.interfaces.nupack4_0_28_wsl2_interface
+        attribute: MaterialParameter
+      - !ExternalAttribute
+        module: serena.scripts.analyze_pnas_2112979119_sd01
+        attribute: ArchiveData        
+    nut_container_declarations: 
+      - !NutDeclaration
+        name: Data
+      - !NutDeclaration
+        name: Archive
+    nut_main_struct:
+      !NutContainer
+        name: PNASData
+        object_list:
+          - !NutObject
+            name: data
+            object_type: !NutObjectType CONTAINER
+            object_info: Data
+          - !NutObject
+            name: archive
+            object_type: !NutObjectType CONTAINER
+            object_info: Archive      
+
+
+DEFINITIONS:
+  !NutContainerDefinitions
+    nut_containers_definitions:
+      - !NutContainer
+        name: Data
+        object_list:
+          - !NutObject
+            name: design_info
+            object_type: !NutObjectType CLASS
+            object_info: [DesignPerformanceData,DesignInformation,WetlabData]
+          - !NutObject
+            name: nupack_settings
+            object_type: !NutObjectType CLASS
+            object_info: [NupackSettings,MaterialParameter]
+          - !NutObject
+            name: structs
+            object_type: !NutObjectType CLASS
+            object_info: [Sara2StructureList,Sara2SecondaryStructure]
+          - !NutObject
+            name: fmn_folded_mfe
+            object_type: !NutObjectType CLASS
+            object_info: [Sara2SecondaryStructure]
+          - !NutObject
+            name: fmn_folded_weighted
+            object_type: !NutObjectType CLASS
+            object_info: [Sara2SecondaryStructure]
+      - !NutContainer
+        name: Archive
+        object_list:
+          - !NutObject
+            name: archive_data
+            object_type: !NutObjectType CLASS
+            object_info: [ArchiveData,DesignPerformanceData,DesignInformation,WetlabData,NupackSettings,MaterialParameter,Sara2StructureList,Sara2SecondaryStructure]
+          
+
+  
+            

@@ -60,6 +60,26 @@ DEFINITIONS:
             name: sublab
             object_type: !NutObjectType VALUE
             object_info: str
+          - !NutObject
+            name: fold_change
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: eterna_score
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: folding_subscore
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: switch_subscore
+            object_type: !NutObjectType VALUE
+            object_info: float
+          - !NutObject
+            name: baseline_subscore
+            object_type: !NutObjectType VALUE
+            object_info: float
       - !NutContainer
         name: NupackSettings
         object_list:
@@ -84,7 +104,7 @@ DEFINITIONS:
             object_type: !NutObjectType VALUE
             object_info: str
           - !NutObject
-            name: sequence
+            name: comments
             object_type: !NutObjectType CONTAINER
             object_info: DesignComments
       - !NutContainer

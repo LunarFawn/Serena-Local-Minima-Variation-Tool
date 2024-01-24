@@ -13,8 +13,8 @@ from serena.interfaces.nupack4_0_28_wsl2_interface import MaterialParameter, NUP
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.ensemble_groups import MultipleEnsembleGroups, EnsembleSwitchStateMFEStructs
 
-from serena.bin.backup_serena import ArchiveSecondaryStructureList
-import serena.bin.backup_serena
+# from serena.bin.ba import ArchiveSecondaryStructureList
+# import serena.bin.backup_serena
 
 class RunInvestigateEnsemble(InvestigateEnsemble):
     """
@@ -28,23 +28,23 @@ class RunInvestigateEnsemble(InvestigateEnsemble):
                                                                     energy_delta_from_MFE=kcal_span_from_mfe,
                                                                     )
        
-        backup_records:ArchiveSecondaryStructureList = ArchiveSecondaryStructureList(working_folder=backup_folder,
-                                             var_name=record_name,
-                                             use_db=True)
+        # backup_records:ArchiveSecondaryStructureList = ArchiveSecondaryStructureList(working_folder=backup_folder,
+        #                                      var_name=record_name,
+        #                                      use_db=True)
         
-        # backup_records.structs.mfe_free_energy = structs.mfe_free_energy
-        # backup_records.structs.mfe_structure = structs.mfe_structure
-        # backup_records.structs.mfe_stack_energy = structs.mfe_stack_energy
-        # backup_records.structs.nuc_count = structs.nuc_count                    
-        backup_records.structs.sara_stuctures = structs.sara_stuctures
-        # backup_records.structs.max_free_energy = structs.max_free_energy
-        # backup_records.structs.min_free_energy = structs.min_free_energy
-        # backup_records.structs.max_stack_energy = structs.max_stack_energy
-        # backup_records.structs.min_stack_energy = structs.min_stack_energy
-        # backup_records.structs.num_structures = structs.num_structures
-        # backup_records.structs.free_energy_span = structs.free_energy_span
-        # backup_records.structs.stack_energy_span = structs.stack_energy_span
-        backup_records.structs.weighted_structure = structs.weighted_structure
+        # # backup_records.structs.mfe_free_energy = structs.mfe_free_energy
+        # # backup_records.structs.mfe_structure = structs.mfe_structure
+        # # backup_records.structs.mfe_stack_energy = structs.mfe_stack_energy
+        # # backup_records.structs.nuc_count = structs.nuc_count                    
+        # backup_records.structs.sara_stuctures = structs.sara_stuctures
+        # # backup_records.structs.max_free_energy = structs.max_free_energy
+        # # backup_records.structs.min_free_energy = structs.min_free_energy
+        # # backup_records.structs.max_stack_energy = structs.max_stack_energy
+        # # backup_records.structs.min_stack_energy = structs.min_stack_energy
+        # # backup_records.structs.num_structures = structs.num_structures
+        # # backup_records.structs.free_energy_span = structs.free_energy_span
+        # # backup_records.structs.stack_energy_span = structs.stack_energy_span
+        # backup_records.structs.weighted_structure = structs.weighted_structure
 
     def pull_archived_data(self, data_folder:str, design_id:str)->Sara2StructureList:
         
@@ -59,23 +59,23 @@ class RunInvestigateEnsemble(InvestigateEnsemble):
         
         structs:Sara2StructureList = Sara2StructureList()
         
-        backup_records:ArchiveSecondaryStructureList = ArchiveSecondaryStructureList(working_folder=data_folder,
-                                            var_name=design_id,
-                                            use_db=True)
+        # backup_records:ArchiveSecondaryStructureList = ArchiveSecondaryStructureList(working_folder=data_folder,
+        #                                     var_name=design_id,
+        #                                     use_db=True)
         
-        # structs.mfe_free_energy = backup_records.structs.mfe_free_energy
-        #structs.mfe_structure = backup_records.structs.mfe_structure
-        #structs.mfe_stack_energy = backup_records.structs.mfe_stack_energy
-        #structs.nuc_count = backup_records.structs.nuc_count             
-        structs.sara_stuctures = backup_records.structs.sara_stuctures
-        #structs.max_free_energy = backup_records.structs.max_free_energy
-        #structs.min_free_energy = backup_records.structs.min_free_energy
-        #structs.max_stack_energy = backup_records.structs.max_stack_energy
-        #structs.min_stack_energy = backup_records.structs.min_stack_energy
-        #structs.num_structures = backup_records.structs.num_structures
-        #structs.free_energy_span = backup_records.structs.free_energy_span
-        #structs.stack_energy_span = backup_records.structs.stack_energy_span
-        structs.weighted_structure = backup_records.structs.weighted_structure
+        # # structs.mfe_free_energy = backup_records.structs.mfe_free_energy
+        # #structs.mfe_structure = backup_records.structs.mfe_structure
+        # #structs.mfe_stack_energy = backup_records.structs.mfe_stack_energy
+        # #structs.nuc_count = backup_records.structs.nuc_count             
+        # structs.sara_stuctures = backup_records.structs.sara_stuctures
+        # #structs.max_free_energy = backup_records.structs.max_free_energy
+        # #structs.min_free_energy = backup_records.structs.min_free_energy
+        # #structs.max_stack_energy = backup_records.structs.max_stack_energy
+        # #structs.min_stack_energy = backup_records.structs.min_stack_energy
+        # #structs.num_structures = backup_records.structs.num_structures
+        # #structs.free_energy_span = backup_records.structs.free_energy_span
+        # #structs.stack_energy_span = backup_records.structs.stack_energy_span
+        # structs.weighted_structure = backup_records.structs.weighted_structure
         
         return structs
 
