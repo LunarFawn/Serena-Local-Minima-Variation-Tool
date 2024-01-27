@@ -110,6 +110,7 @@ class InvestigateEnsembleResults():
     basic_scores:BasicScoreResults
     advanced_scores:AdvancedScoreResults
     number_structures:int
+    investigator_results:InvestigatorResults
 
 class InvestigateEnsemble():
     """
@@ -182,6 +183,6 @@ class InvestigateEnsemble():
         analysis_results:InvestigateEnsembleResults = InvestigateEnsembleResults(basic_scores=basic_scores,
                                                                                  advanced_scores=advanced_scores,
                                                                                  number_structures=ensemble.total_structures,
-                                                                                 )
+                                                                                 investigator_results=investigation_results)
 
         return analysis_results

@@ -13,7 +13,7 @@ import argparse
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.weighted_structures import WeightedStructure
 
-from serena.interfaces.Sara2_API_Python3 import Sara2API, puzzleData, DesignPerformanceData
+from serena.interfaces.Sara2_API_Python3 import Sara2API, puzzleData, DesignPerformanceData, DesignInformation
 from serena.interfaces.vienna2_fmn_hack_interface import Vienna2FMNInterface
 from serena.interfaces.nupack4_0_28_wsl2_interface import (
     MaterialParameter, 
@@ -22,9 +22,10 @@ from serena.interfaces.nupack4_0_28_wsl2_interface import (
 )
 
 from serena.bin.backup_serena_v2 import ArchiveSecondaryStructureList
+from serena.bin.backup_investigator_v1 import ArchiveInvestigator
 
 from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, MaterialParameter, NupackSettings, EnsembleSwitchStateMFEStructs
-from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults
+from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults, InvestigatorResults
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 from serena.utilities.logging_serena import PNASAnalysisLogging
 
@@ -40,6 +41,11 @@ class ArchiveData():
     structs:Sara2StructureList = None
     fmn_folded_mfe:Sara2SecondaryStructure = None
     fmn_folded_weighted:Sara2SecondaryStructure = None
+    
+@dataclass
+class ArchiveInvestigatorData():
+    investigator: InvestigateEnsembleResults = None
+    disign_info:DesignInformation = None
     
 class ProcessPNAS():
     
@@ -117,6 +123,95 @@ class ProcessPNAS():
             
             self.archive_ensemble_data(dest_folder=archive_path,
                                         flow=ArchiveFlow.PUT,data=archive_data)
+            
+        print("Done!")
+
+    def perform_investigation_computations(self, pnas_dataset_path:Path, sublab:str, archive_path:str, do_weighted:bool, max_num_structs:int = 500000, is_agressive:bool = False):
+        new_sara:Sara2API = Sara2API()
+        puzzle_data: puzzleData
+        pandas_sheet: DataFrame
+        puzzle_data, pandas_sheet = new_sara.ProcessLab(path=pnas_dataset_path.as_posix(),
+                                                      designRound_sheet=round,
+                                                      sublab_name=sublab
+                                                      )
+        # pnas_data:List[Sara2StructureList] = []
+        for design in puzzle_data.designsList:
+            if os.path.isdir(archive_path) is False:
+                raise FileExistsError(f'File {archive_path} is not a valid path')
+            
+            found_data:ArchiveData = self.archive_ensemble_data(dest_folder=archive_path,
+                                        flow=ArchiveFlow.GET)
+            
+            if found_data.structs.num_structures < max_num_structs:
+                struct_to_use:Sara2SecondaryStructure = found_data.fmn_folded_mfe
+                if do_weighted is True:
+                    struct_to_use = found_data.fmn_folded_weighted
+                    
+                reference_structures:EnsembleSwitchStateMFEStructs = EnsembleSwitchStateMFEStructs(switched_mfe_struct=struct_to_use,
+                                                                                                non_switch_mfe_struct=found_data.structs.sara_stuctures[0])
+                
+                ensemble_groups: MultipleEnsembleGroups = self.nupack4.load_nupack_subopt_as_ensemble(span_structures=found_data.structs,
+                                                                                                kcal_span_from_mfe=found_data.nupack_settings.kcal_span_from_mfe,
+                                                                                                Kcal_unit_increments=found_data.nupack_settings.Kcal_unit_increments,
+                                                                                                switch_state=reference_structures
+                                                                                                )
+                
+                investigation_results:InvestigateEnsembleResults = self.scoring.investigate_and_score_ensemble(ensemble=ensemble_groups,
+                                                                                                           is_aggressive=is_agressive)
+                
+                data_to_archive:ArchiveInvestigatorData = ArchiveInvestigatorData(investigoator=investigation_results,
+                                                                          disign_info=design.design_info)
+                
+                self.archive_investigation_computations(dest_folder=archive_path,
+                                                        flow=ArchiveFlow.PUT,
+                                                        data=data_to_archive)
+        
+        print("Done!!!")
+    
+    def archive_investigation_computations(self, dest_folder:Path, flow:ArchiveFlow, data:ArchiveInvestigatorData)->Union[None, ArchiveInvestigatorData]:
+        
+        backup_investigator:ArchiveInvestigator = ArchiveInvestigator(working_folder=dest_folder,
+                                             var_name=str(data.disign_info.DesignID),
+                                             use_db=True)
+        
+           
+        if flow == ArchiveFlow.PUT:
+            backup_investigator.investigator.comparison_eval_result = data.investigator.investigator_results.comparison_eval_results
+            backup_investigator.investigator.comp_nuc_counts = data.investigator.investigator_results.comp_nuc_counts
+            backup_investigator.investigator.lmv_values = data.investigator.investigator_results.lmv_values
+            backup_investigator.investigator.lmv_assertions = data.investigator.investigator_results.lmv_assertions
+            backup_investigator.investigator.num_groups = data.investigator.investigator_results.num_groups
+            backup_investigator.investigator.total_structures_ensemble = data.investigator.investigator_results.total_structures_ensemble
+            
+            backup_investigator.scores.basic_scores = data.investigator.basic_scores
+            backup_investigator.scores.advanced_scores = data.investigator.advanced_scores
+            backup_investigator.scores.number_structures = data.investigator.number_structures
+            
+            backup_investigator.design_info.design_info = data.disign_info
+  
+            return None
+        
+        elif flow == ArchiveFlow.GET:
+            retreived_investigator:InvestigatorResults = InvestigatorResults(comparison_eval_results=backup_investigator.investigator.comparison_eval_result,
+                                                                             comp_nuc_counts=backup_investigator.investigator.comp_nuc_counts,
+                                                                             lmv_values=backup_investigator.investigator.lmv_values,
+                                                                             lmv_assertions=backup_investigator.investigator.lmv_assertions,
+                                                                             num_groups=backup_investigator.investigator.num_groups,
+                                                                             total_structures_ensemble=backup_investigator.investigator.total_structures_ensemble)
+            
+            retrieved_results:InvestigateEnsembleResults = InvestigateEnsembleResults(investigator_results=retreived_investigator,
+                                                                                      basic_scores=backup_investigator.scores.basic_scores,
+                                                                                      advanced_scores=backup_investigator.scores.advanced_scores,
+                                                                                      number_structures=backup_investigator.scores.number_structures)
+            
+            retrieved_design_info:DesignInformation = backup_investigator.design_info.design_info
+            
+            retrieved_archive: ArchiveInvestigatorData = ArchiveInvestigatorData(investigator=retrieved_results,
+                                                                                 disign_info=retrieved_design_info)
+            
+            return retrieved_archive
+                
+                
 
     def retrieve_archive_and_run_analysis(self, save_folder:Path, run_name:str, pnas_dataset_path:Path, round:str, sublab:str, do_weighted:bool, is_agressive:bool = False, max_num_structs:int= 500000, archive_path:str=None):
         new_sara:Sara2API = Sara2API()
@@ -323,8 +418,55 @@ def get_nupack_ensemble_structs_and_archive_r101():
     # save_path:str = f'/home/rnauser/test_data/run_data/{run_name}/pnas_eternacon_{timestr}.xlsx'
         
 
-def archive_ensemble_structs():
-    pass
+def perform_serena_ensemble_computations():
+    parser = argparse.ArgumentParser(description='Get and process R101 PNAS data')
+    
+    parser.add_argument('--pnas', 
+                        type=Path,
+                        required=True,
+                        help='Path to the pnas file for analysis')
+    
+    parser.add_argument('--sublab', 
+                        type=str,
+                        default='',
+                        required=True,
+                        help='sublab in R101 to generate and archive enemble data for')
+    
+    
+    parser.add_argument('--archive', 
+                        type=Path,
+                        required=True,
+                        help='Path to the data nut squirrel archive folder')
+    
+    parser.add_argument('--do-weighted', 
+                        action="store_true",
+                        required=False,
+                        help='Use weighted struct from Vienna2 enemble')
+    
+    parser.add_argument('--do-agressive', 
+                        action="store_true",
+                        required=False,
+                        help='use agressive limits')
+    
+    parser.add_argument('--max-structs', 
+                        type=int,
+                        default=500000,
+                        required=False,
+                        help='sublab in R101 to generate and archive enemble data for')
+    
+    
+    args = parser.parse_args()
+    
+
+    process_pnas:ProcessPNAS = ProcessPNAS()
+    
+    process_pnas.perform_investigation_computations(pnas_dataset_path=args.pnas,
+                                                    sublab=args.sublab,
+                                                    archive_path=args.archive,
+                                                    do_weighted=args.do_weighted,
+                                                    max_num_structs=args.max_structs,
+                                                    is_agressive=args.do_agressive)
+    
 
 def switchyness_analysis():
     pass

@@ -1,0 +1,138 @@
+  
+  
+NUT:  
+  !NutStructure
+    db_info:
+      !NutDatabaseInfo
+        db_name: test_db
+    external_imports:
+      - !ExternalAttribute
+        module: serena.utilities.ensemble_structures
+        attribute: Sara2SecondaryStructure
+      - !ExternalAttribute
+        module: serena.utilities.ensemble_structures
+        attribute: Sara2StructureList
+      - !ExternalAttribute
+        module: serena.analysis.investigator
+        attribute: ComparisonEvalResults
+      - !ExternalAttribute
+        module: serena.analysis.investigator
+        attribute: RatioResults
+      - !ExternalAttribute
+        module: serena.utilities.comparison_structures
+        attribute: ComparisonNucResults
+      - !ExternalAttribute
+        module: serena.utilities.comparison_structures
+        attribute: ComparisonNucCounts 
+      - !ExternalAttribute
+        module: serena.utilities.local_minima_variation
+        attribute: ComparisonLMVResponse
+      - !ExternalAttribute
+        module: serena.utilities.local_minima_variation
+        attribute: ComparisonLMV 
+      - !ExternalAttribute
+        module: serena.analysis.investigator
+        attribute: LMVAssertionResult
+      - !ExternalAttribute
+        module: serena.utilities.ensemble_variation
+        attribute: EV 
+      - !ExternalAttribute
+        module: serena.analysis.scoring
+        attribute: BasicScoreResults
+      - !ExternalAttribute
+        module: serena.analysis.scoring
+        attribute: AdvancedScoreResults
+      - !ExternalAttribute
+        module: serena.interfaces.Sara2_API_Python3
+        attribute: DesignInformation 
+      - !ExternalAttribute
+        module: serena.interfaces.Sara2_API_Python3
+        attribute: WetlabData     
+    nut_container_declarations: 
+      - !NutDeclaration
+        name: Investigator
+      - !NutDeclaration
+        name: Scores
+      - !NutDeclaration
+        name: DesignParameters
+    nut_main_struct:
+      !NutContainer
+        name: PNASData
+        object_list:
+          - !NutObject
+            name: investigator
+            object_type: !NutObjectType CONTAINER
+            object_info: Investigator
+          - !NutObject
+            name: scores
+            object_type: !NutObjectType CONTAINER
+            object_info: Scores
+          - !NutObject
+            name: design_info
+            object_type: !NutObjectType CONTAINER
+            object_info: DesignParameters
+               
+
+
+DEFINITIONS:
+  !NutContainerDefinitions
+    nut_containers_definitions:
+      - !NutContainer
+        name: Investigator
+        object_list:
+          - !NutObject
+            name: comparison_eval_result
+            object_type: !NutObjectType CLASS
+            object_info: [ComparisonEvalResults,RatioResults]
+          - !NutObject
+            name: comp_nuc_counts
+            object_type: !NutObjectType CLASS
+            object_info: [ComparisonNucResults,ComparisonNucCounts]
+          - !NutObject
+            name: lmv_values
+            object_type: !NutObjectType CLASS
+            object_info: [ComparisonLMVResponse,ComparisonLMV,EV]
+          - !NutObject
+            name: lmv_assertions
+            object_type: !NutObjectType CLASS
+            object_info: [LMVAssertionResult]
+          - !NutObject
+            name: num_groups
+            object_type: !NutObjectType VALUE
+            object_info: int
+          - !NutObject
+            name: total_structures_ensemble
+            object_type: !NutObjectType VALUE
+            object_info: int
+      - !NutContainer
+        name: Scores
+        object_list:
+          - !NutObject
+            name: basic_scores
+            object_type: !NutObjectType CLASS
+            object_info: [BasicScoreResults]
+          - !NutObject
+            name: advanced_scores
+            object_type: !NutObjectType CLASS
+            object_info: [AdvancedScoreResults]
+          - !NutObject
+            name: number_structures
+            object_type: !NutObjectType VALUE
+            object_info: int
+      - !NutContainer
+        name: DesignParameters
+        object_list:
+          - !NutObject
+            name: design_info
+            object_type: !NutObjectType CLASS
+            object_info: [DesignInformation]
+          - !NutObject
+            name: wetlab_data
+            object_type: !NutObjectType CLASS
+            object_info: [WetlabData]
+
+
+          
+
+  
+            
