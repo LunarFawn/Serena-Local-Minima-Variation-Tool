@@ -26,10 +26,7 @@ NUT:
         attribute: NupackSettings
       - !ExternalAttribute
         module: serena.interfaces.nupack4_0_28_wsl2_interface
-        attribute: MaterialParameter
-      - !ExternalAttribute
-        module: serena.scripts.analyze_pnas_2112979119_sd01
-        attribute: ArchiveData        
+        attribute: MaterialParameter      
     nut_container_declarations: 
       - !NutDeclaration
         name: Data
@@ -42,11 +39,7 @@ NUT:
           - !NutObject
             name: data
             object_type: !NutObjectType CONTAINER
-            object_info: Data
-          - !NutObject
-            name: archive
-            object_type: !NutObjectType CONTAINER
-            object_info: Archive      
+            object_info: Data     
 
 
 DEFINITIONS:
@@ -75,13 +68,7 @@ DEFINITIONS:
             name: fmn_folded_weighted
             object_type: !NutObjectType CLASS
             object_info: [Sara2SecondaryStructure]
-      - !NutContainer
-        name: Archive
-        object_list:
-          - !NutObject
-            name: archive_data
-            object_type: !NutObjectType CLASS
-            object_info: [ArchiveData,DesignPerformanceData,DesignInformation,WetlabData,NupackSettings,MaterialParameter,Sara2StructureList,Sara2SecondaryStructure]
+
           
 
   

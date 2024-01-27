@@ -25,11 +25,9 @@ from serena.interfaces.Sara2_API_Python3 import DesignInformation
 from serena.interfaces.Sara2_API_Python3 import WetlabData
 from serena.interfaces.nupack4_0_28_wsl2_interface import NupackSettings
 from serena.interfaces.nupack4_0_28_wsl2_interface import MaterialParameter
-from serena.scripts.analyze_pnas_2112979119_sd01 import ArchiveData
 
 class Nut_Attributes(Enum):
 	Data = "data_db"
-	Archive = "archive_db"
 
 
 class PNASData(Nut):
@@ -61,43 +59,6 @@ class PNASData(Nut):
 		self.data_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
 			attribute="fmn_folded_weighted_db",
 			atr_type=['Sara2SecondaryStructure']))
-
-		self.archive_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="archive_data_db",
-			atr_type=['ArchiveData', 'DesignPerformanceData', 'DesignInformation', 'WetlabData', 'NupackSettings', 'MaterialParameter', 'Sara2StructureList', 'Sara2SecondaryStructure']))
-
-class Archive(CustomAttribute):
-	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
-		self.parent = parent
-		self.current = current
-		self.do_save = save_value
-
-	@property
-	def archive_data(self)->ArchiveData:
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ArchiveData)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(DesignPerformanceData)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(DesignInformation)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(WetlabData)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(NupackSettings)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(MaterialParameter)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2StructureList)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2SecondaryStructure)
-		return self.parent.archive_data_db
-
-	@archive_data.setter
-	def archive_data(self, value:ArchiveData):
-		if isinstance(value, ArchiveData) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ArchiveData)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(DesignPerformanceData)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(DesignInformation)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(WetlabData)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(NupackSettings)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(MaterialParameter)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2StructureList)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2SecondaryStructure)
-		self.parent.archive_data_db = value
-
 
 class Data(CustomAttribute):
 	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
@@ -190,10 +151,6 @@ class ArchiveSecondaryStructureList(PNASData):
 			current=None,
 			parent=self.data_db)
 
-		self._archive: Archive = Archive(save_value=True,
-			current=None,
-			parent=self.archive_db)
-
 	@property
 	def data(self)->Data:
 		return self._data
@@ -203,16 +160,5 @@ class ArchiveSecondaryStructureList(PNASData):
 		if isinstance(struct, Data) == False:
 			raise ValueError("Invalid value assignment")
 		self._data = struct
-
-
-	@property
-	def archive(self)->Archive:
-		return self._archive
-
-	@archive.setter
-	def archive(self, struct:Archive):
-		if isinstance(struct, Archive) == False:
-			raise ValueError("Invalid value assignment")
-		self._archive = struct
 
 

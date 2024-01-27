@@ -5,7 +5,8 @@ that has nupack4 setup and ready for this project to consume
 """
 from typing import List, Dict
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime\
+
 
 from enum import Enum
 from nupack import *
@@ -27,6 +28,17 @@ class MaterialParameter(Enum):
     rna99_nupack3 = 3    
     #"Same as rna95 except that terminal mismatch free energies in exterior loops and multiloops are replaced by two dangle stacking free energies."
     rna95_nupack3 = 4
+    
+    @classmethod
+    def from_yaml(cls, launcher, node):
+        return cls[node.value]
+    
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar(
+            u'!MaterialParameter',
+            '{}'.format(node._name_)
+        ) 
 
 @dataclass
 class NupackSettings():

@@ -23,3 +23,6 @@ Repository = "https://github.com/LunarFawn/Serena-Local-Minima-Variation-Tool.gi
 testpaths = [
     "tests",
 ]
+
+[project.scripts]
+get_nupack_ensemble_structs_and_archive_r101 = "serena.scripts.analyze_pnas_2112979119_sd01:get_nupack_ensemble_structs_and_archive_r101"

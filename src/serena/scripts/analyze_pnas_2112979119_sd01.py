@@ -8,6 +8,7 @@ from pathlib import Path
 from pandas import DataFrame
 import os
 from dataclasses import dataclass
+import argparse
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.weighted_structures import WeightedStructure
@@ -75,7 +76,7 @@ class ProcessPNAS():
         return struct_to_use
 
         
-    def record_nupack_ensemble_structs(self, pnas_dataset_path:Path, round:str, sublab:str, nupack_settings:NupackSettings, do_archive:bool, archive_path:str=None)->List[Sara2StructureList]:
+    def record_nupack_ensemble_structs(self, pnas_dataset_path:Path, round:str, sublab:str, nupack_settings:NupackSettings, archive_path:str=None)->List[Sara2StructureList]:
         new_sara:Sara2API = Sara2API()
         puzzle_data: puzzleData
         pandas_sheet: DataFrame
@@ -91,7 +92,7 @@ class ProcessPNAS():
             # eterna_score = design.wetlab_results.Eterna_Score
             # folding_subscore = design.wetlab_results.Folding_Subscore
             # switch_subscore = design.wetlab_results.Switch_Subscore
-            # baseline_subscore = design.wetlab_results.Baseline_Subscore
+            # baseline_subscore = design.wetlab_results.Baseline_Subscor    
             
             
             structs:Sara2StructureList = self.nupack4.get_subopt_energy_gap(material_param=nupack_settings.material_param,
@@ -207,10 +208,19 @@ class ProcessPNAS():
         
            
         if flow == ArchiveFlow.PUT:
-            backup_records.archive.archive_data = data
+            backup_records.data.design_info = data.design_info
+            backup_records.data.nupack_settings = data.nupack_settings
+            backup_records.data.structs = data.structs
+            backup_records.data.fmn_folded_mfe = data.fmn_folded_mfe
+            backup_records.data.fmn_folded_weighted = data.fmn_folded_weighted
+          
             return None
         elif flow == ArchiveFlow.GET:
-            retrieved_archive:ArchiveData = backup_records.archive.archive_data 
+            retrieved_archive:ArchiveData = ArchiveData(design_info=backup_records.data.design_info,
+                                                        nupack_settings=backup_records.data.nupack_settings,
+                                                        structs=backup_records.data.structs,
+                                                        fmn_folded_mfe=backup_records.data.fmn_folded_mfe,
+                                                        fmn_folded_weighted=backup_records.data.fmn_folded_weighted)
             return retrieved_archive
                                  
 
@@ -219,8 +229,99 @@ class ProcessPNAS():
     #     pass
     
 
-def get_nupack_ensemble_structs():
-    pass
+def get_nupack_ensemble_structs_and_archive_r101():
+    parser = argparse.ArgumentParser(description='Get and process R101 PNAS data')
+    
+    parser.add_argument('--pnas', 
+                        type=Path,
+                        required=True,
+                        help='Path to the pnas file for analysis')
+    
+    parser.add_argument('--sublab', 
+                        type=str,
+                        default='',
+                        required=True,
+                        help='sublab in R101 to generate and archive enemble data for')
+    
+    parser.add_argument('--round', 
+                        type=str,
+                        default='Round 7 (R101)',
+                        required=False,
+                        help='Round to run')
+    
+    parser.add_argument('--archive', 
+                        type=Path,
+                        required=True,
+                        help='Path to the data nut squirrel archive folder')
+    
+    parser.add_argument('--material',
+                        type=str,
+                        choices=[MaterialParameter.rna06_nupack4.name,
+                                 MaterialParameter.rna95_nupack4.name,
+                                 MaterialParameter.rna99_nupack3.name,
+                                 MaterialParameter.rna95_nupack3.name],
+                        required=True,
+                        help='Material parameters that you can use'
+                        )
+    
+    parser.add_argument('--temp',
+                        type=int,
+                        required=True,
+                        help='Temperature to perform the fold at in degrees C'
+                        )
+    
+    parser.add_argument('--span',
+                        type=int,
+                        required=True,
+                        help='Span from MFE to grab ensemble data for.'
+                        )
+    
+    parser.add_argument('--unit',
+                        type=float,
+                        required=True,
+                        help='Increment size in Kcal of each unit of the ensemble when it is divided up'
+                        )
+    
+    
+    args = parser.parse_args()
+    
+    material: MaterialParameter = MaterialParameter[args.material]
+    
+    nupack_settings:NupackSettings = NupackSettings(material_param=material,
+                                                    temp_C=args.temp,
+                                                    kcal_span_from_mfe=args.span,
+                                                    Kcal_unit_increments=args.unit,
+                                                    sequence='')
+    
+    # parser.add_argument('--r',
+    #                     '--round', 
+    #                     type=str,
+    #                     default='Round 7 (R101)',
+    #                     help='Name to use for the output f')
+    
+    
+    details:str= 'all'#f'20k_filtered_weighted_100K_gtrequal2_nucpenalty_run_1ish'
+
+    
+    process_pnas:ProcessPNAS = ProcessPNAS()
+    process_pnas.record_nupack_ensemble_structs(pnas_dataset_path=args.pnas,
+                                                round=args.round,
+                                                sublab=args.sublab,
+                                                nupack_settings=nupack_settings,
+                                                archive_path=args.archive)
+    
+    # #Round 7 (R101)
+    # same_state:str='3'
+    # sublab_name:str = "good"#f'Same State NG {same_state}'
+    # is_aggressive:bool = False
+    # save_title:str = sublab_name + "_open"
+    # run_name:str = "data_nut_test"#f'SSNG{same_state}_{details}'
+
+
+    # pnas_path:str = '/home/rnauser/test_data/pnas_testing_tweak.xlsx'
+    # timestr = time.strftime("%Y%m%d-%H%M%S")
+    # save_path:str = f'/home/rnauser/test_data/run_data/{run_name}/pnas_eternacon_{timestr}.xlsx'
+        
 
 def archive_ensemble_structs():
     pass
