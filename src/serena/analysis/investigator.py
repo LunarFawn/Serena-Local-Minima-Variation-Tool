@@ -77,8 +77,8 @@ class ComparisonEvalResults():
     ratios:List[RatioResults] = []
     BRaise_list:List[float] =[]
     BUratio_list:List[float] = []
-    bound_total_list: List[int] = []
-    unbound_total_list: List[int] = []
+    bound_total_list: List[float] = []
+    unbound_total_list: List[float] = []
     nuc_penatly_count:int = 0
     first_BUratio:float = 0
 
@@ -112,8 +112,8 @@ class ComparisonInvestigator():
         """
         BRaise_list:List[float] = []
         BUratio_list:List[float] = []
-        bound_total_list: List[int] = []
-        unbound_total_list: List[int] = []
+        bound_total_list: List[float] = []
+        unbound_total_list: List[float] = []
         ratios:List[RatioResults] = []
         nuc_penatly_count:int = 0
         bound_hold:int = -1
@@ -214,10 +214,10 @@ class ComparisonInvestigator():
             #this is only for the fist kcal group
             if group_index == 0:
                 nuc_penatly_count = bound
-                first_BUratio = round(bound_ratio,2)
+                first_BUratio = float(round(bound_ratio,2))
 
-            BUratio_list.append(round(bound_ratio,2))
-            BRaise_list.append(round(bound,2))
+            BUratio_list.append(float(round(bound_ratio,2)))
+            BRaise_list.append(float(round(bound,2)))
 
             ratio_results:RatioResults = RatioResults(unbound_to_total_ratio=unbound_to_total_ratio,
                                                       bound_ratio=bound_ratio,

@@ -28,6 +28,12 @@ from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, Mate
 from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults, InvestigatorResults
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 from serena.utilities.logging_serena import PNASAnalysisLogging
+from serena.analysis.investigator import (
+    ComparisonEvalResults,
+    ComparisonNucResults,
+    ComparisonLMVResponse,
+    LMVAssertionResult
+)
 
 
 class ArchiveFlow(Enum):
@@ -45,7 +51,7 @@ class ArchiveData():
 @dataclass
 class ArchiveInvestigatorData():
     investigator: InvestigateEnsembleResults = None
-    disign_info:DesignInformation = None
+    design_info:DesignPerformanceData = None
     
 class ProcessPNAS():
     
@@ -92,6 +98,8 @@ class ProcessPNAS():
                                                       )
         pnas_data:List[Sara2StructureList] = []
         for design in puzzle_data.designsList:
+
+
             # design_id= str(design.design_info.DesignID)
             sequence = design.design_info.Sequence
             # fold_change = design.wetlab_results.FoldChange
@@ -108,9 +116,9 @@ class ProcessPNAS():
                                                                     )
             pnas_data.append(structs)
             fmn_mfe:Sara2SecondaryStructure = self.get_fmn_state_fold(sequence=sequence,
-                                                                      do_weighted=False)
+                                                                    do_weighted=False)
             fmn_weighted_struct:Sara2SecondaryStructure = self.get_fmn_state_fold(sequence=sequence,
-                                                                                  do_weighted=True)
+                                                                                do_weighted=True)
             
             # if do_archive is True:
             if os.path.isdir(archive_path) is False:
@@ -126,7 +134,7 @@ class ProcessPNAS():
             
         print("Done!")
 
-    def perform_investigation_computations(self, pnas_dataset_path:Path, sublab:str, archive_path:str, do_weighted:bool, max_num_structs:int = 500000, is_agressive:bool = False):
+    def perform_investigation_computations(self, pnas_dataset_path:Path, round:str, sublab:str, source_archive_path:str, target_archive_path:str, do_weighted:bool, max_num_structs:int = 500000, is_agressive:bool = False):
         new_sara:Sara2API = Sara2API()
         puzzle_data: puzzleData
         pandas_sheet: DataFrame
@@ -136,11 +144,13 @@ class ProcessPNAS():
                                                       )
         # pnas_data:List[Sara2StructureList] = []
         for design in puzzle_data.designsList:
-            if os.path.isdir(archive_path) is False:
-                raise FileExistsError(f'File {archive_path} is not a valid path')
+            if os.path.isdir(source_archive_path) is False:
+                raise FileExistsError(f'File {source_archive_path} is not a valid path')
             
-            found_data:ArchiveData = self.archive_ensemble_data(dest_folder=archive_path,
-                                        flow=ArchiveFlow.GET)
+            temp_archive:ArchiveData = ArchiveData(design_info=design)
+            found_data:ArchiveData = self.archive_ensemble_data(dest_folder=source_archive_path,
+                                        flow=ArchiveFlow.GET,
+                                        data=temp_archive)
             
             if found_data.structs.num_structures < max_num_structs:
                 struct_to_use:Sara2SecondaryStructure = found_data.fmn_folded_mfe
@@ -159,10 +169,10 @@ class ProcessPNAS():
                 investigation_results:InvestigateEnsembleResults = self.scoring.investigate_and_score_ensemble(ensemble=ensemble_groups,
                                                                                                            is_aggressive=is_agressive)
                 
-                data_to_archive:ArchiveInvestigatorData = ArchiveInvestigatorData(investigoator=investigation_results,
-                                                                          disign_info=design.design_info)
+                data_to_archive:ArchiveInvestigatorData = ArchiveInvestigatorData(investigator=investigation_results,
+                                                                          design_info=design)
                 
-                self.archive_investigation_computations(dest_folder=archive_path,
+                self.archive_investigation_computations(dest_folder=target_archive_path,
                                                         flow=ArchiveFlow.PUT,
                                                         data=data_to_archive)
         
@@ -171,15 +181,32 @@ class ProcessPNAS():
     def archive_investigation_computations(self, dest_folder:Path, flow:ArchiveFlow, data:ArchiveInvestigatorData)->Union[None, ArchiveInvestigatorData]:
         
         backup_investigator:ArchiveInvestigator = ArchiveInvestigator(working_folder=dest_folder,
-                                             var_name=str(data.disign_info.DesignID),
+                                             var_name=str(data.design_info.design_info.DesignID),
                                              use_db=True)
         
            
         if flow == ArchiveFlow.PUT:
-            backup_investigator.investigator.comparison_eval_result = data.investigator.investigator_results.comparison_eval_results
+            backup_investigator.design_info.design_info = data.design_info.design_info
+            backup_investigator.design_info.wetlab_data = data.design_info.wetlab_results
+            
+            backup_investigator.investigator.comparison_eval_result.ratios = data.investigator.investigator_results.comparison_eval_results.ratios
+            # print(type(data.investigator.investigator_results.comparison_eval_results.BRaise_list[0]))
+            # input()
+            backup_investigator.investigator.comparison_eval_result.BRaise_list = data.investigator.investigator_results.comparison_eval_results.BRaise_list
+            backup_investigator.investigator.comparison_eval_result.BUratio_list = data.investigator.investigator_results.comparison_eval_results.BUratio_list
+            backup_investigator.investigator.comparison_eval_result.bound_total_list = data.investigator.investigator_results.comparison_eval_results.bound_total_list
+            backup_investigator.investigator.comparison_eval_result.unbound_total_list = data.investigator.investigator_results.comparison_eval_results.unbound_total_list
+            backup_investigator.investigator.comparison_eval_result.nuc_penatly_count = data.investigator.investigator_results.comparison_eval_results.nuc_penatly_count
+            backup_investigator.investigator.comparison_eval_result.first_BUratio = data.investigator.investigator_results.comparison_eval_results.first_BUratio
+                       
+            backup_investigator.investigator.lmv_values.lmv_comps = data.investigator.investigator_results.lmv_values.lmv_comps
+            
+            backup_investigator.investigator.lmv_assertions.comp_compare_to_mfe = data.investigator.investigator_results.lmv_assertions.comp_compare_to_mfe
+            backup_investigator.investigator.lmv_assertions.unbouund_pronounced = data.investigator.investigator_results.lmv_assertions.unbouund_pronounced
+            backup_investigator.investigator.lmv_assertions.bound_pronounced = data.investigator.investigator_results.lmv_assertions.bound_pronounced
+            backup_investigator.investigator.lmv_assertions.is_on_off_switch = data.investigator.investigator_results.lmv_assertions.is_on_off_switch
+
             backup_investigator.investigator.comp_nuc_counts = data.investigator.investigator_results.comp_nuc_counts
-            backup_investigator.investigator.lmv_values = data.investigator.investigator_results.lmv_values
-            backup_investigator.investigator.lmv_assertions = data.investigator.investigator_results.lmv_assertions
             backup_investigator.investigator.num_groups = data.investigator.investigator_results.num_groups
             backup_investigator.investigator.total_structures_ensemble = data.investigator.investigator_results.total_structures_ensemble
             
@@ -187,15 +214,34 @@ class ProcessPNAS():
             backup_investigator.scores.advanced_scores = data.investigator.advanced_scores
             backup_investigator.scores.number_structures = data.investigator.number_structures
             
-            backup_investigator.design_info.design_info = data.disign_info
+            
   
             return None
         
         elif flow == ArchiveFlow.GET:
-            retreived_investigator:InvestigatorResults = InvestigatorResults(comparison_eval_results=backup_investigator.investigator.comparison_eval_result,
-                                                                             comp_nuc_counts=backup_investigator.investigator.comp_nuc_counts,
-                                                                             lmv_values=backup_investigator.investigator.lmv_values,
-                                                                             lmv_assertions=backup_investigator.investigator.lmv_assertions,
+            
+            
+            retreived_comparison_eval_results:ComparisonEvalResults = ComparisonEvalResults(ratios=backup_investigator.investigator.comparison_eval_result.ratios,
+                                                                                            BRaise_list=backup_investigator.investigator.comparison_eval_result.BRaise_list,
+                                                                                            BUratio_list=backup_investigator.investigator.comparison_eval_result.BUratio_list,
+                                                                                            bound_total_list=backup_investigator.investigator.comparison_eval_result.bound_total_list,
+                                                                                            unbound_total_list=backup_investigator.investigator.comparison_eval_result.unbound_total_list,
+                                                                                            nuc_penatly_count=backup_investigator.investigator.comparison_eval_result.nuc_penatly_count,
+                                                                                            first_BUratio=backup_investigator.investigator.comparison_eval_result.first_BUratio)
+            
+            retrieved_comparison_nucs:ComparisonNucResults = backup_investigator.investigator.comp_nuc_counts
+            
+            retrieved_lmv_values:ComparisonLMVResponse = ComparisonLMVResponse(lmv_comps=backup_investigator.investigator.lmv_values.lmv_comps)
+            
+            retreived_lmv_assertions:LMVAssertionResult = LMVAssertionResult(comp_compare_to_mfe=backup_investigator.investigator.lmv_assertions.comp_compare_to_mfe,
+                                                                             unbouund_pronounced=backup_investigator.investigator.lmv_assertions.unbouund_pronounced,
+                                                                             bound_pronounced=backup_investigator.investigator.lmv_assertions.bound_pronounced,
+                                                                             is_on_off_switch=backup_investigator.investigator.lmv_assertions.is_on_off_switch)
+            
+            retreived_investigator:InvestigatorResults = InvestigatorResults(comparison_eval_results=retreived_comparison_eval_results,
+                                                                             comp_nuc_counts=retrieved_comparison_nucs,
+                                                                             lmv_values=retrieved_lmv_values,
+                                                                             lmv_assertions=retreived_lmv_assertions,
                                                                              num_groups=backup_investigator.investigator.num_groups,
                                                                              total_structures_ensemble=backup_investigator.investigator.total_structures_ensemble)
             
@@ -225,6 +271,7 @@ class ProcessPNAS():
         for design in puzzle_data.designsList:
             if os.path.isdir(archive_path) is False:
                 raise FileExistsError(f'File {archive_path} is not a valid path')
+
             
             found_data:ArchiveData = self.archive_ensemble_data(dest_folder=archive_path,
                                         flow=ArchiveFlow.GET)
@@ -303,6 +350,7 @@ class ProcessPNAS():
         
            
         if flow == ArchiveFlow.PUT:
+            print(data.design_info)
             backup_records.data.design_info = data.design_info
             backup_records.data.nupack_settings = data.nupack_settings
             backup_records.data.structs = data.structs
@@ -426,6 +474,12 @@ def perform_serena_ensemble_computations():
                         required=True,
                         help='Path to the pnas file for analysis')
     
+    parser.add_argument('--round', 
+                        type=str,
+                        default='Round 7 (R101)',
+                        required=False,
+                        help='Round to run')
+    
     parser.add_argument('--sublab', 
                         type=str,
                         default='',
@@ -433,10 +487,15 @@ def perform_serena_ensemble_computations():
                         help='sublab in R101 to generate and archive enemble data for')
     
     
-    parser.add_argument('--archive', 
+    parser.add_argument('--source', 
                         type=Path,
                         required=True,
                         help='Path to the data nut squirrel archive folder')
+    
+    parser.add_argument('--target', 
+                        type=Path,
+                        required=True,
+                        help='Path to save the new data nut squirrel archive folder')
     
     parser.add_argument('--do-weighted', 
                         action="store_true",
@@ -460,12 +519,16 @@ def perform_serena_ensemble_computations():
 
     process_pnas:ProcessPNAS = ProcessPNAS()
     
+    # print(args.do_agressive)
+    
     process_pnas.perform_investigation_computations(pnas_dataset_path=args.pnas,
                                                     sublab=args.sublab,
-                                                    archive_path=args.archive,
+                                                    source_archive_path=args.source,
+                                                    target_archive_path=args.target,
                                                     do_weighted=args.do_weighted,
                                                     max_num_structs=args.max_structs,
-                                                    is_agressive=args.do_agressive)
+                                                    is_agressive=args.do_agressive,
+                                                    round=args.round)
     
 
 def switchyness_analysis():

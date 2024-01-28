@@ -52,6 +52,12 @@ NUT:
       - !NutDeclaration
         name: Investigator
       - !NutDeclaration
+        name: ComparisonEvalResults
+      - !NutDeclaration
+        name: ComparisonLMVResponse
+      - !NutDeclaration
+        name: LMVAssertionResult
+      - !NutDeclaration
         name: Scores
       - !NutDeclaration
         name: DesignParameters
@@ -78,24 +84,81 @@ DEFINITIONS:
   !NutContainerDefinitions
     nut_containers_definitions:
       - !NutContainer
+        name: LMVAssertionResult
+        object_list:
+          - !NutObject
+            name: comp_compare_to_mfe
+            object_type: !NutObjectType LIST
+            object_info: str
+          - !NutObject
+            name: unbouund_pronounced
+            object_type: !NutObjectType LIST
+            object_info: bool
+          - !NutObject
+            name: bound_pronounced
+            object_type: !NutObjectType LIST
+            object_info: bool
+          - !NutObject
+            name: is_on_off_switch
+            object_type: !NutObjectType LIST
+            object_info: bool
+      - !NutContainer
+        name: ComparisonLMVResponse
+        object_list:
+          - !NutObject
+            name: lmv_comps
+            object_type: !NutObjectType LIST
+            object_info: [ComparisonLMV, EV, CLASS]
+      - !NutContainer
+        name: ComparisonEvalResults
+        object_list:
+          - !NutObject
+            name: ratios
+            object_type: !NutObjectType LIST
+            object_info: [RatioResults, CLASS]
+          - !NutObject
+            name: BRaise_list
+            object_type: !NutObjectType LIST
+            object_info: float
+          - !NutObject
+            name: BUratio_list
+            object_type: !NutObjectType LIST
+            object_info: float
+          - !NutObject
+            name: bound_total_list
+            object_type: !NutObjectType LIST
+            object_info: float
+          - !NutObject
+            name: unbound_total_list
+            object_type: !NutObjectType LIST
+            object_info: float
+          - !NutObject
+            name: nuc_penatly_count
+            object_type: !NutObjectType VALUE
+            object_info: int
+          - !NutObject
+            name: first_BUratio
+            object_type: !NutObjectType VALUE
+            object_info: float
+      - !NutContainer
         name: Investigator
         object_list:
           - !NutObject
             name: comparison_eval_result
-            object_type: !NutObjectType CLASS
-            object_info: [ComparisonEvalResults,RatioResults]
+            object_type: !NutObjectType CONTAINER
+            object_info: ComparisonEvalResults
+          - !NutObject
+            name: lmv_values
+            object_type: !NutObjectType CONTAINER
+            object_info: ComparisonLMVResponse
+          - !NutObject
+            name: lmv_assertions
+            object_type: !NutObjectType CONTAINER
+            object_info: LMVAssertionResult
           - !NutObject
             name: comp_nuc_counts
             object_type: !NutObjectType CLASS
-            object_info: [ComparisonNucResults,ComparisonNucCounts]
-          - !NutObject
-            name: lmv_values
-            object_type: !NutObjectType CLASS
-            object_info: [ComparisonLMVResponse,ComparisonLMV,EV]
-          - !NutObject
-            name: lmv_assertions
-            object_type: !NutObjectType CLASS
-            object_info: [LMVAssertionResult]
+            object_info: [ComparisonNucResults,ComparisonNucCounts]        
           - !NutObject
             name: num_groups
             object_type: !NutObjectType VALUE

@@ -49,21 +49,69 @@ class PNASData(Nut):
 			working_folder=working_folder)
 
 
-		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.PARENT,
 			attribute="comparison_eval_result_db",
-			atr_type=['ComparisonEvalResults', 'RatioResults']))
+			atr_type=None))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="ratios_db",
+			atr_type=['RatioResults', 'CLASS']))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="BRaise_list_db",
+			atr_type=float))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="BUratio_list_db",
+			atr_type=float))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="bound_total_list_db",
+			atr_type=float))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="unbound_total_list_db",
+			atr_type=float))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="nuc_penatly_count_db",
+			atr_type=int))
+
+		self.investigator_db.comparison_eval_result_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="first_BUratio_db",
+			atr_type=float))
+
+		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.PARENT,
+			attribute="lmv_values_db",
+			atr_type=None))
+
+		self.investigator_db.lmv_values_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="lmv_comps_db",
+			atr_type=['ComparisonLMV', 'EV', 'CLASS']))
+
+		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.PARENT,
+			attribute="lmv_assertions_db",
+			atr_type=None))
+
+		self.investigator_db.lmv_assertions_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="comp_compare_to_mfe_db",
+			atr_type=str))
+
+		self.investigator_db.lmv_assertions_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="unbouund_pronounced_db",
+			atr_type=bool))
+
+		self.investigator_db.lmv_assertions_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="bound_pronounced_db",
+			atr_type=bool))
+
+		self.investigator_db.lmv_assertions_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="is_on_off_switch_db",
+			atr_type=bool))
 
 		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
 			attribute="comp_nuc_counts_db",
 			atr_type=['ComparisonNucResults', 'ComparisonNucCounts']))
-
-		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="lmv_values_db",
-			atr_type=['ComparisonLMVResponse', 'ComparisonLMV', 'EV']))
-
-		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
-			attribute="lmv_assertions_db",
-			atr_type=['LMVAssertionResult']))
 
 		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
 			attribute="num_groups_db",
@@ -92,6 +140,222 @@ class PNASData(Nut):
 		self.design_info_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
 			attribute="wetlab_data_db",
 			atr_type=['WetlabData']))
+
+class ComparisonEvalResults(CustomAttribute):
+	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
+		self.parent = parent
+		self.current = current
+		self.do_save = save_value
+
+	@property
+	def ratios(self)->List[RatioResults]:
+		self.parent.nut_filter.yaml_operations.yaml.register_class(RatioResults)
+		return self.parent.ratios_db
+
+	@ratios.setter
+	def ratios(self, value:List[RatioResults]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, RatioResults) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.nut_filter.yaml_operations.yaml.register_class(RatioResults)
+		self.parent.ratios_db = value
+
+
+	@property
+	def BRaise_list(self)->List[float]:
+		return self.parent.BRaise_list_db
+
+	@BRaise_list.setter
+	def BRaise_list(self, value:List[float]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, float) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.BRaise_list_db = value
+
+
+	@property
+	def BUratio_list(self)->List[float]:
+		return self.parent.BUratio_list_db
+
+	@BUratio_list.setter
+	def BUratio_list(self, value:List[float]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, float) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.BUratio_list_db = value
+
+
+	@property
+	def bound_total_list(self)->List[float]:
+		return self.parent.bound_total_list_db
+
+	@bound_total_list.setter
+	def bound_total_list(self, value:List[float]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, float) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.bound_total_list_db = value
+
+
+	@property
+	def unbound_total_list(self)->List[float]:
+		return self.parent.unbound_total_list_db
+
+	@unbound_total_list.setter
+	def unbound_total_list(self, value:List[float]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, float) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.unbound_total_list_db = value
+
+
+	@property
+	def nuc_penatly_count(self)->int:
+		return self.parent.nuc_penatly_count_db
+
+	@nuc_penatly_count.setter
+	def nuc_penatly_count(self, value:int):
+		if isinstance(value, int) == False:
+			raise ValueError("Invalid value assignment")
+		self.parent.nuc_penatly_count_db = value
+
+
+	@property
+	def first_BUratio(self)->float:
+		return self.parent.first_BUratio_db
+
+	@first_BUratio.setter
+	def first_BUratio(self, value:float):
+		if isinstance(value, float) == False:
+			raise ValueError("Invalid value assignment")
+		self.parent.first_BUratio_db = value
+
+
+class ComparisonLMVResponse(CustomAttribute):
+	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
+		self.parent = parent
+		self.current = current
+		self.do_save = save_value
+
+	@property
+	def lmv_comps(self)->List[ComparisonLMV]:
+		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonLMV)
+		self.parent.nut_filter.yaml_operations.yaml.register_class(EV)
+		return self.parent.lmv_comps_db
+
+	@lmv_comps.setter
+	def lmv_comps(self, value:List[ComparisonLMV]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, ComparisonLMV) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonLMV)
+		self.parent.nut_filter.yaml_operations.yaml.register_class(EV)
+		self.parent.lmv_comps_db = value
+
+
+class LMVAssertionResult(CustomAttribute):
+	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
+		self.parent = parent
+		self.current = current
+		self.do_save = save_value
+
+	@property
+	def comp_compare_to_mfe(self)->List[str]:
+		return self.parent.comp_compare_to_mfe_db
+
+	@comp_compare_to_mfe.setter
+	def comp_compare_to_mfe(self, value:List[str]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, str) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.comp_compare_to_mfe_db = value
+
+
+	@property
+	def unbouund_pronounced(self)->List[bool]:
+		return self.parent.unbouund_pronounced_db
+
+	@unbouund_pronounced.setter
+	def unbouund_pronounced(self, value:List[bool]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, bool) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.unbouund_pronounced_db = value
+
+
+	@property
+	def bound_pronounced(self)->List[bool]:
+		return self.parent.bound_pronounced_db
+
+	@bound_pronounced.setter
+	def bound_pronounced(self, value:List[bool]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, bool) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.bound_pronounced_db = value
+
+
+	@property
+	def is_on_off_switch(self)->List[bool]:
+		return self.parent.is_on_off_switch_db
+
+	@is_on_off_switch.setter
+	def is_on_off_switch(self, value:List[bool]):
+		if isinstance(value, list) == False:
+			raise ValueError("Invalid value assignment")
+		if len(value) < 1:
+			raise Exception("Empty lists not allowed")
+
+		for item in value:
+			if isinstance(item, bool) == False:
+				raise ValueError("Invalid value assignment")
+		self.parent.is_on_off_switch_db = value
+
 
 class DesignParameters(CustomAttribute):
 	def __init__(self, parent: Any, current:Any, save_value:bool) -> None:
@@ -130,20 +394,50 @@ class Investigator(CustomAttribute):
 		self.parent = parent
 		self.current = current
 		self.do_save = save_value
+		self._comparison_eval_result: ComparisonEvalResults = ComparisonEvalResults(save_value=True,
+			current=None,
+			parent=self.parent.comparison_eval_result_db)
+
+		self._lmv_values: ComparisonLMVResponse = ComparisonLMVResponse(save_value=True,
+			current=None,
+			parent=self.parent.lmv_values_db)
+
+		self._lmv_assertions: LMVAssertionResult = LMVAssertionResult(save_value=True,
+			current=None,
+			parent=self.parent.lmv_assertions_db)
+
 
 	@property
 	def comparison_eval_result(self)->ComparisonEvalResults:
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonEvalResults)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(RatioResults)
-		return self.parent.comparison_eval_result_db
+		return self._comparison_eval_result
 
 	@comparison_eval_result.setter
 	def comparison_eval_result(self, value:ComparisonEvalResults):
 		if isinstance(value, ComparisonEvalResults) == False:
 			raise ValueError("Invalid value assignment")
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonEvalResults)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(RatioResults)
-		self.parent.comparison_eval_result_db = value
+		self._comparison_eval_result = value
+
+
+	@property
+	def lmv_values(self)->ComparisonLMVResponse:
+		return self._lmv_values
+
+	@lmv_values.setter
+	def lmv_values(self, value:ComparisonLMVResponse):
+		if isinstance(value, ComparisonLMVResponse) == False:
+			raise ValueError("Invalid value assignment")
+		self._lmv_values = value
+
+
+	@property
+	def lmv_assertions(self)->LMVAssertionResult:
+		return self._lmv_assertions
+
+	@lmv_assertions.setter
+	def lmv_assertions(self, value:LMVAssertionResult):
+		if isinstance(value, LMVAssertionResult) == False:
+			raise ValueError("Invalid value assignment")
+		self._lmv_assertions = value
 
 
 	@property
@@ -159,36 +453,6 @@ class Investigator(CustomAttribute):
 		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonNucResults)
 		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonNucCounts)
 		self.parent.comp_nuc_counts_db = value
-
-
-	@property
-	def lmv_values(self)->ComparisonLMVResponse:
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonLMVResponse)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonLMV)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(EV)
-		return self.parent.lmv_values_db
-
-	@lmv_values.setter
-	def lmv_values(self, value:ComparisonLMVResponse):
-		if isinstance(value, ComparisonLMVResponse) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonLMVResponse)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(ComparisonLMV)
-		self.parent.nut_filter.yaml_operations.yaml.register_class(EV)
-		self.parent.lmv_values_db = value
-
-
-	@property
-	def lmv_assertions(self)->LMVAssertionResult:
-		self.parent.nut_filter.yaml_operations.yaml.register_class(LMVAssertionResult)
-		return self.parent.lmv_assertions_db
-
-	@lmv_assertions.setter
-	def lmv_assertions(self, value:LMVAssertionResult):
-		if isinstance(value, LMVAssertionResult) == False:
-			raise ValueError("Invalid value assignment")
-		self.parent.nut_filter.yaml_operations.yaml.register_class(LMVAssertionResult)
-		self.parent.lmv_assertions_db = value
 
 
 	@property
