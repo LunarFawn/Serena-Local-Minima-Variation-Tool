@@ -9,6 +9,7 @@ from pandas import DataFrame
 import os
 from dataclasses import dataclass
 import argparse
+import time
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure, Sara2StructureList
 from serena.utilities.weighted_structures import WeightedStructure
@@ -184,6 +185,8 @@ class ProcessPNAS():
                                              var_name=str(data.design_info.design_info.DesignID),
                                              use_db=True)
         
+        time.sleep(1)
+        
            
         if flow == ArchiveFlow.PUT:
             backup_investigator.design_info.design_info = data.design_info.design_info
@@ -222,23 +225,35 @@ class ProcessPNAS():
         
         elif flow == ArchiveFlow.GET:
             
-            
-            retreived_comparison_eval_results:ComparisonEvalResults = ComparisonEvalResults(ratios=backup_investigator.investigator.comparison_eval_result.ratios,
-                                                                                            BRaise_list=backup_investigator.investigator.comparison_eval_result.BRaise_list,
-                                                                                            BUratio_list=backup_investigator.investigator.comparison_eval_result.BUratio_list,
-                                                                                            bound_total_list=backup_investigator.investigator.comparison_eval_result.bound_total_list,
-                                                                                            unbound_total_list=backup_investigator.investigator.comparison_eval_result.unbound_total_list,
-                                                                                            nuc_penatly_count=backup_investigator.investigator.comparison_eval_result.nuc_penatly_count,
-                                                                                            first_BUratio=backup_investigator.investigator.comparison_eval_result.first_BUratio)
+            ratios = backup_investigator.investigator.comparison_eval_result.ratios
+            brais_list = backup_investigator.investigator.comparison_eval_result.BRaise_list
+            BUratio_list=backup_investigator.investigator.comparison_eval_result.BUratio_list,
+            bound_total_list=backup_investigator.investigator.comparison_eval_result.bound_total_list,
+            unbound_total_list=backup_investigator.investigator.comparison_eval_result.unbound_total_list,
+            nuc_penatly_count=backup_investigator.investigator.comparison_eval_result.nuc_penatly_count,
+            first_BUratio=backup_investigator.investigator.comparison_eval_result.first_BUratio
+                                                                                            
+            retreived_comparison_eval_results:ComparisonEvalResults = ComparisonEvalResults(ratios=ratios,
+                                                                                            BRaise_list=brais_list,
+                                                                                            BUratio_list=BUratio_list,
+                                                                                            bound_total_list=bound_total_list,
+                                                                                            unbound_total_list=unbound_total_list,
+                                                                                            nuc_penatly_count=nuc_penatly_count,
+                                                                                            first_BUratio=first_BUratio)
             
             retrieved_comparison_nucs:ComparisonNucResults = backup_investigator.investigator.comp_nuc_counts
             
             retrieved_lmv_values:ComparisonLMVResponse = ComparisonLMVResponse(lmv_comps=backup_investigator.investigator.lmv_values.lmv_comps)
             
-            retreived_lmv_assertions:LMVAssertionResult = LMVAssertionResult(comp_compare_to_mfe=backup_investigator.investigator.lmv_assertions.comp_compare_to_mfe,
-                                                                             unbouund_pronounced=backup_investigator.investigator.lmv_assertions.unbouund_pronounced,
-                                                                             bound_pronounced=backup_investigator.investigator.lmv_assertions.bound_pronounced,
-                                                                             is_on_off_switch=backup_investigator.investigator.lmv_assertions.is_on_off_switch)
+            comp_compare_to_mfe=backup_investigator.investigator.lmv_assertions.comp_compare_to_mfe,
+            unbouund_pronounced=backup_investigator.investigator.lmv_assertions.unbouund_pronounced,
+            bound_pronounced=backup_investigator.investigator.lmv_assertions.bound_pronounced,
+            is_on_off_switch=backup_investigator.investigator.lmv_assertions.is_on_off_switch
+            
+            retreived_lmv_assertions:LMVAssertionResult = LMVAssertionResult(comp_compare_to_mfe=comp_compare_to_mfe,
+                                                                             unbouund_pronounced=unbouund_pronounced,
+                                                                             bound_pronounced=bound_pronounced,
+                                                                             is_on_off_switch=is_on_off_switch)
             
             retreived_investigator:InvestigatorResults = InvestigatorResults(comparison_eval_results=retreived_comparison_eval_results,
                                                                              comp_nuc_counts=retrieved_comparison_nucs,
@@ -246,18 +261,27 @@ class ProcessPNAS():
                                                                              lmv_assertions=retreived_lmv_assertions,
                                                                              num_groups=backup_investigator.investigator.num_groups,
                                                                              total_structures_ensemble=backup_investigator.investigator.total_structures_ensemble)
+            
             retrieved_reference_strucs:ReferenceStructures = backup_investigator.investigator.lmv_references
             
+            basic_scores=backup_investigator.scores.basic_scores,
+            advanced_scores=backup_investigator.scores.advanced_scores,
+            number_structures=backup_investigator.scores.number_structures,
+            
             retrieved_results:InvestigateEnsembleResults = InvestigateEnsembleResults(investigator_results=retreived_investigator,
-                                                                                      basic_scores=backup_investigator.scores.basic_scores,
-                                                                                      advanced_scores=backup_investigator.scores.advanced_scores,
-                                                                                      number_structures=backup_investigator.scores.number_structures,
+                                                                                      basic_scores=basic_scores,
+                                                                                      advanced_scores=advanced_scores,
+                                                                                      number_structures=number_structures,
                                                                                       lmv_references=retrieved_reference_strucs)
             
-            retrieved_design_info:DesignInformation = backup_investigator.design_info.design_info
+            design_information=backup_investigator.design_info.design_info
+            wetlabResults=backup_investigator.design_info.wetlab_data
+            
+            retrieved_design_info:DesignPerformanceData = DesignPerformanceData(DesignInfo=design_information,
+                                                                                wetlabResults=wetlabResults)
             
             retrieved_archive: ArchiveInvestigatorData = ArchiveInvestigatorData(investigator=retrieved_results,
-                                                                                 disign_info=retrieved_design_info)
+                                                                                 design_info=retrieved_design_info)
             
             return retrieved_archive
                 

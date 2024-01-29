@@ -18,13 +18,6 @@ from serena.utilities.ensemble_variation import EnsembleVariation, EVResult
 #add code here to grab dta from data nut and then create plots for ratios to start
 
 
-class InvestigatorReportGeneration():
-    
-    def __init__(self) -> None:
-        pass
-    
-    def generate_ratios_plot(self):
-        pass
     
         
 
