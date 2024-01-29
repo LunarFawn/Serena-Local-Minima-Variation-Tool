@@ -14,6 +14,39 @@ import matplotlib
 
 from serena.utilities.ensemble_variation import EnsembleVariation, EVResult
 
+
+#add code here to grab dta from data nut and then create plots for ratios to start
+
+
+class InvestigatorReportGeneration():
+    
+    def __init__(self) -> None:
+        pass
+    
+    def generate_ratios_plot(self):
+        pass
+    
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#old stuff below from old project
+
+
 @dataclass
 class SequenceResults():
     result_data: EVResult
@@ -34,7 +67,6 @@ class SequenceInfo():
     span = 0
     units = 0
     folded_struct:str
-
 
 class FullRunInfo():
 

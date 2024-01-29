@@ -25,7 +25,7 @@ from serena.bin.backup_serena_v2 import ArchiveSecondaryStructureList
 from serena.bin.backup_investigator_v1 import ArchiveInvestigator
 
 from serena.interfaces.nupack4_0_28_wsl2_interface import NUPACK4Interface, MaterialParameter, NupackSettings, EnsembleSwitchStateMFEStructs
-from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults, InvestigatorResults
+from serena.analysis.ensemble_analysis import InvestigateEnsemble, InvestigateEnsembleResults, InvestigatorResults, ReferenceStructures
 from serena.utilities.ensemble_groups import SingleEnsembleGroup, MultipleEnsembleGroups
 from serena.utilities.logging_serena import PNASAnalysisLogging
 from serena.analysis.investigator import (
@@ -210,6 +210,8 @@ class ProcessPNAS():
             backup_investigator.investigator.num_groups = data.investigator.investigator_results.num_groups
             backup_investigator.investigator.total_structures_ensemble = data.investigator.investigator_results.total_structures_ensemble
             
+            backup_investigator.investigator.lmv_references = data.investigator.lmv_references
+            
             backup_investigator.scores.basic_scores = data.investigator.basic_scores
             backup_investigator.scores.advanced_scores = data.investigator.advanced_scores
             backup_investigator.scores.number_structures = data.investigator.number_structures
@@ -244,11 +246,13 @@ class ProcessPNAS():
                                                                              lmv_assertions=retreived_lmv_assertions,
                                                                              num_groups=backup_investigator.investigator.num_groups,
                                                                              total_structures_ensemble=backup_investigator.investigator.total_structures_ensemble)
+            retrieved_reference_strucs:ReferenceStructures = backup_investigator.investigator.lmv_references
             
             retrieved_results:InvestigateEnsembleResults = InvestigateEnsembleResults(investigator_results=retreived_investigator,
                                                                                       basic_scores=backup_investigator.scores.basic_scores,
                                                                                       advanced_scores=backup_investigator.scores.advanced_scores,
-                                                                                      number_structures=backup_investigator.scores.number_structures)
+                                                                                      number_structures=backup_investigator.scores.number_structures,
+                                                                                      lmv_references=retrieved_reference_strucs)
             
             retrieved_design_info:DesignInformation = backup_investigator.design_info.design_info
             

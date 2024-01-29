@@ -32,6 +32,8 @@ from serena.analysis.scoring import BasicScoreResults
 from serena.analysis.scoring import AdvancedScoreResults
 from serena.interfaces.Sara2_API_Python3 import DesignInformation
 from serena.interfaces.Sara2_API_Python3 import WetlabData
+from serena.utilities.weighted_structures import WeightedEnsembleResult
+from serena.analysis.ensemble_analysis import ReferenceStructures
 
 class Nut_Attributes(Enum):
 	Investigator = "investigator_db"
@@ -120,6 +122,10 @@ class PNASData(Nut):
 		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
 			attribute="total_structures_ensemble_db",
 			atr_type=int))
+
+		self.investigator_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
+			attribute="lmv_references_db",
+			atr_type=['ReferenceStructures', 'WeightedEnsembleResult', 'Sara2SecondaryStructure']))
 
 		self.scores_db.new_attr(GenericAttribute(atr_class=AtrClass.CHILD,
 			attribute="basic_scores_db",
@@ -475,6 +481,23 @@ class Investigator(CustomAttribute):
 		if isinstance(value, int) == False:
 			raise ValueError("Invalid value assignment")
 		self.parent.total_structures_ensemble_db = value
+
+
+	@property
+	def lmv_references(self)->ReferenceStructures:
+		self.parent.nut_filter.yaml_operations.yaml.register_class(ReferenceStructures)
+		self.parent.nut_filter.yaml_operations.yaml.register_class(WeightedEnsembleResult)
+		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2SecondaryStructure)
+		return self.parent.lmv_references_db
+
+	@lmv_references.setter
+	def lmv_references(self, value:ReferenceStructures):
+		if isinstance(value, ReferenceStructures) == False:
+			raise ValueError("Invalid value assignment")
+		self.parent.nut_filter.yaml_operations.yaml.register_class(ReferenceStructures)
+		self.parent.nut_filter.yaml_operations.yaml.register_class(WeightedEnsembleResult)
+		self.parent.nut_filter.yaml_operations.yaml.register_class(Sara2SecondaryStructure)
+		self.parent.lmv_references_db = value
 
 
 class Scores(CustomAttribute):

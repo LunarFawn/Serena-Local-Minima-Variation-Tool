@@ -47,7 +47,13 @@ NUT:
         attribute: DesignInformation 
       - !ExternalAttribute
         module: serena.interfaces.Sara2_API_Python3
-        attribute: WetlabData     
+        attribute: WetlabData
+      - !ExternalAttribute
+        module: serena.utilities.weighted_structures
+        attribute: WeightedEnsembleResult
+      - !ExternalAttribute
+        module: serena.analysis.ensemble_analysis
+        attribute: ReferenceStructures     
     nut_container_declarations: 
       - !NutDeclaration
         name: Investigator
@@ -77,6 +83,7 @@ NUT:
             name: design_info
             object_type: !NutObjectType CONTAINER
             object_info: DesignParameters
+
                
 
 
@@ -167,6 +174,10 @@ DEFINITIONS:
             name: total_structures_ensemble
             object_type: !NutObjectType VALUE
             object_info: int
+          - !NutObject
+            name: lmv_references
+            object_type: !NutObjectType CLASS
+            object_info: [ReferenceStructures,WeightedEnsembleResult,Sara2SecondaryStructure]
       - !NutContainer
         name: Scores
         object_list:
