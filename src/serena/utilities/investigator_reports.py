@@ -11,6 +11,8 @@ import numpy as np
 from pandas import DataFrame
 import os
 
+from enum import Enum
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 import matplotlib
@@ -54,59 +56,17 @@ from serena.analysis.ensemble_analysis import InvestigateEnsembleResults
 from serena.bin.backup_investigator_v1 import ArchiveInvestigator
 from serena.scripts.analyze_pnas_2112979119_sd01 import ProcessPNAS, ArchiveInvestigatorData, ArchiveFlow
 
+class archiveType(Enum):
+    RATIO='RATIO'
+    COUNT="COUNT"
+
 class InvestigatorReportGeneration():
     
     def __init__(self) -> None:
         pass
     
-    def generate_ubnound_plot(self, data:List[ArchiveInvestigatorData]):
-        timestr = time.strftime("%Y%m%d-%H%M%S")
-        
-        #find how many enesmble energy groups there are
-        num_groups:int = data[0].investigator.investigator_results.num_groups
-        
-        ax:plt = None
-        fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(15, 15))
-        fig.suptitle("Both nuc count")
-        fig.supxlabel("Count of nucleotides with same pairing in unbound and bound state")
-        # fig.text(0.50, 0.02, 
-        #      "Count of nucleotide with same pairing in unbound and bound state", 
-        #     horizontalalignment='center', wrap=True )
-        
-        for plt_index in range(num_groups):
             
-            #get all the data for each plot
-            
-            #first get the both count
-            good_both_count_list:List[float] = []
-            good_both_count_fold_change:List[float] = []
-            bad_both_count_list:List[float] = []
-            bad_both_count_fold_change:List[float] = []
-            
-            for design in data:
-                if design.design_info.design_info.Puzzle_Name == 'good':
-                    good_both_count_list.append(design.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[plt_index].both_count)  
-                    good_both_count_fold_change.append(design.design_info.wetlab_results.FoldChange)
-                elif design.design_info.design_info.Puzzle_Name == 'bad':
-                    bad_both_count_list.append(design.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[plt_index].both_count)  
-                    bad_both_count_fold_change.append(design.design_info.wetlab_results.FoldChange)
-            
-            ax[plt_index].scatter(good_both_count_list, good_both_count_fold_change, c='green')
-            ax[plt_index].scatter(bad_both_count_list, bad_both_count_fold_change, c='red')
-            kcal_delta = plt_index +1
-            stuff = f'{kcal_delta}kcal delta from MFE'
-            ax[plt_index].set_xlabel(stuff)
-            ax[plt_index].set_ylabel("Fold Change")
-        # fig.tight_layout()
-        plt.subplots_adjust(left=0.1,
-                bottom=.1,  
-                top=.9, 
-                )       
-        
-        plt.savefig(f'/home/rnauser/repo/Serena-Local-Minima-Variation-Tool/src/tests/bin/comparison_nuc_counts_{timestr}.png')
-        plt.show()
-        
-    def generate_nuc_count_plot(self, data:List[ArchiveInvestigatorData], attr, nuc_count_name:str, x_string:str, x_range:float):
+    def generate_nuc_count_plot(self, data:List[ArchiveInvestigatorData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float):
         timestr = time.strftime("%Y%m%d-%H%M%S")
         
         #find how many enesmble energy groups there are
@@ -132,10 +92,16 @@ class InvestigatorReportGeneration():
             
             for design in data:
                 if design.design_info.design_info.Puzzle_Name == 'good':
-                    good_list.append(getattr(attr[plt_index], nuc_count_name))  
+                    if attr == archiveType.COUNT:
+                        good_list.append(getattr(design.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[plt_index], nuc_count_name)) 
+                    elif attr == archiveType.RATIO:
+                        good_list.append(getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)) 
                     good_fold_change.append(design.design_info.wetlab_results.FoldChange)
                 elif design.design_info.design_info.Puzzle_Name == 'bad':
-                    bad_list.append(getattr(attr[plt_index], nuc_count_name))  
+                    if attr == archiveType.COUNT:
+                        bad_list.append(getattr(design.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[plt_index], nuc_count_name)) 
+                    elif attr == archiveType.RATIO:
+                        bad_list.append(getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name))  
                     bad_change.append(design.design_info.wetlab_results.FoldChange)
             
             ax[plt_index].scatter(good_list, good_fold_change, c='green')
@@ -186,22 +152,23 @@ def plot_investigator():
                                                                     flow=ArchiveFlow.GET,
                                                                     data=archived_data)
             pnas_data.append(archived_data)
-            time.sleep(1)
-            flag += 1
-            if flag > 5:
-                break
+            # time.sleep(1)
+            # flag += 1
+            # if flag > 5:
+            #     break
     
     for count in  archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].__dict__:
         
         plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-                                                 data=pnas_data, attr=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts, 
+                                                 data=pnas_data, 
+                                                 attr=archiveType.COUNT, 
                                                  nuc_count_name=count, x_string="Count of Nucleotides")
     
     for ratio in  archived_data.investigator.investigator_results.comparison_eval_results.ratios[0].__dict__:
         
         plot_investigaot.generate_nuc_count_plot(x_range=1,
                                                  data=pnas_data, 
-                                                 attr=archived_data.investigator.investigator_results.comparison_eval_results.ratios, 
+                                                 attr=archiveType.RATIO, 
                                                  nuc_count_name=ratio, x_string="Ratio of nucleotide position counts")
         
 plot_investigator()
