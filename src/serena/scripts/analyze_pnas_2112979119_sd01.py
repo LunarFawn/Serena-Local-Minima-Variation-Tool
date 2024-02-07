@@ -100,6 +100,12 @@ class ProcessPNAS():
         pnas_data:List[Sara2StructureList] = []
         for design in puzzle_data.designsList:
 
+            archive_nut:str = f'{archive_path}/{str(design.design_info.DesignID)}'
+            if os.path.isdir(archive_nut) == True:
+                print(f'Skipping {str(design.design_info.DesignID)} as it is already there')
+                continue
+            else:
+                print(f'Processing {str(design.design_info.DesignID)} and grabbing ensemble data')
 
             # design_id= str(design.design_info.DesignID)
             sequence = design.design_info.Sequence
@@ -147,6 +153,15 @@ class ProcessPNAS():
         for design in puzzle_data.designsList:
             if os.path.isdir(source_archive_path) is False:
                 raise FileExistsError(f'File {source_archive_path} is not a valid path')
+            
+            container_list:List[str] = []
+            container_list = os.listdir(path=source_archive_path)
+            
+            if str(design.design_info.DesignID) not in container_list:
+                print(f'{design.design_info.DesignID} not in list')
+                continue
+            else:
+                print(f'Found and processing {design.design_info.DesignID}')
             
             temp_archive:ArchiveData = ArchiveData(design_info=design)
             found_data:ArchiveData = self.archive_ensemble_data(dest_folder=source_archive_path,
