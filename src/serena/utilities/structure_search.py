@@ -40,41 +40,43 @@ class StaticSystemDetector():
         for five_prime_index in range(num_nucs):
             unbound_char: str = unbound_structure.structure[five_prime_index]
             bound_char: str = bound_structure.structure[five_prime_index]
-            if unbound_char == bound_char:
-                if in_stack is True:
-                    if unbound_char == ')':
+            if in_stack == True:
+                if unbound_char == bound_char:
+                    # if in_stack is True:
+                    if unbound_char == ')' or unbound_char == '.':
                         break
+                else:
+                    break
+                        
                     
-                
-                if unbound_char == '(':
-                    in_stack = True
-                    five_prime_nuc_count += 1
-                elif unbound_char == '.':
-                    five_prime_dot_count +=1
-                
-                
-            else:
-                break
+            if unbound_char == '(' and bound_char == '(':
+                in_stack = True
+                five_prime_nuc_count += 1
+            elif unbound_char == '.' or bound_char == '.':
+                five_prime_dot_count +=1                    
+                # else:
+                #     break
         
         in_stack = False
         for three_prime_index in reversed(range(num_nucs)):
             unbound_char: str = unbound_structure.structure[three_prime_index]
             bound_char: str = bound_structure.structure[three_prime_index]
-            if unbound_char == bound_char:
-                if in_stack is True:
-                    if unbound_char == '(':
+            if in_stack is True:    
+                if unbound_char == bound_char:                
+                    if unbound_char == '(' or unbound_char == '.':
                         break
+                else:
+                    break
                     
                 
-                if unbound_char == ')':
-                    in_stack = True
-                    three_prime_nuc_count += 1
-                elif unbound_char == '.':
-                    three_prime_dot_count +=1
+            if unbound_char == ')' and bound_char == ')':
+                in_stack = True
+                three_prime_nuc_count += 1
+            elif unbound_char == '.' or bound_char == '.':
+                three_prime_dot_count +=1
                         
                 
-            else:
-                break
+            
         
         prime_static_nuc_count_total = five_prime_nuc_count + three_prime_nuc_count + three_prime_dot_count + five_prime_dot_count
         

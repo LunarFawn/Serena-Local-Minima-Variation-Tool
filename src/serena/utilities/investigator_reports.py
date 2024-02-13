@@ -248,6 +248,8 @@ class InvestigatorReportGeneration():
                                                                                                                     bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
                         static__nuc_ratio:float = float(getattr(static_primes_nuc_count, nuc_count_name)) / design.investigator.lmv_references.mfe_structure.nuc_count
                         new_attr_value = static__nuc_ratio
+                        x_tickes = np.arange(0, 1.05, 0.05)
+                        ax[plt_index].set_xticks(x_tickes)
                     
                   
                     
