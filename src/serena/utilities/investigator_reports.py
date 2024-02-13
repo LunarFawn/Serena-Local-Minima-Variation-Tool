@@ -89,8 +89,8 @@ class InvestigatorReportGeneration():
         pass
     
             
-    def generate_nuc_count_plot(self, data:List[ArchiveInvestigatorData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE):
-        timestr = time.strftime("%Y%m%d-%H%M%S")
+    def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, ):
+        
         
         #find how many enesmble energy groups there are
         num_groups:int = data[0].investigator.investigator_results.num_groups
@@ -407,18 +407,21 @@ class InvestigatorReportGeneration():
                 top=.9, 
                 )       
         
-        
-        plt.savefig(f'/home/rnauser/repo/Serena-Local-Minima-Variation-Tool/src/tests/bin/{nuc_count_name}_{filename_type}_{timestr}.png')
+        save_dir:str = f'/home/rnauser/repo/Serena-Local-Minima-Variation-Tool/src/tests/bin/{timestr}'
+        if os.path.isdir(save_dir) == False:
+            os.makedirs(save_dir)
+        plt.savefig(f'{save_dir}/{nuc_count_name}_{filename_type}_{timestr}.png')
         plt.close()
         # plt.show()
         
         
 def plot_investigator():
-    
+    sublab:str = 'SSNG1'
+    timestr:str = f'{sublab}_{time.strftime("%Y%m%d-%H%M%S")}'
     plot_investigaot:InvestigatorReportGeneration = InvestigatorReportGeneration()
     pnas:ProcessPNAS = ProcessPNAS()
     
-    archive_path:str = '/home/rnauser/test_data/serena/R101_PNAS/computational_data/SSNG1' #'/home/rnauser/test_data/serena/computatation/computational_data'#
+    archive_path:str = f'/home/rnauser/test_data/serena/R101_PNAS/computational_data/{sublab}' #'/home/rnauser/test_data/serena/computatation/computational_data'#
     
     new_sara:Sara2API = Sara2API()
     puzzle_data: puzzleData
@@ -458,7 +461,8 @@ def plot_investigator():
                                                     attr=archiveType.STATIC_PRIMES, 
                                                     nuc_count_name=item, x_string="Ratio of static 5' and 3' static nucleotides",
                                                     training=False,
-                                                    score_type=enumerator)
+                                                    score_type=enumerator,
+                                                    timestr=timestr)
 
     for count in  archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].__dict__:
         
@@ -469,70 +473,9 @@ def plot_investigator():
                                                 attr=archiveType.COUNT, 
                                                 nuc_count_name=count, x_string="Count of Nucleotides",
                                                 training=False,
-                                                score_type=enumerator)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.FOLDCHANGE)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.BASELINE)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.FOLDING)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.SWITCH)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.KDON)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.KDOFF)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.ETERNA)
-
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.BASIC)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.COUNT, 
-        #                                         nuc_count_name=count, x_string="Count of Nucleotides",
-        #                                         training=False,
-        #                                         score_type=ScoreType.ADVANCED)
+                                                score_type=enumerator,
+                                                timestr=timestr)
+     
     
     for ratio in  archived_data.investigator.investigator_results.comparison_eval_results.ratios[0].__dict__:
         
@@ -543,71 +486,9 @@ def plot_investigator():
                                                 attr=archiveType.RATIO, 
                                                 nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
                                                 training=False,
-                                                score_type=enumerator)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.FOLDCHANGE)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.BASELINE)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.FOLDING)
-        
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.SWITCH)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.KDON)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.KDOFF)
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.ETERNA)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.BASIC)
-        
-        # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-        #                                         data=pnas_data, 
-        #                                         attr=archiveType.RATIO, 
-        #                                         nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
-        #                                         training=False,
-        #                                         score_type=ScoreType.ADVANCED)
-        
+                                                score_type=enumerator,
+                                                timestr=timestr)
+      
     for lmv_rel in archived_data.investigator.investigator_results.lmv_values.lmv_comps[0].__dict__:
         
         for enumerator in ScoreType:
@@ -616,132 +497,9 @@ def plot_investigator():
                                                 attr=archiveType.LMV, 
                                                 nuc_count_name=lmv_rel, x_string="LMV of group",
                                                 training=False,
-                                                score_type=enumerator)
+                                                score_type=enumerator,
+                                                timestr=timestr)
                 
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                         data=pnas_data, 
-            #                                         attr=archiveType.LMV, 
-            #                                         nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                         training=False,
-            #                                         score_type=ScoreType.FOLDCHANGE)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                         data=pnas_data, 
-            #                                         attr=archiveType.LMV, 
-            #                                         nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                         training=False,
-            #                                         score_type=ScoreType.BASELINE)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                         data=pnas_data, 
-            #                                         attr=archiveType.LMV, 
-            #                                         nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                         training=False,
-            #                                         score_type=ScoreType.FOLDING)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                         data=pnas_data, 
-            #                                         attr=archiveType.LMV, 
-            #                                         nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                         training=False,
-            #                                         score_type=ScoreType.SWITCH)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                         data=pnas_data, 
-            #                                         attr=archiveType.LMV, 
-            #                                         nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                         training=False,
-            #                                         score_type=ScoreType.KDON)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                         data=pnas_data, 
-            #                                         attr=archiveType.LMV, 
-            #                                         nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                         training=False,
-            #                                         score_type=ScoreType.KDOFF)
-        
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                             data=pnas_data, 
-            #                                             attr=archiveType.LMV, 
-            #                                             nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                             training=False,
-            #                                             score_type=ScoreType.ETERNA)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                             data=pnas_data, 
-            #                                             attr=archiveType.LMV, 
-            #                                             nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                             training=False,
-            #                                             score_type=ScoreType.BASIC)
-            
-            # plot_investigaot.generate_nuc_count_plot(x_range=40,
-            #                                             data=pnas_data, 
-            #                                             attr=archiveType.LMV, 
-            #                                             nuc_count_name=lmv_rel, x_string="LMV of group",
-            #                                             training=False,
-            #                                             score_type=ScoreType.ADVANCED)
-  
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=40,
-    #                                                 data=pnas_data, 
-    #                                                 attr=archiveType.LMV, 
-    #                                                 nuc_count_name=lmv_rel, x_string="LMV of group",
-    #                                                 training=False,
-    #                                                 score_type=ScoreType.FOLDCHANGE)
-            
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.BASELINE)
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.FOLDING)
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.SWITCH)
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.KDON)
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.KDOFF)
-
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         score_type=ScoreType.ETERNA)
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.BASIC)
-    
-    # plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-    #                                         data=pnas_data, 
-    #                                         attr=archiveType.STATIC_PRIMES, 
-    #                                         nuc_count_name="static_prime_end_to_total", x_string="Ratio of static 5' and 3' static nucleotides",
-    #                                         training=False,
-    #                                         score_type=ScoreType.ADVANCED) 
+           
         
 plot_investigator()
