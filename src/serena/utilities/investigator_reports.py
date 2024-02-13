@@ -11,6 +11,7 @@ import numpy as np
 from pandas import DataFrame
 import os
 from matplotlib.markers import MarkerStyle
+import argparse
 
 from enum import Enum
 
@@ -26,6 +27,8 @@ from serena.analysis.investigator import (
     
     
 )
+
+from serena.bin.backup_serena_v2 import ArchiveSecondaryStructureList
 
 from serena.utilities.comparison_structures import (
     ComparisonNucCounts,
@@ -61,6 +64,8 @@ from serena.scripts.analyze_pnas_2112979119_sd01 import ProcessPNAS, ArchiveInve
 
 from serena.utilities.structure_search import StaticSystemDetector, PrimeNucCounts
 
+from serena.scripts.analyze_pnas_2112979119_sd01 import ArchiveData, ArchiveFlow
+
 class archiveType(Enum):
     RATIO='RATIO'
     COUNT="COUNT"
@@ -89,7 +94,7 @@ class InvestigatorReportGeneration():
         pass
     
             
-    def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, ):
+    def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, ):
         
         
         #find how many enesmble energy groups there are
@@ -183,7 +188,7 @@ class InvestigatorReportGeneration():
             result_fold_change_high_structs:List[float] = []
             result_fold_change_obsurd_structs:List[float] = []
             
-            for design in data:
+            for index, design in enumerate(data):
                 if training is True:
                     if design.design_info.design_info.Puzzle_Name == 'good':
                         if attr == archiveType.COUNT:
@@ -239,8 +244,8 @@ class InvestigatorReportGeneration():
                     
                     elif attr == archiveType.STATIC_PRIMES:
                         static_detector:StaticSystemDetector = StaticSystemDetector()
-                        static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.mfe_structure,
-                                                                                                       bound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index])
+                        static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
+                                                                                                                    bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
                         static__nuc_ratio:float = float(getattr(static_primes_nuc_count, nuc_count_name)) / design.investigator.lmv_references.mfe_structure.nuc_count
                         new_attr_value = static__nuc_ratio
                     
@@ -415,37 +420,54 @@ class InvestigatorReportGeneration():
         # plt.show()
         
         
-def plot_investigator():
-    sublab:str = 'SSNG1'
-    test_name:str = 'cluster_200'
+def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pnas_path:Path, round:str, archive_path:Path, source_archive_path:Path ):
+    # sublab:str = 'SSNG1'
+    test_name:str = f'{test_name}_cluster_{cluster_size_threshold}'
     timestr:str = f'{sublab}_{test_name}_{time.strftime("%Y%m%d-%H%M%S")}'
     plot_investigaot:InvestigatorReportGeneration = InvestigatorReportGeneration()
     pnas:ProcessPNAS = ProcessPNAS()
     
-    archive_path:str = f'/home/rnauser/test_data/serena/R101_PNAS/computational_data/{sublab}' #'/home/rnauser/test_data/serena/computatation/computational_data'#
+    # archive_path:str = f'/home/rnauser/test_data/serena/R101_PNAS/computational_data/{sublab}' #'/home/rnauser/test_data/serena/computatation/computational_data'#
+    # source_archive_path:str =  f'/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/{sublab}'
+    archive_path = archive_path.joinpath(sublab)
+    source_archive_path = source_archive_path.joinpath(sublab)
+    
     
     new_sara:Sara2API = Sara2API()
     puzzle_data: puzzleData
     pandas_sheet: DataFrame
-    pnas_path:str = '/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx' #'/home/rnauser/test_data/pnas_testing_tweak.xlsx'#
-    puzzle_data, pandas_sheet = new_sara.ProcessLab(path=pnas_path,
-                                                    designRound_sheet="Round 7 (R101)", #'R101 Filtered good bad',#'R101 Filtered good bad',#
+    # pnas_path:str = '/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx' #'/home/rnauser/test_data/pnas_testing_tweak.xlsx'#
+    puzzle_data, pandas_sheet = new_sara.ProcessLab(path=pnas_path.as_posix(),
+                                                    designRound_sheet=round,#"Round 7 (R101)", #'R101 Filtered good bad',#'R101 Filtered good bad',#
                                                     sublab_name=''
                                                     )
     pnas_data:List[ArchiveInvestigatorData] = []
+    source_data:List[ArchiveData] = []
     
     # ignor_list = [6387992, 6374121, 6374127, 6388849, 6388889, 6391463]
     dir_list = os.listdir(archive_path)
     flag = 0
     for design in puzzle_data.designsList: 
         
-        if str(design.design_info.DesignID) in dir_list and design.wetlab_results.NumberOfClusters1 >200: 
+        if str(design.design_info.DesignID) in dir_list and design.wetlab_results.NumberOfClusters1 > cluster_size_threshold: 
         
             archived_data:ArchiveInvestigatorData = ArchiveInvestigatorData(design_info=design)
             
-            archived_data = pnas.archive_investigation_computations(dest_folder=archive_path,
+            archived_data = pnas.archive_investigation_computations(dest_folder=archive_path.as_posix(),
                                                                     flow=ArchiveFlow.GET,
                                                                     data=archived_data)
+            
+            temp_archive:ArchiveData = ArchiveData(design_info=design)
+            # found_source_data:ArchiveData = pnas.archive_ensemble_data(dest_folder=source_archive_path,
+            #                             flow=ArchiveFlow.GET,
+            #                             data=temp_archive)
+            
+            backup_records:ArchiveSecondaryStructureList = ArchiveSecondaryStructureList(working_folder=source_archive_path.as_posix(),
+                                             var_name=str(design.design_info.DesignID),
+                                             use_db=True)
+            temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
+            
+            source_data.append(temp_archive)
             pnas_data.append(archived_data)
         
             # if flag > 5:
@@ -458,7 +480,8 @@ def plot_investigator():
     for item in ['static_stem_nuc_count', 'static_loop_nuc_count', 'prime_static_nuc_count_total']:
         for enumerator in ScoreType:
             plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-                                                    data=pnas_data, 
+                                                    data=pnas_data,
+                                                    source_data=source_data,
                                                     attr=archiveType.STATIC_PRIMES, 
                                                     nuc_count_name=item, x_string="Ratio of static 5' and 3' static nucleotides",
                                                     training=False,
@@ -470,7 +493,8 @@ def plot_investigator():
         for enumerator in ScoreType:
         
             plot_investigaot.generate_nuc_count_plot(x_range=archived_data.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[0].num_nucs,
-                                                data=pnas_data, 
+                                                data=pnas_data,
+                                                source_data=source_data, 
                                                 attr=archiveType.COUNT, 
                                                 nuc_count_name=count, x_string="Count of Nucleotides",
                                                 training=False,
@@ -483,7 +507,8 @@ def plot_investigator():
         for enumerator in ScoreType:
         
             plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-                                                data=pnas_data, 
+                                                data=pnas_data,
+                                                source_data=source_data, 
                                                 attr=archiveType.RATIO, 
                                                 nuc_count_name=ratio, x_string="Ratio of nucleotide position counts",
                                                 training=False,
@@ -494,13 +519,78 @@ def plot_investigator():
         
         for enumerator in ScoreType:
             plot_investigaot.generate_nuc_count_plot(x_range=40,
-                                                data=pnas_data, 
+                                                data=pnas_data,
+                                                source_data=source_data, 
                                                 attr=archiveType.LMV, 
                                                 nuc_count_name=lmv_rel, x_string="LMV of group",
                                                 training=False,
                                                 score_type=enumerator,
                                                 timestr=timestr)
                 
+  
+
+def run_plot_investigator():
+    parser = argparse.ArgumentParser(description='Get and process R101 PNAS data')
+    
+    parser.add_argument('--pnas', 
+                        type=Path,
+                        required=True,
+                        help='Path to the pnas file for analysis')
+    
+    parser.add_argument('--round', 
+                        type=str,
+                        default='Round 7 (R101)',
+                        required=False,
+                        help='Round to run')
+    
+    parser.add_argument('--sublab', 
+                        type=str,
+                        default='',
+                        required=True,
+                        help='sublab in R101 to generate and archive enemble data for')
+    
+    parser.add_argument('--test-name', 
+                        type=str,
+                        default='',
+                        required=True,
+                        help='name for the test')
+    
+    parser.add_argument('--source-data', 
+                        type=Path,
+                        required=True,
+                        help='Path to the data nut squirrel archive folder')
+    
+    parser.add_argument('--computations', 
+                        type=Path,
+                        required=True,
+                        help='Path to computationse folder')
+    
+    parser.add_argument('--do-weighted', 
+                        action="store_true",
+                        required=False,
+                        help='Use weighted struct from Vienna2 enemble')
+    
+    parser.add_argument('--cluster', 
+                        type=int,
+                        default=500000,
+                        required=False,
+                        help='sublab in R101 to generate and archive enemble data for')
+    
+    
+    args = parser.parse_args()
+    
+
+    
+    
+    # print(args.do_agressive)
+    
+    plot_investigator(sublab=args.sublab,
+                      test_name=args.test_name,
+                      cluster_size_threshold=args.cluster,
+                      pnas_path=args.pnas,
+                      round=args.round,
+                      archive_path=args.computations,
+                      source_archive_path=args.source_data)
            
         
-plot_investigator()
+# plot_investigator()
