@@ -101,7 +101,7 @@ class ProcessPNAS():
         for design in puzzle_data.designsList:
 
             archive_nut:str = f'{archive_path}/{str(design.design_info.DesignID)}'
-            if os.path.isdir(archive_nut) == True:
+            if os.path.isdir(archive_nut) == True and '6483958' != str(design.design_info.DesignID):
                 print(f'Skipping {str(design.design_info.DesignID)} as it is already there')
                 continue
             else:
@@ -157,11 +157,20 @@ class ProcessPNAS():
             container_list:List[str] = []
             container_list = os.listdir(path=source_archive_path)
             
+            
+            
             if str(design.design_info.DesignID) not in container_list:
                 print(f'{design.design_info.DesignID} not in list')
                 continue
             else:
-                print(f'Found and processing {design.design_info.DesignID}')
+                print(f'Found and checking status of {design.design_info.DesignID}')
+            
+            archive_nut:str = f'{target_archive_path}/{str(design.design_info.DesignID)}'            
+            if os.path.isdir(archive_nut) == True:# and '6483958' != str(design.design_info.DesignID):
+                print(f'Skipping {str(design.design_info.DesignID)} as it is already there')
+                continue
+            else:
+                print(f'Data not generated yet. Performing computation on DesignID:{str(design.design_info.DesignID)} ensemble data retrieved from archive.')
             
             temp_archive:ArchiveData = ArchiveData(design_info=design)
             found_data:ArchiveData = self.archive_ensemble_data(dest_folder=source_archive_path,
