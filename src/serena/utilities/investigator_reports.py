@@ -417,7 +417,8 @@ class InvestigatorReportGeneration():
         
 def plot_investigator():
     sublab:str = 'SSNG1'
-    timestr:str = f'{sublab}_{time.strftime("%Y%m%d-%H%M%S")}'
+    test_name:str = 'cluster_200'
+    timestr:str = f'{sublab}_{test_name}_{time.strftime("%Y%m%d-%H%M%S")}'
     plot_investigaot:InvestigatorReportGeneration = InvestigatorReportGeneration()
     pnas:ProcessPNAS = ProcessPNAS()
     
@@ -447,9 +448,9 @@ def plot_investigator():
                                                                     data=archived_data)
             pnas_data.append(archived_data)
         
-            if flag > 5:
-                break
-            flag +=1
+            # if flag > 5:
+            #     break
+            # flag +=1
     
     ratio_value:int = 1
     
