@@ -5,7 +5,8 @@ that has nupack4 setup and ready for this project to consume
 """
 from typing import List, Dict
 from dataclasses import dataclass
-from datetime import datetime\
+from datetime import datetime
+import numpy as np
 
 
 from enum import Enum
@@ -168,3 +169,9 @@ class NUPACK4Interface():
         ensemble_groups: MultipleEnsembleGroups = make_ensemble.make_multiple_ensemple_groups(ensemble_groups=single_groups,
                                                                                               mfe_switch_structures=switch_state)
         return ensemble_groups
+
+    def sara2_pairs_list(self, secondary_structure:Sara2SecondaryStructure)->List[int]:
+        nupack_structure:Structure = Structure(structure=secondary_structure.structure)
+        pairs:List[int] = nupack_structure.pairlist().tolist()
+        return pairs
+        
