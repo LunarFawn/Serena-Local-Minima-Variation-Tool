@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List
 
 import re
-from re import Match
+from re import Match, Pattern
 
 from serena.utilities.ensemble_structures import Sara2SecondaryStructure
 
@@ -135,7 +135,8 @@ class MolecularSnare():
         
         search_sequence:str = unbound_secondary_structure.sequence
         
-        for index in range(len(moleculte_binding_sequence)):
+            
+        for index in reversed(range(len(moleculte_binding_sequence))):
             
             #only need to look at unbound as the primary structure will not change and
             #we only want to look at the unbound state representation for now
@@ -147,19 +148,31 @@ class MolecularSnare():
             second_half_molecule = moleculte_binding_sequence[index:]
             lenght_second_half = len(second_half_molecule)
             
-            first_half_molecule_matches:List[Match] = re.search(first_half_molecule, search_sequence)
-            second_half_molecule_matches:List[Match] = re.search(second_half_molecule, search_sequence)
+            first_half_moelcule_pattern:Pattern = re.compile(first_half_molecule)
+            first_half_molecule_matches:List[Match] = first_half_moelcule_pattern.search(search_sequence)
+            
+            if first_half_molecule_bound_structure == None:
+                #there are no matches so move on to the next one
+                continue
+            
             for first_half_match in first_half_molecule_matches:
                 
+                #only allow the search to be after the end of the first half
+                second_half_molecule_pattern:Pattern = re.compile(first_half_molecule)
+                second_half_molecule_matches:List[Match] = second_half_molecule_pattern.search(search_sequence, first_half_match.end())
+                
                 first_half_end_index:int = first_half_match.end()
+                if second_half_molecule_matches == None:
+                    # there are no matches so skip to the next match
+                    continue
                 
                 for second_half_match in second_half_molecule_matches:
                     
-                    if second_half_match.start() < first_half_end_index:
-                        #the second half is before the first half so should not form
-                        #could form if psuedoknot, but very unlikly and not the focus of
-                        #this search for now
-                        continue
+                    # if second_half_match.start() < first_half_end_index:
+                    #     #the second half is before the first half so should not form
+                    #     #could form if psuedoknot, but very unlikly and not the focus of
+                    #     #this search for now
+                    #     continue
                     
                     second_half_start_index:int = second_half_match.start()
                     
@@ -172,21 +185,28 @@ class MolecularSnare():
                     
                     if unbound_structure_segment == bound_structure_segment:
                         if first_half_molecule_bound_structure.count('.') == len(first_half_molecule_bound_structure) and second_half_molecule_bound_structure.count('.') == len(second_half_molecule_bound_structure):
+                            #it is most likely a snare, but now need to do a double check and make sure the stem is a static stem
+                            #and is forming the stack for the snare and not bound somewhere else. maybe still keep track of all the posible configurations you can think there
+                            #could be
+                            
+                            
                             
                             snare_dectected = True
                             number_snares += 1  
                             # snare_list.append(unbound_structure_segment)
                             new_snare:MoleculareSnareDef = MoleculareSnareDef(first_half_molecule=first_half_molecule,
-                                                                              first_molecule_match=first_half_match,
-                                                                              second_half_molecule=second_half_molecule,
-                                                                              second_molecule_match=second_half_match,
-                                                                              static_stem_start_index=first_half_end_index,
-                                                                              static_stem_end_index=second_half_start_index,
-                                                                              static_stem_structure=unbound_structure_segment,
-                                                                              length_first_half=lenght_first_half,
-                                                                              lenght_second_half=lenght_second_half) 
+                                                                            first_molecule_match=first_half_match,
+                                                                            second_half_molecule=second_half_molecule,
+                                                                            second_molecule_match=second_half_match,
+                                                                            static_stem_start_index=first_half_end_index,
+                                                                            static_stem_end_index=second_half_start_index,
+                                                                            static_stem_structure=unbound_structure_segment,
+                                                                            length_first_half=lenght_first_half,
+                                                                            lenght_second_half=lenght_second_half) 
                             snare_list.append(new_snare)        
-
+                # else:
+                #     #there is no second half found in the snare
+                #     pass
                         
         #now return result
         snare_search_results:SnareResults = SnareResults(snare_dectected=snare_dectected,
