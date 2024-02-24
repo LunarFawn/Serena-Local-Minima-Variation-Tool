@@ -62,7 +62,7 @@ from serena.analysis.ensemble_analysis import InvestigateEnsembleResults
 from serena.bin.backup_investigator_v1 import ArchiveInvestigator
 from serena.scripts.analyze_pnas_2112979119_sd01 import ProcessPNAS, ArchiveInvestigatorData, ArchiveFlow
 
-from serena.utilities.structure_search import StaticSystemDetector, PrimeNucCounts
+from serena.utilities.structure_search import StaticSystemDetector, PrimeNucCounts, MolecularSnareDetector, MoleculareSnareDef, SnareResults
 
 from serena.scripts.analyze_pnas_2112979119_sd01 import ArchiveData, ArchiveFlow
 
@@ -74,6 +74,7 @@ class archiveType(Enum):
     LMV_MFE="LMV_MFE"
     LMV_COMP="LMV_COMP"
     STATIC_PRIMES="STATIC_PRIMES"
+    SNARE='SNARE'
     
 class ScoreType(Enum):
     BASELINE='BASELINE'
@@ -94,7 +95,7 @@ class InvestigatorReportGeneration():
         pass
     
             
-    def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, ):
+    def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, snare_binding:str=None ):
         
         
         #find how many enesmble energy groups there are
@@ -251,6 +252,17 @@ class InvestigatorReportGeneration():
                         x_tickes = np.arange(0, 1.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
                     
+                    elif attr == archiveType.SNARE:
+                        detector:MolecularSnareDetector = MolecularSnareDetector()
+                        snare_result:SnareResults = detector.find_prime_moleculare_snare(moleculte_binding_sequence=snare_binding,
+                                                             unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
+                        if snare_result.snare_dectected is True:
+                            snare_nuc_ratio:float = float(snare_result.snare_list[0].snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
+                            new_attr_value = snare_nuc_ratio
+                            x_tickes = np.arange(0, 1.05, 0.05)
+                            ax[plt_index].set_xticks(x_tickes)
+                            
                   
                     
                     if design.investigator.number_structures[0] <= low_structs_num:
@@ -422,7 +434,7 @@ class InvestigatorReportGeneration():
         # plt.show()
         
         
-def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pnas_path:Path, round:str, archive_path:Path, source_archive_path:Path ):
+def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pnas_path:Path, round:str, archive_path:Path, source_archive_path:Path, snare_binding:str = None ):
     # sublab:str = 'SSNG1'
     test_name:str = f'{test_name}_cluster_{cluster_size_threshold}'
     timestr:str = f'{sublab}_{test_name}_{time.strftime("%Y%m%d-%H%M%S")}'
@@ -479,6 +491,19 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
     ratio_value:int = 1
     
     # if archived_data.design_info.wetlab_results.NumberOfClusters1 > 0:#200:
+    snare_test_name:str = "moleculare_snare_nuc_ratio"
+    if snare_binding != None:
+        for enumerator in ScoreType:
+            plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
+                                                    data=pnas_data,
+                                                    source_data=source_data,
+                                                    attr=archiveType.SNARE, 
+                                                    nuc_count_name=snare_test_name, x_string="Ratio of molecular snare static nucs to total nucs",
+                                                    training=False,
+                                                    score_type=enumerator,
+                                                    timestr=timestr,
+                                                    misc=snare_binding)
+    
     for item in ['static_stem_nuc_count', 'static_loop_nuc_count', 'prime_static_nuc_count_total']:
         for enumerator in ScoreType:
             plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
@@ -578,6 +603,13 @@ def run_plot_investigator():
                         required=False,
                         help='sublab in R101 to generate and archive enemble data for')
     
+    parser.add_argument('--snare-binding', 
+                        type=str,
+                        default=None,
+                        required=False,
+                        help='moleculare snare binding sequence')
+    
+    
     
     args = parser.parse_args()
     
@@ -592,7 +624,8 @@ def run_plot_investigator():
                       pnas_path=args.pnas,
                       round=args.round,
                       archive_path=args.computations,
-                      source_archive_path=args.source_data)
+                      source_archive_path=args.source_data,
+                      snare_binding=args.snare_binding)
            
         
 # plot_investigator()

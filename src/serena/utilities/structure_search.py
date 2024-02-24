@@ -115,7 +115,7 @@ class SnareResults():
     snare_list:List[MoleculareSnareDef]
     number_snares:int
 
-class MolecularSnare():
+class MolecularSnareDetector():
     
     def __init__(self) -> None:
         self.nupack:NUPACK4Interface = NUPACK4Interface()
@@ -153,6 +153,8 @@ class MolecularSnare():
             
         for index in reversed(range(len(moleculte_binding_sequence))):
             
+            if snare_dectected is True:
+                    break
             #only need to look at unbound as the primary structure will not change and
             #we only want to look at the unbound state representation for now
             
@@ -171,6 +173,9 @@ class MolecularSnare():
                 continue
             
             for first_half_match in first_half_molecule_matches:
+                
+                if snare_dectected is True:
+                    break
                 
                 first_half_start_index:int = first_half_match.start()
                 first_half_end_index:int = first_half_match.end()
@@ -326,7 +331,8 @@ class MolecularSnare():
                                                                             snare_stem_nuc_count=snare_stem_nuc_count,
                                                                             is_prime_stem=static_prime,
                                                                             is_hairpin_stem=static_hairpin) 
-                            snare_list.append(new_snare)        
+                            snare_list.append(new_snare)
+                            break        
                 # else:
                 #     #there is no second half found in the snare
                 #     pass
