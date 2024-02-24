@@ -481,8 +481,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            source_data.append(temp_archive)
-            pnas_data.append(archived_data)
+            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            
+                source_data.append(temp_archive)
+                pnas_data.append(archived_data)
+                break
         
             # if flag > 5:
             #     break
@@ -502,7 +505,7 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                                     training=False,
                                                     score_type=enumerator,
                                                     timestr=timestr,
-                                                    misc=snare_binding)
+                                                    snare_binding=snare_binding)
     
     for item in ['static_stem_nuc_count', 'static_loop_nuc_count', 'prime_static_nuc_count_total']:
         for enumerator in ScoreType:
@@ -628,4 +631,11 @@ def run_plot_investigator():
                       snare_binding=args.snare_binding)
            
         
-# plot_investigator()
+plot_investigator(sublab='SSNG1',
+                  test_name='molecular_snare',
+                  cluster_size_threshold=200,
+                  pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
+                  round='Round 7 (R101)',
+                  archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
+                  source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
+                  snare_binding='AGGAUAUAGAAGG')

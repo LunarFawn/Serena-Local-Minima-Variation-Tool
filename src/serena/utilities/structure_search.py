@@ -166,28 +166,33 @@ class MolecularSnareDetector():
             lenght_second_half = len(second_half_molecule)
             
             first_half_moelcule_pattern:Pattern = re.compile(first_half_molecule)
-            first_half_molecule_matches:List[Match] = first_half_moelcule_pattern.search(search_sequence)
+            # first_half_molecule_matches= first_half_moelcule_pattern.search(search_sequence)
+            first_half_molecule_matches:tuple[Match]= first_half_moelcule_pattern.finditer(search_sequence)
             
-            if first_half_molecule_bound_structure == None:
+            if first_half_molecule_matches == None:
                 #there are no matches so move on to the next one
                 continue
             
+            first_half_molecule_matches = tuple(first_half_molecule_matches)
+                        
             for first_half_match in first_half_molecule_matches:
                 
                 if snare_dectected is True:
                     break
                 
                 first_half_start_index:int = first_half_match.start()
-                first_half_end_index:int = first_half_match.end()
+                first_half_end_index:int = first_half_match.end()-1
                 
                 #only allow the search to be after the end of the first half
                 second_half_molecule_pattern:Pattern = re.compile(second_half_molecule)
-                second_half_molecule_matches:List[Match] = second_half_molecule_pattern.search(search_sequence, first_half_end_index)
-                
+                # second_half_molecule_matches:List[Match] = second_half_molecule_pattern.search(search_sequence, first_half_end_index)
+                second_half_molecule_matches:tuple[Match] = second_half_molecule_pattern.finditer(search_sequence, first_half_end_index)
                 
                 if second_half_molecule_matches == None:
                     # there are no matches so skip to the next match
                     continue
+                
+                second_half_molecule_matches = tuple(second_half_molecule_matches)
                 
                 for second_half_match in second_half_molecule_matches:
                     
@@ -198,7 +203,7 @@ class MolecularSnareDetector():
                     #     continue
                     
                     second_half_start_index:int = second_half_match.start()
-                    second_half_end_index:int = second_half_match.end()
+                    second_half_end_index:int = second_half_match.end()-1
                     
                     bound_structure_segment_prime_side_1:str = bound_secondary_structure.structure[:first_half_start_index]
                     bound_structure_segment_prime_side_2:str = bound_secondary_structure.structure[second_half_end_index:]
@@ -234,7 +239,7 @@ class MolecularSnareDetector():
                         static_hairpin = True
                         in_stem:bool = False
                         in_loop:bool = True
-                        for side_A_nuc_index in range(second_half_start_index, second_half_start_index-1, -1):
+                        for side_A_nuc_index in range(second_half_start_index, second_half_start_index-2, -1):
                             side_A_bound_nuc_index_pair:int = bound_pairs_list[side_A_nuc_index]
                             side_A_unbound_nuc_index_pair:int = unbound_pairs_list[side_A_nuc_index]
                             
@@ -243,7 +248,7 @@ class MolecularSnareDetector():
                                 new_tuple:tuple = (side_A_nuc_index, side_A_bound_nuc_index_pair)
                                 side_A_nuc_pair_list.append(new_tuple)
                         
-                        for side_B_nuc_index in range(first_half_end_index, first_half_end_index+1, 1):
+                        for side_B_nuc_index in range(first_half_end_index, first_half_end_index+2, 1):
                             side_B_bound_nuc_index_pair:int = bound_pairs_list[side_B_nuc_index]
                             side_B_unbound_nuc_index_pair:int = unbound_pairs_list[side_B_nuc_index]
                             
@@ -271,7 +276,7 @@ class MolecularSnareDetector():
                                     
                     if molecule_is_loop is True and bound_structure_segment_prime_side_1 == unbound_structure_segment_prime_side_1 and bound_structure_segment_prime_side_2 == unbound_structure_segment_prime_side_2:
                         static_prime = True
-                        for side_A_nuc_index in range(first_half_start_index, first_half_start_index-1, -1):
+                        for side_A_nuc_index in range(first_half_start_index, first_half_start_index-2, -1):
                             side_A_bound_nuc_index_pair:int = bound_pairs_list[side_A_nuc_index]
                             side_A_unbound_nuc_index_pair:int = unbound_pairs_list[side_A_nuc_index]
                             
@@ -280,7 +285,7 @@ class MolecularSnareDetector():
                                 new_tuple:tuple = (side_A_nuc_index, side_A_bound_nuc_index_pair)
                                 side_A_nuc_pair_list.append(new_tuple)
                         
-                        for side_B_nuc_index in range(second_half_end_index, second_half_end_index+1, 1):
+                        for side_B_nuc_index in range(second_half_end_index, second_half_end_index+2, 1):
                             side_B_bound_nuc_index_pair:int = bound_pairs_list[side_B_nuc_index]
                             side_B_unbound_nuc_index_pair:int = unbound_pairs_list[side_B_nuc_index]
                             

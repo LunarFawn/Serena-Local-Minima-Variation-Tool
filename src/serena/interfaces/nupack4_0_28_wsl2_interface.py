@@ -171,7 +171,13 @@ class NUPACK4Interface():
         return ensemble_groups
 
     def sara2_pairs_list(self, secondary_structure:Sara2SecondaryStructure)->List[int]:
-        nupack_structure:Structure = Structure(structure=secondary_structure.structure)
-        pairs:List[int] = nupack_structure.pairlist().tolist()
+        num_nucs:int = len(secondary_structure.structure)
+        pairs:List[int] = []
+        try:
+            nupack_structure:Structure = Structure(structure=secondary_structure.structure)
+            pairs = nupack_structure.pairlist().tolist()
+        except:
+            pairs = [x for x in range(num_nucs)]
+            
         return pairs
         
