@@ -105,6 +105,7 @@ class MoleculareSnareDef():
     lenght_second_half:int
     second_molecule_match:Match
     snare_stem_nuc_count:int
+    signal_fold_nuc_count:int
     is_prime_stem:bool
     is_hairpin_stem:bool
     is_snare_loop:bool
@@ -450,6 +451,9 @@ class MolecularSnareDetector():
         unbound_structure_segment:str = ''
         # unbound_structure_segment_side_2:str = ''
         
+        bound_signal_fold_segment:str=''
+        unbound_signal_fold_segment:str = ''
+        
         if five_prime_snare is True:        
             bound_structure_segment_side_1 = bound_secondary_structure.structure[:first_half_start_index]
             bound_structure_segment_side_2 = bound_secondary_structure.structure[second_half_end_index:]
@@ -458,9 +462,15 @@ class MolecularSnareDetector():
             unbound_structure_segment_side_1 = unbound_secondary_structure.structure[:first_half_start_index]
             unbound_structure_segment_side_2 = unbound_secondary_structure.structure[second_half_end_index:]
             unbound_structure_segment = unbound_structure_segment_side_1 + unbound_structure_segment_side_2
+            
+            bound_signal_fold_segment = bound_secondary_structure.structure[first_half_end_index:second_half_start_index]
+            unbound_signal_fold_segment = unbound_secondary_structure.structure[first_half_end_index:second_half_start_index]
         else:            
             bound_structure_segment:str = bound_secondary_structure.structure[first_half_end_index:second_half_start_index]
             unbound_structure_segment:str = unbound_secondary_structure.structure[first_half_end_index:second_half_start_index]
+            
+            bound_signal_fold_segment = bound_secondary_structure.structure[:first_half_start_index] + bound_secondary_structure.structure[second_half_end_index:]
+            unbound_signal_fold_segment = unbound_secondary_structure.structure[:first_half_start_index] + unbound_secondary_structure.structure[second_half_end_index:]
             
         #do +1 and -1 due to the ends being able to be paired as part of the stacks that are associated with the snare
         #this makes it so that we are only checking if the snare is part of a loop for verification of existence
@@ -488,7 +498,8 @@ class MolecularSnareDetector():
         snare_stem_nuc_count:int = 0
     
         
-        snare_stem_nuc_count = 0
+     
+        signal_fold_nuc_count:int = 0
         
 
         for static_index in range(len(bound_structure_segment)):
@@ -497,6 +508,13 @@ class MolecularSnareDetector():
             
             if bound_char == unbound_char:
                 snare_stem_nuc_count += 1
+        
+        for static_index in range(len(bound_signal_fold_segment)):
+            bound_char:str = bound_signal_fold_segment[static_index]
+            unbound_char:str = unbound_signal_fold_segment[static_index]
+            
+            if bound_char == unbound_char:
+                signal_fold_nuc_count += 1
  
         
         new_snare:MoleculareSnareDef = MoleculareSnareDef(first_half_molecule=first_half_molecule,
@@ -508,7 +526,8 @@ class MolecularSnareDetector():
                                                         snare_stem_nuc_count=snare_stem_nuc_count,
                                                         is_prime_stem=five_prime_snare,
                                                         is_hairpin_stem=not(five_prime_snare),
-                                                        is_snare_loop=molecule_is_loop) 
+                                                        is_snare_loop=molecule_is_loop,
+                                                        signal_fold_nuc_count=signal_fold_nuc_count) 
                   
             # else:
             #     #there is no second half found in the snare

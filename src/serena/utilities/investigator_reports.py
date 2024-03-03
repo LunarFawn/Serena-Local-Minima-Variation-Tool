@@ -113,7 +113,12 @@ class InvestigatorReportGeneration():
         
         ax:plt = None
         fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(15, 15))
-        fig.suptitle(nuc_count_name)
+        subtitle_filename:str = ''
+        if attr == archiveType.STATIC_PRIMES:
+            subtitle_filename = f'{nuc_count_name}_to_total'
+        else:
+            subtitle_filename = nuc_count_name
+        fig.suptitle(subtitle_filename)
         fig.supxlabel(x_string)
         
         
@@ -260,6 +265,7 @@ class InvestigatorReportGeneration():
                         static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
                                                                                                                     bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
                         static__nuc_ratio:float = float(getattr(static_primes_nuc_count, nuc_count_name)) / design.investigator.lmv_references.mfe_structure.nuc_count
+                        
                         new_attr_value = static__nuc_ratio
                         x_tickes = np.arange(0, x_range+.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
@@ -278,7 +284,10 @@ class InvestigatorReportGeneration():
                                                                                                  bound_secondary_structure=source_data[index].fmn_folded_weighted,
                                                                                                  five_prime_snare=snare_binding.five_prime_snare)
                         if snare_result.is_snare_loop is True:
-                            snare_nuc_ratio:float = float(snare_result.snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
+                            if nuc_count_name == 'signal_fold_nuc_count_to_total':
+                                snare_nuc_ratio:float = float(snare_result.signal_fold_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
+                            else:
+                                snare_nuc_ratio:float = float(snare_result.snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
                             new_attr_value = snare_nuc_ratio
                         else:
                             new_attr_value = -.1
@@ -465,7 +474,7 @@ class InvestigatorReportGeneration():
         save_dir:str = f'/home/rnauser/repo/Serena-Local-Minima-Variation-Tool/src/tests/bin/{timestr}'
         if os.path.isdir(save_dir) == False:
             os.makedirs(save_dir)
-        plt.savefig(f'{save_dir}/{nuc_count_name}_{filename_type}_{timestr}.png')
+        plt.savefig(f'{save_dir}/{subtitle_filename}_{filename_type}_{timestr}.png')
         plt.close()
         # plt.show()
         
@@ -517,11 +526,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            # if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
             
-            #     source_data.append(temp_archive)
-            #     pnas_data.append(archived_data)
-            #     break
+                source_data.append(temp_archive)
+                pnas_data.append(archived_data)
+                break
         
              
             
@@ -536,18 +545,19 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
     ratio_value:int = 1
     
     # if archived_data.design_info.wetlab_results.NumberOfClusters1 > 0:#200:
-    snare_test_name:str = "moleculare_snare_nuc_ratio"
+    snare_test_name:List[str] = ["moleculare_snare_nuc_to_total",'signal_fold_nuc_count_to_total']
     if snare_binding != None:
-        for enumerator in ScoreType:
-            plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
-                                                    data=pnas_data,
-                                                    source_data=source_data,
-                                                    attr=archiveType.SNARE, 
-                                                    nuc_count_name=snare_test_name, x_string="Ratio of molecular snare static nucs to total nucs",
-                                                    training=False,
-                                                    score_type=enumerator,
-                                                    timestr=timestr,
-                                                    snare_binding=snare_binding)
+        for snare_name in snare_test_name:
+            for enumerator in ScoreType:
+                plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
+                                                        data=pnas_data,
+                                                        source_data=source_data,
+                                                        attr=archiveType.SNARE, 
+                                                        nuc_count_name=snare_name, x_string="Ratio of molecular snare static nucs to total nucs",
+                                                        training=False,
+                                                        score_type=enumerator,
+                                                        timestr=timestr,
+                                                        snare_binding=snare_binding)
         # return
     
     for item in ['static_stem_nuc_count', 'static_loop_nuc_count', 'prime_static_nuc_count_total']:
@@ -720,7 +730,7 @@ ssng2_second_start_index:int = 67
 ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
-plot_investigator(sublab='SSNG3',
+plot_investigator(sublab='SSNG2',
                     test_name='moleculare_snare_paper',
                     cluster_size_threshold=100,
                     pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
@@ -728,8 +738,8 @@ plot_investigator(sublab='SSNG3',
                     archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
                     source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
                     snare_binding=SnareBinding(first_half_molecule='AGGAUAU',
-                                                first_half_start_index=ssng3_first_start_index,
+                                                first_half_start_index=ssng1_ssng2_first_index,
                                                 second_half_molecule='AGAAGG',
-                                                second_half_start_index=ssng3_second_start_index,
-                                                five_prime_snare=False)
+                                                second_half_start_index=ssng2_second_start_index,
+                                                five_prime_snare=True)
                 )
