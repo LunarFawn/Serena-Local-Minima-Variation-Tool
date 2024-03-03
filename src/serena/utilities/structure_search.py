@@ -107,6 +107,7 @@ class MoleculareSnareDef():
     snare_stem_nuc_count:int
     is_prime_stem:bool
     is_hairpin_stem:bool
+    is_snare_loop:bool
     
 
 @dataclass
@@ -136,8 +137,8 @@ class MolecularSnareDetector():
         both sides of the bindin site need to bnd to forma loop that holds teh molecule. the 2nd sate will be a full loop but the 1st state
         by nature must not be a full loop and only one side will be static. that is the snare side. 
         """
-        unbound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=unbound_secondary_structure)
-        bound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=bound_secondary_structure)
+        # unbound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=unbound_secondary_structure)
+        # bound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=bound_secondary_structure)
         
         first_half_molecule:str = ''
         lenght_first_half:int = -1
@@ -206,9 +207,9 @@ class MolecularSnareDetector():
                     second_half_end_index:int = second_half_match.end()-1
                     
                     bound_structure_segment_prime_side_1:str = bound_secondary_structure.structure[:first_half_start_index]
-                    bound_structure_segment_prime_side_2:str = bound_secondary_structure.structure[second_half_end_index:]
+                    bound_structure_segment_prime_side_2:str = bound_secondary_structure.structure[second_half_end_index+1:]
                     unbound_structure_segment_prime_side_1:str = unbound_secondary_structure.structure[:first_half_start_index]
-                    unbound_structure_segment_prime_side_2:str = unbound_secondary_structure.structure[second_half_end_index:]
+                    unbound_structure_segment_prime_side_2:str = unbound_secondary_structure.structure[second_half_end_index+1:]
                     
                     bound_structure_segment:str = bound_secondary_structure.structure[first_half_end_index:second_half_start_index]
                     unbound_structure_segment:str = unbound_secondary_structure.structure[first_half_end_index:second_half_start_index]
@@ -237,25 +238,25 @@ class MolecularSnareDetector():
                     if molecule_is_loop is True and unbound_structure_segment == bound_structure_segment:    
                         #this means that it has a non-prime snare or what I am calling a hairpin snare
                         static_hairpin = True
-                        in_stem:bool = False
-                        in_loop:bool = True
-                        for side_A_nuc_index in range(second_half_start_index, second_half_start_index-2, -1):
-                            side_A_bound_nuc_index_pair:int = bound_pairs_list[side_A_nuc_index]
-                            side_A_unbound_nuc_index_pair:int = unbound_pairs_list[side_A_nuc_index]
+                        # in_stem:bool = False
+                        # in_loop:bool = True
+                        # for side_A_nuc_index in range(second_half_start_index, second_half_start_index-2, -1):
+                        #     side_A_bound_nuc_index_pair:int = bound_pairs_list[side_A_nuc_index]
+                        #     side_A_unbound_nuc_index_pair:int = unbound_pairs_list[side_A_nuc_index]
                             
-                            if side_A_unbound_nuc_index_pair == side_A_bound_nuc_index_pair:
-                                #it is for sure static and the pairing is the same
-                                new_tuple:tuple = (side_A_nuc_index, side_A_bound_nuc_index_pair)
-                                side_A_nuc_pair_list.append(new_tuple)
+                        #     if side_A_unbound_nuc_index_pair == side_A_bound_nuc_index_pair:
+                        #         #it is for sure static and the pairing is the same
+                        #         new_tuple:tuple = (side_A_nuc_index, side_A_bound_nuc_index_pair)
+                        #         side_A_nuc_pair_list.append(new_tuple)
                         
-                        for side_B_nuc_index in range(first_half_end_index, first_half_end_index+2, 1):
-                            side_B_bound_nuc_index_pair:int = bound_pairs_list[side_B_nuc_index]
-                            side_B_unbound_nuc_index_pair:int = unbound_pairs_list[side_B_nuc_index]
+                        # for side_B_nuc_index in range(first_half_end_index, first_half_end_index+2, 1):
+                        #     side_B_bound_nuc_index_pair:int = bound_pairs_list[side_B_nuc_index]
+                        #     side_B_unbound_nuc_index_pair:int = unbound_pairs_list[side_B_nuc_index]
                             
-                            if side_B_unbound_nuc_index_pair == side_B_bound_nuc_index_pair:
-                                #it is for sure static and the pairing is the same
-                                new_tuple:tuple = (side_B_nuc_index, side_B_bound_nuc_index_pair)
-                                side_B_nuc_pair_list.append(new_tuple)
+                        #     if side_B_unbound_nuc_index_pair == side_B_bound_nuc_index_pair:
+                        #         #it is for sure static and the pairing is the same
+                        #         new_tuple:tuple = (side_B_nuc_index, side_B_bound_nuc_index_pair)
+                        #         side_B_nuc_pair_list.append(new_tuple)
                         
                         snare_stem_nuc_count = len(bound_structure_segment)
                                     
@@ -274,53 +275,58 @@ class MolecularSnareDetector():
                             #     else:
                                     
                                     
-                    if molecule_is_loop is True and bound_structure_segment_prime_side_1 == unbound_structure_segment_prime_side_1 and bound_structure_segment_prime_side_2 == unbound_structure_segment_prime_side_2:
+                    if molecule_is_loop is True and bound_structure_segment_prime_side_1[2:] == unbound_structure_segment_prime_side_1[2:] and bound_structure_segment_prime_side_2[:-2] == unbound_structure_segment_prime_side_2[:-2]:
                         static_prime = True
-                        for side_A_nuc_index in range(first_half_start_index, first_half_start_index-2, -1):
-                            side_A_bound_nuc_index_pair:int = bound_pairs_list[side_A_nuc_index]
-                            side_A_unbound_nuc_index_pair:int = unbound_pairs_list[side_A_nuc_index]
+                        # for side_A_nuc_index in range(first_half_start_index, first_half_start_index-2, -1):
+                        #     side_A_bound_nuc_index_pair:int = bound_pairs_list[side_A_nuc_index]
+                        #     side_A_unbound_nuc_index_pair:int = unbound_pairs_list[side_A_nuc_index]
                             
-                            if side_A_unbound_nuc_index_pair == side_A_bound_nuc_index_pair:
-                                #it is for sure static and the pairing is the same
-                                new_tuple:tuple = (side_A_nuc_index, side_A_bound_nuc_index_pair)
-                                side_A_nuc_pair_list.append(new_tuple)
+                        #     if side_A_unbound_nuc_index_pair == side_A_bound_nuc_index_pair:
+                        #         #it is for sure static and the pairing is the same
+                        #         new_tuple:tuple = (side_A_nuc_index, side_A_bound_nuc_index_pair)
+                        #         side_A_nuc_pair_list.append(new_tuple)
                         
-                        for side_B_nuc_index in range(second_half_end_index, second_half_end_index+2, 1):
-                            side_B_bound_nuc_index_pair:int = bound_pairs_list[side_B_nuc_index]
-                            side_B_unbound_nuc_index_pair:int = unbound_pairs_list[side_B_nuc_index]
+                        # for side_B_nuc_index in range(second_half_end_index, second_half_end_index+2, 1):
+                        #     side_B_bound_nuc_index_pair:int = bound_pairs_list[side_B_nuc_index]
+                        #     side_B_unbound_nuc_index_pair:int = unbound_pairs_list[side_B_nuc_index]
                             
-                            if side_B_unbound_nuc_index_pair == side_B_bound_nuc_index_pair:
-                                #it is for sure static and the pairing is the same
-                                new_tuple:tuple = (side_B_nuc_index, side_B_bound_nuc_index_pair)
-                                side_B_nuc_pair_list.append(new_tuple)
+                        #     if side_B_unbound_nuc_index_pair == side_B_bound_nuc_index_pair:
+                        #         #it is for sure static and the pairing is the same
+                        #         new_tuple:tuple = (side_B_nuc_index, side_B_bound_nuc_index_pair)
+                        #         side_B_nuc_pair_list.append(new_tuple)
                         
                         snare_stem_nuc_count = len(bound_structure_segment_prime_side_1) + len(bound_structure_segment_prime_side_2)
                                             
                     if molecule_is_loop is True and (static_hairpin is True or static_prime is True):     
                         
-                         #now compare the dictionaries. 
-                        for side_nuc_index in range(len(side_A_nuc_pair_list)):
-                            side_A_nuc:int = side_A_nuc_pair_list[side_nuc_index][0]
-                            side_A_pair:int = side_A_nuc_pair_list[side_nuc_index][1]
-                            side_B_nuc:int = side_B_nuc_pair_list[side_nuc_index][0]
-                            side_B_pair:int = side_B_nuc_pair_list[side_nuc_index][1]
+                        #  #now compare the dictionaries. 
+                        # for side_nuc_index in range(len(side_A_nuc_pair_list)):
+                            
+                        #     # if len(side_A_nuc_pair_list) != len(side_B_nuc_pair_list):
+                        #     #     #its not good
+                        #     #     break
+                            
+                        #     side_A_nuc:int = side_A_nuc_pair_list[side_nuc_index][0]
+                        #     side_A_pair:int = side_A_nuc_pair_list[side_nuc_index][1]
+                        #     side_B_nuc:int = side_B_nuc_pair_list[side_nuc_index][0]
+                        #     side_B_pair:int = side_B_nuc_pair_list[side_nuc_index][1]
                             
                             
-                                #this should be the either the start of the bindig ring
-                                #or it is the end
-                            if side_A_nuc == side_A_pair and side_B_nuc == side_B_pair:
-                                #this first one is part of the loop so we can continue
-                                if side_nuc_index == 0:
-                                    continue
-                                else:
-                                    break
-                            elif side_A_nuc == side_B_pair and side_A_pair == side_B_nuc:
-                                snare_dectected = True
-                                break
+                        #         #this should be the either the start of the bindig ring
+                        #         #or it is the end
+                        #     if side_A_nuc == side_A_pair and side_B_nuc == side_B_pair:
+                        #         #this first one is part of the loop so we can continue
+                        #         if side_nuc_index == 0:
+                        #             continue
+                        #         else:
+                        #             break
+                        #     elif side_A_nuc == side_B_pair and side_A_pair == side_B_nuc:
+                        #         snare_dectected = True
+                        #         break
                             # elif side_nuc_index > 0:
                                 
                             #     if 
-                                    
+                        snare_dectected = True          
                         if snare_dectected == True:                        
                             #if this all it true then we now need to 
                             #investigate the pairs list 3.14159265358979323846
@@ -408,7 +414,110 @@ class MolecularSnareDetector():
             #             #make the new first half sequence stop where the last one started.
             #             #we are working our way down
             #             first_half_sequence = first_half_sequence[:start_first_half_molecule]
+            
+            
+    def measure_snare_stem_staticness(self, first_half_molecule:str, first_half_start_index:int, five_prime_snare:bool, second_half_molecule:str, second_half_start_index:int, unbound_secondary_structure:Sara2SecondaryStructure, bound_secondary_structure:Sara2SecondaryStructure)->MoleculareSnareDef:
+        """
+        prime moleculare snare has the 5'3' static stem as the static stem for the snare. 
+        
+        There is also rotation of the molecule binding pattern. This results in the joint for the binding site
+        being at one of the two ends of the snare loop 
+        
+        both sides of the bindin site need to bnd to forma loop that holds teh molecule. the 2nd sate will be a full loop but the 1st state
+        by nature must not be a full loop and only one side will be static. that is the snare side. 
+        """
+        # unbound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=unbound_secondary_structure)
+        # bound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=bound_secondary_structure)
+        
+       
+        lenght_first_half:int = len(first_half_molecule)
+        lenght_second_half:int = len(second_half_molecule)
+        
+        snare_dectected:bool = False
+        snare_list:List[MoleculareSnareDef] = []
+        number_snares:int = 0
+        
+        search_sequence:str = unbound_secondary_structure.sequence
+        
+                
+        
+        first_half_end_index:int = first_half_start_index + lenght_first_half
+
+        second_half_end_index:int = second_half_start_index + lenght_second_half
+        
+        bound_structure_segment:str = ''
+        # bound_structure_segment_side_2:str = ''
+        unbound_structure_segment:str = ''
+        # unbound_structure_segment_side_2:str = ''
+        
+        if five_prime_snare is True:        
+            bound_structure_segment_side_1 = bound_secondary_structure.structure[:first_half_start_index]
+            bound_structure_segment_side_2 = bound_secondary_structure.structure[second_half_end_index:]
+            bound_structure_segment = bound_structure_segment_side_1 + bound_structure_segment_side_2
+            
+            unbound_structure_segment_side_1 = unbound_secondary_structure.structure[:first_half_start_index]
+            unbound_structure_segment_side_2 = unbound_secondary_structure.structure[second_half_end_index:]
+            unbound_structure_segment = unbound_structure_segment_side_1 + unbound_structure_segment_side_2
+        else:            
+            bound_structure_segment:str = bound_secondary_structure.structure[first_half_end_index:second_half_start_index]
+            unbound_structure_segment:str = unbound_secondary_structure.structure[first_half_end_index:second_half_start_index]
+            
+        #do +1 and -1 due to the ends being able to be paired as part of the stacks that are associated with the snare
+        #this makes it so that we are only checking if the snare is part of a loop for verification of existence
+        first_half_molecule_bound_structure:str = bound_secondary_structure.structure[first_half_start_index+1:first_half_end_index-1]
+        second_half_molecule_bound_structure:str = bound_secondary_structure.structure[second_half_start_index+1:second_half_end_index-1]
+        
+        #first check that the molecule binding sites are only a loop
+        molecule_is_loop:bool = False
+        static_hairpin: bool = False
+        static_prime:bool = False
+        
+        #need this to be a loop
+        if first_half_molecule_bound_structure.count('.') == len(first_half_molecule_bound_structure) and second_half_molecule_bound_structure.count('.') == len(second_half_molecule_bound_structure):
+            #it is most likely a snare, but now need to do a double check and make sure the stem is a static stem
+            #and is forming the stack for the snare and not bound somewhere else. maybe still keep track of all the posible configurations you can think there
+            #could be
+            
+            #if it is a loop then now test for static stems on both sides
+            molecule_is_loop = True
+        
+        #now we need to test
+        side_A_nuc_pair_list:List[tuple] = []
+        side_B_nuc_pair_list:List[tuple] = []
+        
+        snare_stem_nuc_count:int = 0
+    
+        
+        snare_stem_nuc_count = 0
+        
+
+        for static_index in range(len(bound_structure_segment)):
+            bound_char:str = bound_structure_segment[static_index]
+            unbound_char:str = unbound_structure_segment[static_index]
+            
+            if bound_char == unbound_char:
+                snare_stem_nuc_count += 1
+ 
+        
+        new_snare:MoleculareSnareDef = MoleculareSnareDef(first_half_molecule=first_half_molecule,
+                                                        first_molecule_match=None,
+                                                        second_half_molecule=second_half_molecule,
+                                                        second_molecule_match=None,                                                                            
+                                                        length_first_half=lenght_first_half,
+                                                        lenght_second_half=lenght_second_half,
+                                                        snare_stem_nuc_count=snare_stem_nuc_count,
+                                                        is_prime_stem=five_prime_snare,
+                                                        is_hairpin_stem=not(five_prime_snare),
+                                                        is_snare_loop=molecule_is_loop) 
+                  
+            # else:
+            #     #there is no second half found in the snare
+            #     pass
                         
+        #now return result
+       
+        
+        return new_snare    
 
                 
             
