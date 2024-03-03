@@ -526,11 +526,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            # if archived_data.design_info.wetlab_results.Eterna_Score == 100:
             
-                source_data.append(temp_archive)
-                pnas_data.append(archived_data)
-                break
+            #     source_data.append(temp_archive)
+            #     pnas_data.append(archived_data)
+            #     break
         
              
             
@@ -560,7 +560,7 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                                         snare_binding=snare_binding)
         # return
     
-    for item in ['static_stem_nuc_count', 'static_loop_nuc_count', 'prime_static_nuc_count_total']:
+    for item in ['static_stem_nuc_count', 'static_loop_nuc_count']:
         for enumerator in ScoreType:
             plot_investigaot.generate_nuc_count_plot(x_range=ratio_value,
                                                     data=pnas_data,
@@ -730,7 +730,7 @@ ssng2_second_start_index:int = 67
 ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
-plot_investigator(sublab='SSNG2',
+plot_investigator(sublab='SSNG3',
                     test_name='moleculare_snare_paper',
                     cluster_size_threshold=100,
                     pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
@@ -738,8 +738,8 @@ plot_investigator(sublab='SSNG2',
                     archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
                     source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
                     snare_binding=SnareBinding(first_half_molecule='AGGAUAU',
-                                                first_half_start_index=ssng1_ssng2_first_index,
+                                                first_half_start_index=ssng3_first_start_index,
                                                 second_half_molecule='AGAAGG',
-                                                second_half_start_index=ssng2_second_start_index,
+                                                second_half_start_index=ssng3_second_start_index,
                                                 five_prime_snare=True)
                 )
