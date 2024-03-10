@@ -109,7 +109,7 @@ class InvestigatorReportGeneration():
         """
         This is a function for ploting all the ratios needed for knob turn analysis
         """
-        
+        kcal_delta = 1
         ratios_to_plot:List[ScoreType] = [ScoreType.FOLDCHANGE, ScoreType.KDOFF, ScoreType.KDON, ScoreType.ETERNA, ScoreType.BASELINE, ScoreType.FOLDING, ScoreType.SWITCH,  ]
         
         num_groups:int = len(ratios_to_plot)
@@ -126,7 +126,7 @@ class InvestigatorReportGeneration():
         else:
             nuc_count_name_mod = nuc_count_name
             
-        subtitle_filename = f'{data[0].design_info.design_info.Puzzle_Name} {nuc_count_name_mod}'
+        subtitle_filename = f'{data[0].design_info.design_info.Puzzle_Name} {nuc_count_name_mod} All Designs'
         fig.suptitle(subtitle_filename)
         fig.supxlabel(f'Ratios for knob turn analysis of {nuc_count_name_mod}')
 
@@ -212,10 +212,10 @@ class InvestigatorReportGeneration():
                 struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                                 bound_secondary_structure=source_data[index].fmn_folded_weighted)
                             
-                if len(struct_bound) == 0:
-                    new_attr_value = -.05
-                else:
-                    new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[0], nuc_count_name)
+                # if len(struct_bound) == 0:
+                #     new_attr_value = -.05
+                # else:
+                new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[kcal_delta-1], nuc_count_name)
                 x_tickes = np.arange(-0.1, x_range+.05, 0.05)
                 if 'last_' in nuc_count_name and '_last' not in nuc_count_name:
                     x_tickes = np.arange(-0.1, x_range+.2, 0.2)
@@ -369,7 +369,7 @@ class InvestigatorReportGeneration():
                 # ax[plt_index].set_ylim(-20, 20) 
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(min(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1, max(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1)
-            ax[plt_index].set_ymargin(.25)
+            ax[plt_index].set_ymargin(.05)
             # ax[plt_index].set_xmargin(.15)
 
             # if 'last_' in nuc_count_name_mod and '_last' not in nuc_count_name_mod:
@@ -378,7 +378,7 @@ class InvestigatorReportGeneration():
             ax[plt_index].legend(loc="upper left")
            
             
-            kcal_delta = plt_index +1
+            
             stuff = f'{kcal_delta-1}kcal to {kcal_delta}kcal delta from MFE'
             ax[plt_index].set_xlabel(stuff)
             
@@ -895,11 +895,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            # if archived_data.design_info.wetlab_results.Eterna_Score == 100:
             
-                source_data.append(temp_archive)
-                pnas_data.append(archived_data)
-                break
+            #     source_data.append(temp_archive)
+            #     pnas_data.append(archived_data)
+            #     break
         
              
             
@@ -915,20 +915,24 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
     
     
     for ratio in  archived_data.investigator.investigator_results.comparison_eval_results.ratios[0].__dict__:
-        
-            if 'last_' in ratio and '_last' not in ratio:
-                # temp_value = 5 
-                continue
-            # else:
-            #     temp_value = ratio_value
-                
-            plot_investigaot.plot_all_ratio_plots(x_range=ratio_value,
-                                                data=pnas_data,
-                                                source_data=source_data, 
-                                                attr=archiveType.RATIO, 
-                                                nuc_count_name=ratio,
-                                                training=False,
-                                                timestr=timestr)
+        ratio_value = 1
+        if 'last_' in ratio and '_last' not in ratio:
+            # temp_value = 5 
+            continue
+            
+        if 'to_both' in ratio:
+            # ratio_value = 5
+            continue
+        # else:
+        #     temp_value = ratio_value
+            
+        plot_investigaot.plot_all_ratio_plots(x_range=ratio_value,
+                                            data=pnas_data,
+                                            source_data=source_data, 
+                                            attr=archiveType.RATIO, 
+                                            nuc_count_name=ratio,
+                                            training=False,
+                                            timestr=timestr)
     
     return
     # if archived_data.design_info.wetlab_results.NumberOfClusters1 > 0:#200:
@@ -1122,7 +1126,7 @@ for kcla_index in [1]:#[1,2,7]:
     for sublab_index in [1,2,3]:
         sublab_name:str = f'SSNG{sublab_index}'
         Kcal_range:int = kcla_index
-        test_name:str = 'Check_all_ratios'#'moleculare_snare_paper_Check_Fold_good_bound'
+        test_name:str = 'Check_all_ratios_All_Designs'#'moleculare_snare_paper_Check_Fold_good_bound'
         if sublab_name == 'SSNG3':
             first_half_value:int = ssng3_first_start_index
             second_half_value:int = ssng3_second_start_index
