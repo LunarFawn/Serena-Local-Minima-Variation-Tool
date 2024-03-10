@@ -16,6 +16,8 @@ import argparse
 from enum import Enum
 
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.pyplot import Axes
 from matplotlib.ticker import StrMethodFormatter
 import matplotlib
 
@@ -99,19 +101,27 @@ class SnareBinding():
 
 class InvestigatorReportGeneration():
     
-    def __init__(self) -> None:
+    def __init__(self, kcal_max_plot:int) -> None:
         self.pairs_detection:PairsDetection = PairsDetection()
+        self.kcal_max_plot:int = kcal_max_plot
     
             
     def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, snare_binding:SnareBinding=None ):
         
         
         #find how many enesmble energy groups there are
-        num_groups:int = data[0].investigator.investigator_results.num_groups
         
+        only_2_kcal:bool = True
+        
+        if only_2_kcal is False:
+            num_groups:int = data[0].investigator.investigator_results.num_groups
+        else:
+            num_groups:int = self.kcal_max_plot
         
         
         ax:plt = None
+        ax:Axes
+        fig:Figure
         fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(15, 15))
         subtitle_filename:str = ''
         if attr == archiveType.STATIC_PRIMES:
@@ -121,6 +131,8 @@ class InvestigatorReportGeneration():
         fig.suptitle(subtitle_filename)
         fig.supxlabel(x_string)
         
+        if len(fig.axes) == 1:
+            ax = [ax]
         
         # fig.text(0.50, 0.02, 
         #      "Count of nucleotide with same pairing in unbound and bound state", 
@@ -257,7 +269,7 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) < 1:
+                        if len(struct_bound) == 0:
                             new_attr_value = -.1
                         else:
                             new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)
@@ -267,10 +279,21 @@ class InvestigatorReportGeneration():
                         ax[plt_index].set_xticks(x_tickes)
                         
                         
+                        
                         # result_list.append(ratio_attr) 
                     elif attr == archiveType.LMV:
-                        new_attr:EV = getattr(design.investigator.investigator_results.lmv_values.lmv_comps[plt_index], nuc_count_name)
-                        new_attr_value = new_attr.ev_normalized
+                        struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                            bound_secondary_structure=source_data[index].fmn_folded_weighted)
+                        
+                        if len(struct_bound) == 0:
+                            new_attr_value = -5
+                        else:
+                            new_attr:EV = getattr(design.investigator.investigator_results.lmv_values.lmv_comps[plt_index], nuc_count_name)
+                            new_attr_value = new_attr.ev_normalized
+                        x_tickes = np.arange(-10, x_range, 5)
+                        ax[plt_index].set_xticks(x_tickes)
+                        
+                        
                         # result_list.append(new_attr.ev_normalized)
                     
                     elif attr == archiveType.STATIC_PRIMES:
@@ -278,7 +301,7 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) < 1:
+                        if len(struct_bound) == 0:
                             new_attr_value = -.1
                         else:
                             static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
@@ -299,7 +322,7 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) < 1:
+                        if len(struct_bound) == 0:
                             new_attr_value = -.1
                         else:
                             snare_result = detector.measure_snare_stem_staticness(first_half_molecule=snare_binding.first_half_molecule,
@@ -417,6 +440,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Foldchange")
                     filename_type = 'Foldchange'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(result_fold_change_low_structs + result_fold_change_med_structs + result_fold_change_high_structs + result_fold_change_obsurd_structs)+1)
                 elif score_type == ScoreType.BASELINE:
                     # ax[plt_index].scatter(result_list, baseline_scores, color='red')
                     ax[plt_index].scatter(low_structs, baseline_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
@@ -425,6 +450,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Baseline subscore")
                     filename_type = 'Baseline'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(baseline_low_structs + baseline_med_structs + baseline_high_structs + baseline_obsurd_structs)+1)
                 elif score_type == ScoreType.FOLDING:
                     # ax[plt_index].scatter(result_list, folding_scores, color='green')
                     ax[plt_index].scatter(low_structs, folding_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
@@ -433,6 +460,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Folding subscore")
                     filename_type = 'Folding'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(folding_low_structs + folding_med_structs + folding_high_structs + folding_obsurd_structs)+1)
                 elif score_type == ScoreType.SWITCH:
                     # ax[plt_index].scatter(result_list, switch_scores, color='brown')
                     ax[plt_index].scatter(low_structs, switch_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
@@ -440,6 +469,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                     ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Switching subscore")
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(switch_low_structs + switch_med_structs + switch_high_structs + switch_obsurd_structs)+1)
                     filename_type = 'Switching'
                 elif score_type == ScoreType.KDON:
                     # ax[plt_index].scatter(result_list, kdone_values, color='purple')
@@ -449,14 +480,18 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("KDON")
                     filename_type = 'KDON'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(kdone_low_structs + kdone_med_structs + kdone_high_structs + kdone_obsurd_structs)+1)
                 elif score_type == ScoreType.KDOFF:
                     # ax[plt_index].scatter(result_list, kdoff_values, color='black')
                     ax[plt_index].scatter(low_structs, kdoff_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(med_structs, kdoff_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                     ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                     ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("KDOFF")
                     filename_type = 'KDOFF'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(kdoff_low_structs + kdoff_med_structs + kdoff_high_structs + kdoff_obsurd_structs)+1)
                 elif score_type == ScoreType.ETERNA:
                     # ax[plt_index].scatter(result_list, eterna_values, color='black')
                     ax[plt_index].scatter(low_structs, eterna_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
@@ -465,6 +500,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Score")
                     filename_type = 'Eterna'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(eterna_low_structs + eterna_med_structs + eterna_high_structs + eterna_obsurd_structs)+1)
                 elif score_type == ScoreType.BASIC:
                     # ax[plt_index].scatter(result_list, serena_basic_values, color='black')
                     ax[plt_index].scatter(low_structs, serena_basic_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
@@ -472,8 +509,10 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                     ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Serena Basic Score")
-                    ax[plt_index].set_ylim(-20, 20)
+                    # ax[plt_index].set_ylim(-20, 20)
                     filename_type = 'Basic'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(min(serena_basic_low_structs + serena_basic_med_structs + serena_basic_high_structs + serena_basic_obsurd_structs)+1, max(serena_basic_low_structs + serena_basic_med_structs + serena_basic_high_structs + serena_basic_obsurd_structs)+1)
                 elif score_type == ScoreType.ADVANCED:
                     # ax[plt_index].scatter(result_list, serena_advanced_values, color='black')
                     ax[plt_index].scatter(low_structs, serena_advanced_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
@@ -482,9 +521,12 @@ class InvestigatorReportGeneration():
                     ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Serena Basic plus Advanced Score")
                     filename_type = 'Advanced' 
-                    ax[plt_index].set_ylim(-20, 20) 
-                
-                
+                    # ax[plt_index].set_ylim(-20, 20) 
+                    # ax[plt_index].set_ylim(-20, 20) 
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(min(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1, max(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1)
+                ax[plt_index].set_ymargin(.25)
+                # ax[plt_index].set_xmargin(.15)
                 
             if attr == archiveType.RATIO or attr == archiveType.STATIC_PRIMES:
                 
@@ -517,11 +559,11 @@ class InvestigatorReportGeneration():
         # plt.show()
         
         
-def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pnas_path:Path, round:str, archive_path:Path, source_archive_path:Path, snare_binding:SnareBinding = None ):
+def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pnas_path:Path, round:str, archive_path:Path, source_archive_path:Path, snare_binding:SnareBinding = None, kcal_max_plot:int = 2):
     # sublab:str = 'SSNG1'
     test_name:str = f'{test_name}_cluster_{cluster_size_threshold}'
     timestr:str = f'{sublab}_{test_name}_{time.strftime("%Y%m%d-%H%M%S")}'
-    plot_investigaot:InvestigatorReportGeneration = InvestigatorReportGeneration()
+    plot_investigaot:InvestigatorReportGeneration = InvestigatorReportGeneration(kcal_max_plot=kcal_max_plot)
     pnas:ProcessPNAS = ProcessPNAS()
     
     # archive_path:str = f'/home/rnauser/test_data/serena/R101_PNAS/computational_data/{sublab}' #'/home/rnauser/test_data/serena/computatation/computational_data'#
@@ -564,11 +606,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            # if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
             
-            #     source_data.append(temp_archive)
-            #     pnas_data.append(archived_data)
-            #     break
+                source_data.append(temp_archive)
+                pnas_data.append(archived_data)
+                break
         
              
             
@@ -768,16 +810,31 @@ ssng2_second_start_index:int = 67
 ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
-plot_investigator(sublab='SSNG1',
-                    test_name='moleculare_snare_paper_Check_Fold',
+
+sublab_name:str = 'SSNG1'
+Kcal_range:int = 2
+test_name:str = 'moleculare_snare_paper_Check_Fold_good_bound'
+if sublab_name == 'SSNG3':
+    first_half_value:int = ssng3_first_start_index
+    second_half_value:int = ssng3_second_start_index
+elif sublab_name == 'SSNG2':
+    first_half_value:int = ssng1_ssng2_first_index
+    second_half_value:int = ssng2_second_start_index
+elif sublab_name == 'SSNG1':
+    first_half_value:int = ssng1_ssng2_first_index
+    second_half_value:int = ssng1_second_start_index
+
+plot_investigator(sublab=sublab_name,
+                    test_name=f'{test_name}_plot_{Kcal_range}kcal',
                     cluster_size_threshold=100,
                     pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
                     round='Round 7 (R101)',
                     archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
                     source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
                     snare_binding=SnareBinding(first_half_molecule='AGGAUAU',
-                                                first_half_start_index=ssng1_ssng2_first_index,
+                                                first_half_start_index=first_half_value,
                                                 second_half_molecule='AGAAGG',
-                                                second_half_start_index=ssng1_second_start_index,
-                                                five_prime_snare=False)
+                                                second_half_start_index=second_half_value,
+                                                five_prime_snare=False),
+                    kcal_max_plot=Kcal_range
                 )
