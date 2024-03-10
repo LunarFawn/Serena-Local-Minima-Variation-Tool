@@ -105,7 +105,293 @@ class InvestigatorReportGeneration():
         self.pairs_detection:PairsDetection = PairsDetection()
         self.kcal_max_plot:int = kcal_max_plot
     
+    def plot_all_ratio_plots(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData],nuc_count_name:str, attr:archiveType, x_range:float, training:bool = True, snare_binding:SnareBinding=None ):
+        """
+        This is a function for ploting all the ratios needed for knob turn analysis
+        """
+        
+        ratios_to_plot:List[ScoreType] = [ScoreType.BASELINE,ScoreType.ETERNA, ScoreType.FOLDCHANGE, ScoreType.FOLDING, ScoreType.KDOFF, ScoreType.KDON, ScoreType.SWITCH]
+        
+        num_groups:int = len(ratios_to_plot)
+        
+        
+        
+        ax:plt = None
+        ax:Axes
+        fig:Figure
+        fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(15, 15))
+        subtitle_filename:str = ''
+        if attr == archiveType.STATIC_PRIMES:
+            nuc_count_name_mod = f'{nuc_count_name}_to_total'
+        else:
+            nuc_count_name_mod = nuc_count_name
             
+        subtitle_filename = f'{data[0].design_info.design_info.Puzzle_Name}_{nuc_count_name_mod}'
+        fig.suptitle(subtitle_filename)
+        fig.supxlabel(f'Ratios for knob turn analysis of {nuc_count_name_mod}')
+
+        
+    
+        for plt_index in range(num_groups):
+            score_type = ratios_to_plot[plt_index]
+            #first get the both count
+            good_list:List[float] = []
+            good_fold_change:List[float] = []
+            bad_list:List[float] = []
+            bad_change:List[float] = []
+            
+            result_list:List[float] = []
+            
+            low_structs_num:int = 4000#5000#3000
+            med_structs_num:int = 8000#15000#6000
+            high_structs_num:int = 12000#25000#9000
+            
+            low_structs:List[float] = []
+            med_structs:List[float] = []
+            high_structs:List[float] = []
+            obsurd_structs:List[float] = []
+            
+            
+            baseline_scores:List[float] = []
+            baseline_low_structs:List[float] = []
+            baseline_med_structs:List[float] = []
+            baseline_high_structs:List[float] = []
+            baseline_obsurd_structs:List[float] = []
+                        
+            folding_scores:List[float] = []
+            folding_low_structs:List[float] = []
+            folding_med_structs:List[float] = []
+            folding_high_structs:List[float] = []
+            folding_obsurd_structs:List[float] = []
+            
+            switch_scores:List[float] = []
+            switch_low_structs:List[float] = []
+            switch_med_structs:List[float] = []
+            switch_high_structs:List[float] = []
+            switch_obsurd_structs:List[float] = []
+            
+            kdoff_values:List[float] = []
+            kdoff_low_structs:List[float] = []
+            kdoff_med_structs:List[float] = []
+            kdoff_high_structs:List[float] = []
+            kdoff_obsurd_structs:List[float] = []
+            
+            kdone_values:List[float] = []
+            kdone_low_structs:List[float] = []
+            kdone_med_structs:List[float] = []
+            kdone_high_structs:List[float] = []
+            kdone_obsurd_structs:List[float] = []
+            
+            eterna_values:List[float] = []
+            eterna_low_structs:List[float] = []
+            eterna_med_structs:List[float] = []
+            eterna_high_structs:List[float] = []
+            eterna_obsurd_structs:List[float] = []
+            
+            serena_basic_values:List[float] = []
+            serena_basic_low_structs:List[float] = []
+            serena_basic_med_structs:List[float] = []
+            serena_basic_high_structs:List[float] = []
+            serena_basic_obsurd_structs:List[float] = []
+            
+            serena_advanced_values:List[float] = []
+            serena_advanced_low_structs:List[float] = []
+            serena_advanced_med_structs:List[float] = []
+            serena_advanced_high_structs:List[float] = []
+            serena_advanced_obsurd_structs:List[float] = []
+            
+            result_fold_change:List[float] = []
+            result_fold_change_low_structs:List[float] = []
+            result_fold_change_med_structs:List[float] = []
+            result_fold_change_high_structs:List[float] = []
+            result_fold_change_obsurd_structs:List[float] = []
+            
+            for index, design in enumerate(data):
+                
+                struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                                bound_secondary_structure=source_data[index].fmn_folded_weighted)
+                            
+                if len(struct_bound) == 0:
+                    new_attr_value = -.2
+                else:
+                    new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[0], nuc_count_name)
+                x_tickes = np.arange(-0.35, x_range+.05, 0.05)
+                if 'last_' in nuc_count_name and '_last' not in nuc_count_name:
+                    x_tickes = np.arange(-0.35, x_range+.2, 0.2)
+                ax[plt_index].set_xticks(x_tickes)
+                
+                if design.investigator.number_structures[0] <= low_structs_num:
+                    low_structs.append(new_attr_value)
+                    result_fold_change_low_structs.append(design.design_info.wetlab_results.FoldChange)
+                    baseline_low_structs.append(design.design_info.wetlab_results.Baseline_Subscore)
+                    switch_low_structs.append(design.design_info.wetlab_results.Switch_Subscore)
+                    folding_low_structs.append(design.design_info.wetlab_results.Folding_Subscore)
+                    kdoff_low_structs.append(design.design_info.wetlab_results.KDOFF)
+                    kdone_low_structs.append(design.design_info.wetlab_results.KDON)
+                    eterna_low_structs.append(design.design_info.wetlab_results.Eterna_Score)
+                  
+                    
+                elif design.investigator.number_structures[0] > low_structs_num and design.investigator.number_structures[0] <= med_structs_num:
+                    med_structs.append(new_attr_value)
+                    result_fold_change_med_structs.append(design.design_info.wetlab_results.FoldChange)
+                    baseline_med_structs.append(design.design_info.wetlab_results.Baseline_Subscore)
+                    switch_med_structs.append(design.design_info.wetlab_results.Switch_Subscore)
+                    folding_med_structs.append(design.design_info.wetlab_results.Folding_Subscore)
+                    kdoff_med_structs.append(design.design_info.wetlab_results.KDOFF)
+                    kdone_med_structs.append(design.design_info.wetlab_results.KDON)
+                    eterna_med_structs.append(design.design_info.wetlab_results.Eterna_Score)
+     
+                    
+                elif design.investigator.number_structures[0] > med_structs_num and design.investigator.number_structures[0] <= high_structs_num:
+                    high_structs.append(new_attr_value)
+                    result_fold_change_high_structs.append(design.design_info.wetlab_results.FoldChange)
+                    baseline_high_structs.append(design.design_info.wetlab_results.Baseline_Subscore)
+                    switch_high_structs.append(design.design_info.wetlab_results.Switch_Subscore)
+                    folding_high_structs.append(design.design_info.wetlab_results.Folding_Subscore)
+                    kdoff_high_structs.append(design.design_info.wetlab_results.KDOFF)
+                    kdone_high_structs.append(design.design_info.wetlab_results.KDON)
+                    eterna_high_structs.append(design.design_info.wetlab_results.Eterna_Score)
+                
+                    
+                elif design.investigator.number_structures[0] > high_structs_num:
+                    obsurd_structs.append(new_attr_value)
+                    result_fold_change_obsurd_structs.append(design.design_info.wetlab_results.FoldChange)
+                    baseline_obsurd_structs.append(design.design_info.wetlab_results.Baseline_Subscore)
+                    switch_obsurd_structs.append(design.design_info.wetlab_results.Switch_Subscore)
+                    folding_obsurd_structs.append(design.design_info.wetlab_results.Folding_Subscore)
+                    kdoff_obsurd_structs.append(design.design_info.wetlab_results.KDOFF)
+                    kdone_obsurd_structs.append(design.design_info.wetlab_results.KDON)
+                    eterna_obsurd_structs.append(design.design_info.wetlab_results.Eterna_Score)
+
+                marker_style:str = 'o'
+                low_marker:str = '*'
+                medium_marker:str = '^'
+                high_marker:str = 's'
+                # if attr == archiveType.SNARE:
+                #     marker_style:str = '^'
+                
+                label_low=f'< {str(low_structs_num)} stucts'
+                label_medium =f' > {str(low_structs_num)} and < {str(med_structs_num)} stucts'
+                label_high = f'> {str(med_structs_num)} and < {str(high_structs_num)} stucts'
+                label_obsurde=f'> {str(high_structs_num)} stucts'
+                
+                if score_type == ScoreType.FOLDCHANGE:               
+                    # ax[plt_index].scatter(result_list, result_fold_change, c='blue')
+                    ax[plt_index].scatter(low_structs, result_fold_change_low_structs, color='green', marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, result_fold_change_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, result_fold_change_high_structs, color='black' ,marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Foldchange")
+                    filename_type = 'Foldchange'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(result_fold_change_low_structs + result_fold_change_med_structs + result_fold_change_high_structs + result_fold_change_obsurd_structs)+1)
+                elif score_type == ScoreType.BASELINE:
+                    # ax[plt_index].scatter(result_list, baseline_scores, color='red')
+                    ax[plt_index].scatter(low_structs, baseline_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, baseline_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, baseline_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Eterna Baseline subscore")
+                    filename_type = 'Baseline'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(baseline_low_structs + baseline_med_structs + baseline_high_structs + baseline_obsurd_structs)+1)
+                elif score_type == ScoreType.FOLDING:
+                    # ax[plt_index].scatter(result_list, folding_scores, color='green')
+                    ax[plt_index].scatter(low_structs, folding_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, folding_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, folding_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Eterna Folding subscore")
+                    filename_type = 'Folding'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(folding_low_structs + folding_med_structs + folding_high_structs + folding_obsurd_structs)+1)
+                elif score_type == ScoreType.SWITCH:
+                    # ax[plt_index].scatter(result_list, switch_scores, color='brown')
+                    ax[plt_index].scatter(low_structs, switch_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, switch_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Eterna Switching subscore")
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(switch_low_structs + switch_med_structs + switch_high_structs + switch_obsurd_structs)+1)
+                    filename_type = 'Switching'
+                elif score_type == ScoreType.KDON:
+                    # ax[plt_index].scatter(result_list, kdone_values, color='purple')
+                    ax[plt_index].scatter(low_structs, kdone_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, kdone_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("KDON")
+                    filename_type = 'KDON'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(kdone_low_structs + kdone_med_structs + kdone_high_structs + kdone_obsurd_structs)+1)
+                elif score_type == ScoreType.KDOFF:
+                    # ax[plt_index].scatter(result_list, kdoff_values, color='black')
+                    ax[plt_index].scatter(low_structs, kdoff_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, kdoff_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("KDOFF")
+                    filename_type = 'KDOFF'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(kdoff_low_structs + kdoff_med_structs + kdoff_high_structs + kdoff_obsurd_structs)+1)
+                elif score_type == ScoreType.ETERNA:
+                    # ax[plt_index].scatter(result_list, eterna_values, color='black')
+                    ax[plt_index].scatter(low_structs, eterna_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, eterna_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, eterna_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'), label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Eterna Score")
+                    filename_type = 'Eterna'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(0, max(eterna_low_structs + eterna_med_structs + eterna_high_structs + eterna_obsurd_structs)+1)
+                elif score_type == ScoreType.BASIC:
+                    # ax[plt_index].scatter(result_list, serena_basic_values, color='black')
+                    ax[plt_index].scatter(low_structs, serena_basic_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, serena_basic_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Serena Basic Score")
+                    # ax[plt_index].set_ylim(-20, 20)
+                    filename_type = 'Basic'
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(min(serena_basic_low_structs + serena_basic_med_structs + serena_basic_high_structs + serena_basic_obsurd_structs)+1, max(serena_basic_low_structs + serena_basic_med_structs + serena_basic_high_structs + serena_basic_obsurd_structs)+1)
+                elif score_type == ScoreType.ADVANCED:
+                    # ax[plt_index].scatter(result_list, serena_advanced_values, color='black')
+                    ax[plt_index].scatter(low_structs, serena_advanced_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, serena_advanced_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, serena_advanced_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
+                    ax[plt_index].set_ylabel("Serena Basic plus Advanced Score")
+                    filename_type = 'Advanced' 
+                    # ax[plt_index].set_ylim(-20, 20) 
+                    # ax[plt_index].set_ylim(-20, 20) 
+                    # ax[plt_index].set_ymargin(.1)
+                    # ax[plt_index].set_ylim(min(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1, max(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1)
+                ax[plt_index].set_ymargin(.25)
+                # ax[plt_index].set_xmargin(.15)
+
+                if 'last_' in nuc_count_name_mod and '_last' not in nuc_count_name_mod:
+                    ax[plt_index].legend(loc="upper right")
+                else:
+                    ax[plt_index].legend(loc="upper left")
+           
+            
+                kcal_delta = plt_index +1
+                stuff = f'{kcal_delta-1}kcal to {kcal_delta}kcal delta from MFE'
+                ax[plt_index].set_xlabel(stuff)
+        # fig.tight_layout()
+        plt.subplots_adjust(left=0.1,
+                bottom=.1,  
+                top=.9, 
+                )       
+        
+        save_dir:str = f'/home/rnauser/repo/Serena-Local-Minima-Variation-Tool/src/tests/bin/{timestr}'
+        if os.path.isdir(save_dir) == False:
+            os.makedirs(save_dir)
+        plt.savefig(f'{save_dir}/{subtitle_filename}_All_Ratios_{timestr}.png')
+        plt.close()
+        
     def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, snare_binding:SnareBinding=None ):
         
         
@@ -214,7 +500,7 @@ class InvestigatorReportGeneration():
             result_fold_change_high_structs:List[float] = []
             result_fold_change_obsurd_structs:List[float] = []
             
-            ax[plt_index].set_xlim(-.3, x_range+.05)
+            ax[plt_index].set_xlim(-.35, x_range+.05)
             
             for index, design in enumerate(data):
                 if training is True:
@@ -270,7 +556,7 @@ class InvestigatorReportGeneration():
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
                         if len(struct_bound) == 0:
-                            new_attr_value = -.1
+                            new_attr_value = -.2
                         else:
                             new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)
                         x_tickes = np.arange(-0.35, x_range+.05, 0.05)
@@ -302,7 +588,7 @@ class InvestigatorReportGeneration():
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
                         if len(struct_bound) == 0:
-                            new_attr_value = -.1
+                            new_attr_value = -.2
                         else:
                             static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
                                                                                                                         bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
@@ -323,7 +609,7 @@ class InvestigatorReportGeneration():
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
                         if len(struct_bound) == 0:
-                            new_attr_value = -.1
+                            new_attr_value = -.2
                         else:
                             snare_result = detector.measure_snare_stem_staticness(first_half_molecule=snare_binding.first_half_molecule,
                                                                                                     first_half_start_index=snare_binding.first_half_start_index,
@@ -343,7 +629,7 @@ class InvestigatorReportGeneration():
                                     snare_nuc_ratio:float = float(snare_result.snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
                                 new_attr_value = snare_nuc_ratio
                             else:
-                                new_attr_value = -.05
+                                new_attr_value = -.3
                             
                         x_tickes = np.arange(-.35, x_range +.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
@@ -542,7 +828,8 @@ class InvestigatorReportGeneration():
             ax[plt_index].set_xlabel(stuff)
             
             
-            
+        
+        
             
             
         # fig.tight_layout()
@@ -606,11 +893,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            # if archived_data.design_info.wetlab_results.Eterna_Score == 100:
             
-                source_data.append(temp_archive)
-                pnas_data.append(archived_data)
-                break
+            #     source_data.append(temp_archive)
+            #     pnas_data.append(archived_data)
+            #     break
         
              
             
@@ -811,30 +1098,32 @@ ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
 
-sublab_name:str = 'SSNG1'
-Kcal_range:int = 2
-test_name:str = 'moleculare_snare_paper_Check_Fold_good_bound'
-if sublab_name == 'SSNG3':
-    first_half_value:int = ssng3_first_start_index
-    second_half_value:int = ssng3_second_start_index
-elif sublab_name == 'SSNG2':
-    first_half_value:int = ssng1_ssng2_first_index
-    second_half_value:int = ssng2_second_start_index
-elif sublab_name == 'SSNG1':
-    first_half_value:int = ssng1_ssng2_first_index
-    second_half_value:int = ssng1_second_start_index
+for kcla_index in [1,2,7]:
+    for sublab_index in [1,2,3]:
+        sublab_name:str = f'SSNG{sublab_index}'
+        Kcal_range:int = kcla_index
+        test_name:str = 'moleculare_snare_paper_Check_Fold_good_bound'
+        if sublab_name == 'SSNG3':
+            first_half_value:int = ssng3_first_start_index
+            second_half_value:int = ssng3_second_start_index
+        elif sublab_name == 'SSNG2':
+            first_half_value:int = ssng1_ssng2_first_index
+            second_half_value:int = ssng2_second_start_index
+        elif sublab_name == 'SSNG1':
+            first_half_value:int = ssng1_ssng2_first_index
+            second_half_value:int = ssng1_second_start_index
 
-plot_investigator(sublab=sublab_name,
-                    test_name=f'{test_name}_plot_{Kcal_range}kcal',
-                    cluster_size_threshold=100,
-                    pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
-                    round='Round 7 (R101)',
-                    archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
-                    source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
-                    snare_binding=SnareBinding(first_half_molecule='AGGAUAU',
-                                                first_half_start_index=first_half_value,
-                                                second_half_molecule='AGAAGG',
-                                                second_half_start_index=second_half_value,
-                                                five_prime_snare=False),
-                    kcal_max_plot=Kcal_range
-                )
+        plot_investigator(sublab=sublab_name,
+                            test_name=f'{test_name}_plot_{Kcal_range}kcal',
+                            cluster_size_threshold=100,
+                            pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
+                            round='Round 7 (R101)',
+                            archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
+                            source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
+                            snare_binding=SnareBinding(first_half_molecule='AGGAUAU',
+                                                        first_half_start_index=first_half_value,
+                                                        second_half_molecule='AGAAGG',
+                                                        second_half_start_index=second_half_value,
+                                                        five_prime_snare=False),
+                            kcal_max_plot=Kcal_range
+                        )
