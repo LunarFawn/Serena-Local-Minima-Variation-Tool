@@ -62,7 +62,7 @@ from serena.analysis.ensemble_analysis import InvestigateEnsembleResults
 from serena.bin.backup_investigator_v1 import ArchiveInvestigator
 from serena.scripts.analyze_pnas_2112979119_sd01 import ProcessPNAS, ArchiveInvestigatorData, ArchiveFlow
 
-from serena.utilities.structure_search import StaticSystemDetector, PrimeNucCounts, MolecularSnareDetector, MoleculareSnareDef, SnareResults
+from serena.utilities.structure_search import StaticSystemDetector, PrimeNucCounts, MolecularSnareDetector, MoleculareSnareDef, SnareResults, PairsDetection
 
 from serena.scripts.analyze_pnas_2112979119_sd01 import ArchiveData, ArchiveFlow
 
@@ -100,7 +100,7 @@ class SnareBinding():
 class InvestigatorReportGeneration():
     
     def __init__(self) -> None:
-        pass
+        self.pairs_detection:PairsDetection = PairsDetection()
     
             
     def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, snare_binding:SnareBinding=None ):
@@ -235,6 +235,12 @@ class InvestigatorReportGeneration():
                 else:
                     new_attr_value:float
                     if attr == archiveType.COUNT:
+                        # struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                        #                                     bound_secondary_structure=source_data[index].fmn_folded_weighted)
+                        
+                        # if len(struct_bound) < 1:
+                        #     new_attr_value = -.2
+                        # else:
                         new_attr_value = getattr(design.investigator.investigator_results.comp_nuc_counts.comparison_nuc_counts[plt_index], nuc_count_name)
                         # if design.investigator.number_structures <= low_structs:
                         #     low_structs.append(count_attr)
@@ -248,11 +254,18 @@ class InvestigatorReportGeneration():
                             
                         # result_list.append(count_attr) 
                     elif attr == archiveType.RATIO:
-                        new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)
-                        x_tickes = np.arange(0, x_range+.05, 0.05)
+                        struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                            bound_secondary_structure=source_data[index].fmn_folded_weighted)
+                        
+                        if len(struct_bound) < 1:
+                            new_attr_value = -.1
+                        else:
+                            new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)
+                        x_tickes = np.arange(-0.35, x_range+.05, 0.05)
                         if 'last_' in nuc_count_name and '_last' not in nuc_count_name:
-                            x_tickes = np.arange(0, x_range+.2, 0.2)
+                            x_tickes = np.arange(-0.35, x_range+.2, 0.2)
                         ax[plt_index].set_xticks(x_tickes)
+                        
                         
                         # result_list.append(ratio_attr) 
                     elif attr == archiveType.LMV:
@@ -262,12 +275,18 @@ class InvestigatorReportGeneration():
                     
                     elif attr == archiveType.STATIC_PRIMES:
                         static_detector:StaticSystemDetector = StaticSystemDetector()
-                        static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
-                                                                                                                    bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
-                        static__nuc_ratio:float = float(getattr(static_primes_nuc_count, nuc_count_name)) / design.investigator.lmv_references.mfe_structure.nuc_count
+                        struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                            bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        new_attr_value = static__nuc_ratio
-                        x_tickes = np.arange(0, x_range+.05, 0.05)
+                        if len(struct_bound) < 1:
+                            new_attr_value = -.1
+                        else:
+                            static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
+                                                                                                                        bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
+                            static__nuc_ratio:float = float(getattr(static_primes_nuc_count, nuc_count_name)) / design.investigator.lmv_references.mfe_structure.nuc_count
+                            
+                            new_attr_value = static__nuc_ratio
+                        x_tickes = np.arange(-0.35, x_range+.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
                     
                     elif attr == archiveType.SNARE:
@@ -275,30 +294,41 @@ class InvestigatorReportGeneration():
                         # snare_result:SnareResults = detector.find_prime_moleculare_snare(moleculte_binding_sequence=snare_binding,
                         #                                      unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                         #                                      bound_secondary_structure=source_data[index].fmn_folded_weighted)
+                        snare_result:MoleculareSnareDef
+                        static_detector:StaticSystemDetector = StaticSystemDetector()
+                        struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                            bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        snare_result:MoleculareSnareDef = detector.measure_snare_stem_staticness(first_half_molecule=snare_binding.first_half_molecule,
-                                                                                                 first_half_start_index=snare_binding.first_half_start_index,
-                                                                                                 second_half_molecule=snare_binding.second_half_molecule,
-                                                                                                 second_half_start_index=snare_binding.second_half_start_index,
-                                                                                                 unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
-                                                                                                 bound_secondary_structure=source_data[index].fmn_folded_weighted,
-                                                                                                 five_prime_snare=snare_binding.five_prime_snare)
-                        if snare_result.is_snare_loop is True:
-                            if nuc_count_name == 'signal_fold_nuc_count_to_total':
-                                snare_nuc_ratio:float = float(snare_result.signal_fold_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
-                            else:
-                                snare_nuc_ratio:float = float(snare_result.snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
-                            new_attr_value = snare_nuc_ratio
-                        else:
+                        if len(struct_bound) < 1:
                             new_attr_value = -.1
+                        else:
+                            snare_result = detector.measure_snare_stem_staticness(first_half_molecule=snare_binding.first_half_molecule,
+                                                                                                    first_half_start_index=snare_binding.first_half_start_index,
+                                                                                                    second_half_molecule=snare_binding.second_half_molecule,
+                                                                                                    second_half_start_index=snare_binding.second_half_start_index,
+                                                                                                    unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
+                                                                                                    bound_secondary_structure=source_data[index].fmn_folded_weighted,
+                                                                                                    five_prime_snare=snare_binding.five_prime_snare)
+                            # if len(struct_unbound) < 1 and len(struct_bound) > 0:
+                            #     new_attr_value = -.3
+                            # elif len(struct_unbound) > 0  and len(struct_bound) <1:
+                            #     new_attr_value = -.5
+                            if snare_result.is_snare_loop is True:
+                                if nuc_count_name == 'signal_fold_nuc_count_to_total':
+                                    snare_nuc_ratio:float = float(snare_result.signal_fold_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
+                                else:
+                                    snare_nuc_ratio:float = float(snare_result.snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
+                                new_attr_value = snare_nuc_ratio
+                            else:
+                                new_attr_value = -.05
                             
-                        x_tickes = np.arange(-.3, x_range +.05, 0.05)
+                        x_tickes = np.arange(-.35, x_range +.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
                         # ax[plt_index].set_xlim(-., x_range+.05)
                         # else:
                         #     new_attr_value = 0
                             
-                  
+                    
                     
                     if design.investigator.number_structures[0] <= low_structs_num:
                         low_structs.append(new_attr_value)
@@ -368,80 +398,88 @@ class InvestigatorReportGeneration():
             else: 
                 
                 marker_style:str = 'o'
+                low_marker:str = '*'
+                medium_marker:str = '^'
+                high_marker:str = 's'
                 # if attr == archiveType.SNARE:
                 #     marker_style:str = '^'
                 
+                label_low=f'< {str(low_structs_num)} stucts'
+                label_medium =f' > {str(low_structs_num)} and < {str(med_structs_num)} stucts'
+                label_high = f'> {str(med_structs_num)} and < {str(high_structs_num)} stucts'
+                label_obsurde=f'> {str(high_structs_num)} stucts'
+                
                 if score_type == ScoreType.FOLDCHANGE:               
                     # ax[plt_index].scatter(result_list, result_fold_change, c='blue')
-                    ax[plt_index].scatter(low_structs, result_fold_change_low_structs, color='green', marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, result_fold_change_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, result_fold_change_high_structs, color='black' ,marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, result_fold_change_low_structs, color='green', marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, result_fold_change_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, result_fold_change_high_structs, color='black' ,marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Foldchange")
                     filename_type = 'Foldchange'
                 elif score_type == ScoreType.BASELINE:
                     # ax[plt_index].scatter(result_list, baseline_scores, color='red')
-                    ax[plt_index].scatter(low_structs, baseline_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, baseline_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, baseline_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, baseline_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, baseline_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, baseline_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Baseline subscore")
                     filename_type = 'Baseline'
                 elif score_type == ScoreType.FOLDING:
                     # ax[plt_index].scatter(result_list, folding_scores, color='green')
-                    ax[plt_index].scatter(low_structs, folding_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, folding_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, folding_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, folding_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, folding_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, folding_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Folding subscore")
                     filename_type = 'Folding'
                 elif score_type == ScoreType.SWITCH:
                     # ax[plt_index].scatter(result_list, switch_scores, color='brown')
-                    ax[plt_index].scatter(low_structs, switch_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, switch_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, switch_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, switch_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Switching subscore")
                     filename_type = 'Switching'
                 elif score_type == ScoreType.KDON:
                     # ax[plt_index].scatter(result_list, kdone_values, color='purple')
-                    ax[plt_index].scatter(low_structs, kdone_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, kdone_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, kdone_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, kdone_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("KDON")
                     filename_type = 'KDON'
                 elif score_type == ScoreType.KDOFF:
                     # ax[plt_index].scatter(result_list, kdoff_values, color='black')
-                    ax[plt_index].scatter(low_structs, kdoff_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, kdoff_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("KDOFF")
                     filename_type = 'KDOFF'
                 elif score_type == ScoreType.ETERNA:
                     # ax[plt_index].scatter(result_list, eterna_values, color='black')
-                    ax[plt_index].scatter(low_structs, eterna_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, eterna_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, eterna_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'), label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, eterna_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, eterna_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, eterna_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'), label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Eterna Score")
                     filename_type = 'Eterna'
                 elif score_type == ScoreType.BASIC:
                     # ax[plt_index].scatter(result_list, serena_basic_values, color='black')
-                    ax[plt_index].scatter(low_structs, serena_basic_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, serena_basic_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, serena_basic_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, serena_basic_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Serena Basic Score")
                     ax[plt_index].set_ylim(-20, 20)
                     filename_type = 'Basic'
                 elif score_type == ScoreType.ADVANCED:
                     # ax[plt_index].scatter(result_list, serena_advanced_values, color='black')
-                    ax[plt_index].scatter(low_structs, serena_advanced_low_structs, color='green',marker=MarkerStyle(marker_style, 'none'), label=f'less than {str(low_structs_num)} stucts')
-                    ax[plt_index].scatter(med_structs, serena_advanced_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(low_structs_num)} and {str(med_structs_num)} stucts')
-                    ax[plt_index].scatter(high_structs, serena_advanced_high_structs, color='black',marker=MarkerStyle(marker_style, 'none'),label=f'between {str(med_structs_num)} and {str(high_structs_num)} stucts')
-                    ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(marker_style, 'none'),label=f'greater than {str(high_structs_num)} stucts')
+                    ax[plt_index].scatter(low_structs, serena_advanced_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
+                    ax[plt_index].scatter(med_structs, serena_advanced_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
+                    ax[plt_index].scatter(high_structs, serena_advanced_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
+                    ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
                     ax[plt_index].set_ylabel("Serena Basic plus Advanced Score")
                     filename_type = 'Advanced' 
                     ax[plt_index].set_ylim(-20, 20) 
@@ -730,16 +768,16 @@ ssng2_second_start_index:int = 67
 ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
-plot_investigator(sublab='SSNG3',
-                    test_name='moleculare_snare_paper',
+plot_investigator(sublab='SSNG1',
+                    test_name='moleculare_snare_paper_Check_Fold',
                     cluster_size_threshold=100,
                     pnas_path=Path('/home/rnauser/test_data/serena/R101_PNAS/source/pnas.2112979119.sd01.xlsx'),
                     round='Round 7 (R101)',
                     archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/computational_data/'),
                     source_archive_path=Path('/home/rnauser/test_data/serena/R101_PNAS/raw_fold_data/rna95_nupack3/'),
                     snare_binding=SnareBinding(first_half_molecule='AGGAUAU',
-                                                first_half_start_index=ssng3_first_start_index,
+                                                first_half_start_index=ssng1_ssng2_first_index,
                                                 second_half_molecule='AGAAGG',
-                                                second_half_start_index=ssng3_second_start_index,
-                                                five_prime_snare=True)
+                                                second_half_start_index=ssng1_second_start_index,
+                                                five_prime_snare=False)
                 )

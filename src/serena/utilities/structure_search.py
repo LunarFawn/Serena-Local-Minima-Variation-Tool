@@ -5,6 +5,7 @@ File for handeling the searching for various types of structures
 from enum import Enum
 from dataclasses import dataclass
 from typing import List, Dict
+from rna_tools import SecondaryStructure
 
 import re
 from re import Match, Pattern
@@ -117,6 +118,25 @@ class SnareResults():
     snare_list:List[MoleculareSnareDef]
     number_snares:int
 
+class PairsDetection():
+    
+    def __init__(self) -> None:
+        pass
+    
+    def get_pairs(self, unbound_secondary_structure:Sara2SecondaryStructure, bound_secondary_structure:Sara2SecondaryStructure):
+        
+        try:
+            struct_bound = SecondaryStructure.parse_vienna_to_pairs(bound_secondary_structure.structure)
+        except:
+            struct_bound = ()
+            
+        try:
+            struct_unbound = SecondaryStructure.parse_vienna_to_pairs(unbound_secondary_structure.structure)
+        except:
+            struct_unbound = ()
+        
+        return struct_bound, struct_unbound
+
 class MolecularSnareDetector():
     
     def __init__(self) -> None:
@@ -140,6 +160,8 @@ class MolecularSnareDetector():
         """
         # unbound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=unbound_secondary_structure)
         # bound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=bound_secondary_structure)
+        
+        
         
         first_half_molecule:str = ''
         lenght_first_half:int = -1
@@ -430,7 +452,17 @@ class MolecularSnareDetector():
         # unbound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=unbound_secondary_structure)
         # bound_pairs_list:List[int] = self.nupack.sara2_pairs_list(secondary_structure=bound_secondary_structure)
         
-       
+        # tool:SecondaryStructure = SecondaryStructure()
+        # try:
+        #     struct_bound = SecondaryStructure.parse_vienna_to_pairs(bound_secondary_structure.structure, remove_gaps_in_ss=True)
+        # except:
+        #     struct_bound = ()
+        
+        # try:
+        #     struct_unbound = SecondaryStructure.parse_vienna_to_pairs(unbound_secondary_structure.structure, remove_gaps_in_ss=True)
+        # except:
+        #     struct_unbound = ()
+            
         lenght_first_half:int = len(first_half_molecule)
         lenght_second_half:int = len(second_half_molecule)
         
@@ -536,7 +568,7 @@ class MolecularSnareDetector():
         #now return result
        
         
-        return new_snare    
+        return new_snare 
 
                 
             
