@@ -276,13 +276,15 @@ class InvestigatorReportGeneration():
                 label_high = f'> {str(med_structs_num)} and < {str(high_structs_num)} stucts'
                 label_obsurde=f'> {str(high_structs_num)} stucts'
                 
+                fontsize_plots:str ='xx-large'
+                
             if score_type == ScoreType.FOLDCHANGE:               
                 # ax[plt_index].scatter(result_list, result_fold_change, c='blue')
                 ax[plt_index].scatter(low_structs, result_fold_change_low_structs, color='green', marker=MarkerStyle(low_marker, 'none'), label=label_low)
                 ax[plt_index].scatter(med_structs, result_fold_change_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, result_fold_change_high_structs, color='black' ,marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Foldchange")
+                ax[plt_index].set_ylabel("Foldchange",fontsize=fontsize_plots)
                 filename_type = 'Foldchange'
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(result_fold_change_low_structs + result_fold_change_med_structs + result_fold_change_high_structs + result_fold_change_obsurd_structs)+1)
@@ -292,7 +294,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, baseline_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, baseline_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Eterna Baseline subscore")
+                ax[plt_index].set_ylabel("Eterna Baseline subscore",fontsize=fontsize_plots)
                 filename_type = 'Baseline'
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(baseline_low_structs + baseline_med_structs + baseline_high_structs + baseline_obsurd_structs)+1)
@@ -302,7 +304,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, folding_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, folding_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Eterna Folding subscore")
+                ax[plt_index].set_ylabel("Eterna Folding subscore",fontsize=fontsize_plots)
                 filename_type = 'Folding'
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(folding_low_structs + folding_med_structs + folding_high_structs + folding_obsurd_structs)+1)
@@ -312,7 +314,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, switch_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Eterna Switching subscore")
+                ax[plt_index].set_ylabel("Eterna Switching subscore",fontsize=fontsize_plots)
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(switch_low_structs + switch_med_structs + switch_high_structs + switch_obsurd_structs)+1)
                 filename_type = 'Switching'
@@ -322,7 +324,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, kdone_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("KDON")
+                ax[plt_index].set_ylabel("KDON",fontsize=fontsize_plots)
                 filename_type = 'KDON'
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(kdone_low_structs + kdone_med_structs + kdone_high_structs + kdone_obsurd_structs)+1)
@@ -332,7 +334,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, kdoff_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("KDOFF")
+                ax[plt_index].set_ylabel("KDOFF",fontsize=fontsize_plots)
                 filename_type = 'KDOFF'
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(kdoff_low_structs + kdoff_med_structs + kdoff_high_structs + kdoff_obsurd_structs)+1)
@@ -342,7 +344,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, eterna_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, eterna_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'), label=label_high)
                 ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Eterna Score")
+                ax[plt_index].set_ylabel("Eterna Design Score",fontsize=fontsize_plots)
                 filename_type = 'Eterna'
                 # ax[plt_index].set_ymargin(.1)
                 # ax[plt_index].set_ylim(0, max(eterna_low_structs + eterna_med_structs + eterna_high_structs + eterna_obsurd_structs)+1)
@@ -352,7 +354,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, serena_basic_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Serena Basic Score")
+                ax[plt_index].set_ylabel("Serena Basic Score",fontsize=fontsize_plots)
                 # ax[plt_index].set_ylim(-20, 20)
                 filename_type = 'Basic'
                 # ax[plt_index].set_ymargin(.1)
@@ -363,7 +365,7 @@ class InvestigatorReportGeneration():
                 ax[plt_index].scatter(med_structs, serena_advanced_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
                 ax[plt_index].scatter(high_structs, serena_advanced_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
                 ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                ax[plt_index].set_ylabel("Serena Basic plus Advanced Score")
+                ax[plt_index].set_ylabel("Serena Basic plus Advanced Score",fontsize=fontsize_plots)
                 filename_type = 'Advanced' 
                 # ax[plt_index].set_ylim(-20, 20) 
                 # ax[plt_index].set_ylim(-20, 20) 
@@ -396,9 +398,11 @@ class InvestigatorReportGeneration():
         
     def generate_nuc_count_plot(self, timestr:str, data:List[ArchiveInvestigatorData], source_data:List[ArchiveData], attr:archiveType, nuc_count_name:str, x_string:str, x_range:float, training:bool = True, score_type:ScoreType=ScoreType.FOLDCHANGE, snare_binding:SnareBinding=None ):
         
-        
+        fontsize_plots =55
+        fontsize_ticks = 26#25
+        legend_size:int = 25
         #find how many enesmble energy groups there are
-        do_all_designs:bool = False
+        do_all_designs:bool = True
         only_2_kcal:bool = True
         
         if only_2_kcal is False:
@@ -410,14 +414,16 @@ class InvestigatorReportGeneration():
         ax:plt = None
         ax:Axes
         fig:Figure
-        fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(15, 15))
+        fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(50, 15))
         subtitle_filename:str = ''
         if attr == archiveType.STATIC_PRIMES:
             subtitle_filename = f'{nuc_count_name}_to_total'
         else:
             subtitle_filename = nuc_count_name
-        fig.suptitle(subtitle_filename)
-        fig.supxlabel(x_string)
+        
+        subtitle_filename = f'{data[0].design_info.design_info.Puzzle_Name} {subtitle_filename} All Designs'
+        fig.suptitle(subtitle_filename, fontsize=fontsize_plots)
+        fig.supxlabel(x_string, fontsize=fontsize_plots)
         
         if len(fig.axes) == 1:
             ax = [ax]
@@ -502,7 +508,8 @@ class InvestigatorReportGeneration():
             result_fold_change_high_structs:List[float] = []
             result_fold_change_obsurd_structs:List[float] = []
             
-            ax[plt_index].set_xlim(-.4, x_range+.05)
+            # ax[plt_index].set_xlim(-.35, x_range+.05)
+            ax[plt_index].set_xlim(-.02, x_range+.02)
             
             for index, design in enumerate(data):
                 if training is True:
@@ -561,9 +568,12 @@ class InvestigatorReportGeneration():
                             new_attr_value = -.05
                         else:
                             new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)
-                        x_tickes = np.arange(-0.35, x_range+.05, 0.05)
+                        # x_tickes = np.arange(-0.35, x_range+.05, 0.05)
+                        # x_tickes = np.arange(-0.10, x_range+.05, 0.05)
+                        x_tickes = np.arange(0, x_range+.02, 0.02)
                         if 'last_' in nuc_count_name and '_last' not in nuc_count_name:
-                            x_tickes = np.arange(-0.35, x_range+.2, 0.2)
+                            # x_tickes = np.arange(-0.35, x_range+.2, 0.2)
+                             x_tickes = np.arange(-0.20, x_range+.2, 0.2)
                         ax[plt_index].set_xticks(x_tickes)
                         
                         
@@ -597,7 +607,8 @@ class InvestigatorReportGeneration():
                             static__nuc_ratio:float = float(getattr(static_primes_nuc_count, nuc_count_name)) / design.investigator.lmv_references.mfe_structure.nuc_count
                             
                             new_attr_value = static__nuc_ratio
-                        x_tickes = np.arange(-0.35, x_range+.05, 0.05)
+                        x_tickes = np.arange(0, x_range+.02, 0.02)
+                        # x_tickes = np.arange(-0.35, x_range+.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
                     
                     elif attr == archiveType.SNARE:
@@ -632,8 +643,11 @@ class InvestigatorReportGeneration():
                                 new_attr_value = snare_nuc_ratio
                             else:
                                 new_attr_value = -.1
-                            
-                        x_tickes = np.arange(-.35, x_range +.05, 0.05)
+                                
+                        x_tickes = np.arange(0, x_range+.02, 0.02)        
+                        # x_tickes = np.arange(-0.10, x_range+.05, 0.05)
+                        
+                        # x_tickes = np.arange(-.35, x_range +.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
                         # ax[plt_index].set_xlim(-., x_range+.05)
                         # else:
@@ -720,114 +734,143 @@ class InvestigatorReportGeneration():
                 label_high = f'> {str(med_structs_num)} and < {str(high_structs_num)} stucts'
                 label_obsurde=f'> {str(high_structs_num)} stucts'
                 
+                fil_style:str = 'none'
+                # # marker_size = 
+                # marker_size = [20]*len(x)
+                new_size:int = 60*7
+                # low_structs_size = [new_size]*len(low_structs)
+                # med_structs_size = [new_size]*len(med_structs)
+                # high_structs_size = [new_size]*len(high_structs)
+                # obsurd_structs_size = [new_size]*len(obsurd_structs)
+                low_structs_size = new_size *2
+                med_structs_size = new_size
+                high_structs_size = new_size
+                obsurd_structs_size = new_size
                 if score_type == ScoreType.FOLDCHANGE:               
-                    # ax[plt_index].scatter(result_list, result_fold_change, c='blue')
-                    ax[plt_index].scatter(low_structs, result_fold_change_low_structs, color='green', marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, result_fold_change_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, result_fold_change_high_structs, color='black' ,marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Foldchange")
+                    # ax[plt_index].scatter(result_list, result_fold_change, c='blue')                    
+                    ax[plt_index].scatter(obsurd_structs, result_fold_change_obsurd_structs, color='red' ,marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, result_fold_change_high_structs, color='black' ,marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, result_fold_change_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size, label=label_medium)
+                    ax[plt_index].scatter(low_structs, result_fold_change_low_structs, color='green', marker=MarkerStyle(low_marker, fil_style), s=low_structs_size, label=label_low)
+                    ax[plt_index].set_ylabel("Foldchange",fontsize=fontsize_plots)
                     filename_type = 'Foldchange'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(result_fold_change_low_structs + result_fold_change_med_structs + result_fold_change_high_structs + result_fold_change_obsurd_structs)+1)
                 elif score_type == ScoreType.BASELINE:
                     # ax[plt_index].scatter(result_list, baseline_scores, color='red')
-                    ax[plt_index].scatter(low_structs, baseline_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, baseline_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, baseline_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Eterna Baseline subscore")
+                    
+                    ax[plt_index].scatter(obsurd_structs, baseline_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size, label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, baseline_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, baseline_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, baseline_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style), s=low_structs_size, label=label_low)
+                    
+                    ax[plt_index].set_ylabel("Eterna Baseline subscore",fontsize=fontsize_plots)
                     filename_type = 'Baseline'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(baseline_low_structs + baseline_med_structs + baseline_high_structs + baseline_obsurd_structs)+1)
                 elif score_type == ScoreType.FOLDING:
                     # ax[plt_index].scatter(result_list, folding_scores, color='green')
-                    ax[plt_index].scatter(low_structs, folding_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, folding_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, folding_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Eterna Folding subscore")
+                    ax[plt_index].scatter(obsurd_structs, folding_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, folding_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, folding_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, folding_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style), s=low_structs_size, label=label_low)
+                    
+                    
+                    ax[plt_index].set_ylabel("Eterna Folding subscore",fontsize=fontsize_plots)
                     filename_type = 'Folding'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(folding_low_structs + folding_med_structs + folding_high_structs + folding_obsurd_structs)+1)
                 elif score_type == ScoreType.SWITCH:
                     # ax[plt_index].scatter(result_list, switch_scores, color='brown')
-                    ax[plt_index].scatter(low_structs, switch_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, switch_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Eterna Switching subscore")
+                    ax[plt_index].scatter(obsurd_structs, switch_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, switch_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, switch_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, switch_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style),s=low_structs_size, label=label_low)
+                    
+                    
+                    
+                    ax[plt_index].set_ylabel("Eterna Switching subscore",fontsize=fontsize_plots)
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(switch_low_structs + switch_med_structs + switch_high_structs + switch_obsurd_structs)+1)
                     filename_type = 'Switching'
                 elif score_type == ScoreType.KDON:
                     # ax[plt_index].scatter(result_list, kdone_values, color='purple')
-                    ax[plt_index].scatter(low_structs, kdone_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, kdone_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("KDON")
+                    
+                    ax[plt_index].scatter(obsurd_structs, kdone_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, kdone_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, kdone_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, kdone_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style),s=low_structs_size, label=label_low)
+                    
+                    
+                    
+                    ax[plt_index].set_ylabel("KDON",fontsize=fontsize_plots)
                     filename_type = 'KDON'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(kdone_low_structs + kdone_med_structs + kdone_high_structs + kdone_obsurd_structs)+1)
                 elif score_type == ScoreType.KDOFF:
                     # ax[plt_index].scatter(result_list, kdoff_values, color='black')
-                    ax[plt_index].scatter(low_structs, kdoff_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, kdoff_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("KDOFF")
+                    ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, kdoff_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(low_structs, kdoff_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style),s=low_structs_size, label=label_low)
+                    ax[plt_index].scatter(med_structs, kdoff_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    
+                    
+                    ax[plt_index].set_ylabel("KDOFF",fontsize=fontsize_plots)
                     filename_type = 'KDOFF'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(kdoff_low_structs + kdoff_med_structs + kdoff_high_structs + kdoff_obsurd_structs)+1)
                 elif score_type == ScoreType.ETERNA:
                     # ax[plt_index].scatter(result_list, eterna_values, color='black')
-                    ax[plt_index].scatter(low_structs, eterna_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, eterna_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, eterna_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'), label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Eterna Score")
+                    ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, eterna_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style),  s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, eterna_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, eterna_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style),s=low_structs_size, label=label_low)
+                    
+                    ax[plt_index].set_ylabel("Eterna Score",fontsize=fontsize_plots)
                     filename_type = 'Eterna'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(0, max(eterna_low_structs + eterna_med_structs + eterna_high_structs + eterna_obsurd_structs)+1)
                 elif score_type == ScoreType.BASIC:
                     # ax[plt_index].scatter(result_list, serena_basic_values, color='black')
-                    ax[plt_index].scatter(low_structs, serena_basic_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, serena_basic_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Serena Basic Score")
+                    ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, serena_basic_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, serena_basic_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, serena_basic_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style),s=low_structs_size, label=label_low)
+                    ax[plt_index].set_ylabel("Serena Basic Score",fontsize=fontsize_plots)
                     # ax[plt_index].set_ylim(-20, 20)
                     filename_type = 'Basic'
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(min(serena_basic_low_structs + serena_basic_med_structs + serena_basic_high_structs + serena_basic_obsurd_structs)+1, max(serena_basic_low_structs + serena_basic_med_structs + serena_basic_high_structs + serena_basic_obsurd_structs)+1)
                 elif score_type == ScoreType.ADVANCED:
                     # ax[plt_index].scatter(result_list, serena_advanced_values, color='black')
-                    ax[plt_index].scatter(low_structs, serena_advanced_low_structs, color='green',marker=MarkerStyle(low_marker, 'none'), label=label_low)
-                    ax[plt_index].scatter(med_structs, serena_advanced_med_structs, color='blue',marker=MarkerStyle(marker_style, 'none'),label=label_medium)
-                    ax[plt_index].scatter(high_structs, serena_advanced_high_structs, color='black',marker=MarkerStyle(medium_marker, 'none'),label=label_high)
-                    ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(high_marker, 'none'),label=label_obsurde)
-                    ax[plt_index].set_ylabel("Serena Basic plus Advanced Score")
+                    ax[plt_index].scatter(obsurd_structs, serena_advanced_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
+                    ax[plt_index].scatter(high_structs, serena_advanced_high_structs, color='black',marker=MarkerStyle(medium_marker, fil_style), s=high_structs_size,label=label_high)
+                    ax[plt_index].scatter(med_structs, serena_advanced_med_structs, color='blue',marker=MarkerStyle(marker_style, fil_style), s=med_structs_size,label=label_medium)
+                    ax[plt_index].scatter(low_structs, serena_advanced_low_structs, color='green',marker=MarkerStyle(low_marker, fil_style),s=low_structs_size, label=label_low)
+                    ax[plt_index].set_ylabel("Serena Basic plus Advanced Score",fontsize=fontsize_plots)
                     filename_type = 'Advanced' 
                     # ax[plt_index].set_ylim(-20, 20) 
                     # ax[plt_index].set_ylim(-20, 20) 
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(min(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1, max(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1)
-                ax[plt_index].set_ymargin(.05)
+                ax[plt_index].set_ymargin(.35) #.25
+               
                 # ax[plt_index].set_xmargin(.15)
                 
-            if attr == archiveType.RATIO or attr == archiveType.STATIC_PRIMES:
+            # if attr == archiveType.RATIO or attr == archiveType.STATIC_PRIMES:
                 
-                if 'last_' in nuc_count_name and '_last' not in nuc_count_name:
-                    ax[plt_index].legend(loc="upper right")
-                else:
-                    ax[plt_index].legend(loc="upper left")
-            else:
-                ax[plt_index].legend(loc="best")
+            #     if 'last_' in nuc_count_name and '_last' not in nuc_count_name:
+            #         ax[plt_index].legend(loc="upper right")
+            #     else:
+            #         ax[plt_index].legend(loc="upper left")
+            # else:
+            #     ax[plt_index].legend(loc="best")
+            
+            ax[plt_index].legend(loc="upper left")
             
             kcal_delta = plt_index +1
             stuff = f'{kcal_delta-1}kcal to {kcal_delta}kcal delta from MFE'
-            ax[plt_index].set_xlabel(stuff)
+            ax[plt_index].set_xlabel(stuff, fontsize=fontsize_plots)
             
             
         
@@ -839,7 +882,11 @@ class InvestigatorReportGeneration():
                 bottom=.1,  
                 top=.9, 
                 )       
-        
+        plt.grid(linewidth = 2.5, linestyle = '--',)
+        plt.rc('legend', fontsize=legend_size)
+        # plt.rc('axes', labelsize='medium')
+        plt.rc('xtick', labelsize=fontsize_ticks)    # fontsize of the tick labels
+        plt.rc('ytick', labelsize=fontsize_ticks)    # fontsize of the tick labels
         save_dir:str = f'/home/rnauser/repo/Serena-Local-Minima-Variation-Tool/src/tests/bin/{timestr}'
         if os.path.isdir(save_dir) == False:
             os.makedirs(save_dir)
@@ -895,11 +942,11 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            # if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
             
-            #     source_data.append(temp_archive)
-            #     pnas_data.append(archived_data)
-            #     break
+                source_data.append(temp_archive)
+                pnas_data.append(archived_data)
+                break
         
              
             
@@ -1122,11 +1169,11 @@ ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
 
-for kcla_index in [1,2,7]: #[1]:#
+for kcla_index in [1]:#[1,2,7]: #
     for sublab_index in [1,2,3]:
         sublab_name:str = f'SSNG{sublab_index}'
         Kcal_range:int = kcla_index
-        test_name:str = 'Check_entire_7_kcal_Good_Designs'#'moleculare_snare_paper_Check_Fold_good_bound'
+        test_name:str = 'Check_entire_7_kcal_All_Designs'#'moleculare_snare_paper_Check_Fold_good_bound'
         if sublab_name == 'SSNG3':
             first_half_value:int = ssng3_first_start_index
             second_half_value:int = ssng3_second_start_index
