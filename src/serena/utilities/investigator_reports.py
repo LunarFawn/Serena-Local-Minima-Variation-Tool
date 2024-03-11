@@ -398,7 +398,7 @@ class InvestigatorReportGeneration():
         
         
         #find how many enesmble energy groups there are
-        
+        do_all_designs:bool = False
         only_2_kcal:bool = True
         
         if only_2_kcal is False:
@@ -502,7 +502,7 @@ class InvestigatorReportGeneration():
             result_fold_change_high_structs:List[float] = []
             result_fold_change_obsurd_structs:List[float] = []
             
-            ax[plt_index].set_xlim(-.35, x_range+.05)
+            ax[plt_index].set_xlim(-.4, x_range+.05)
             
             for index, design in enumerate(data):
                 if training is True:
@@ -557,8 +557,8 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) == 0:
-                            new_attr_value = -.2
+                        if len(struct_bound) == 0 and do_all_designs is False:
+                            new_attr_value = -.05
                         else:
                             new_attr_value = getattr(design.investigator.investigator_results.comparison_eval_results.ratios[plt_index], nuc_count_name)
                         x_tickes = np.arange(-0.35, x_range+.05, 0.05)
@@ -573,7 +573,7 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) == 0:
+                        if len(struct_bound) == 0 and do_all_designs is False:
                             new_attr_value = -5
                         else:
                             new_attr:EV = getattr(design.investigator.investigator_results.lmv_values.lmv_comps[plt_index], nuc_count_name)
@@ -589,8 +589,8 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) == 0:
-                            new_attr_value = -.2
+                        if len(struct_bound) == 0 and do_all_designs is False:
+                            new_attr_value = -.05
                         else:
                             static_primes_nuc_count:PrimeNucCounts = static_detector.find_3prime_5prime_static_system(unbound_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],#design.investigator.lmv_references.mfe_structure,
                                                                                                                         bound_structure=source_data[index].fmn_folded_weighted) #design.investigator.lmv_references.weighted_structures.structs[plt_index])
@@ -610,8 +610,8 @@ class InvestigatorReportGeneration():
                         struct_bound, unbound = self.pairs_detection.get_pairs(unbound_secondary_structure=design.investigator.lmv_references.weighted_structures.structs[plt_index],
                                                             bound_secondary_structure=source_data[index].fmn_folded_weighted)
                         
-                        if len(struct_bound) == 0:
-                            new_attr_value = -.2
+                        if len(struct_bound) == 0 and do_all_designs is False:
+                            new_attr_value = -.05
                         else:
                             snare_result = detector.measure_snare_stem_staticness(first_half_molecule=snare_binding.first_half_molecule,
                                                                                                     first_half_start_index=snare_binding.first_half_start_index,
@@ -631,7 +631,7 @@ class InvestigatorReportGeneration():
                                     snare_nuc_ratio:float = float(snare_result.snare_stem_nuc_count) / design.investigator.lmv_references.mfe_structure.nuc_count
                                 new_attr_value = snare_nuc_ratio
                             else:
-                                new_attr_value = -.3
+                                new_attr_value = -.1
                             
                         x_tickes = np.arange(-.35, x_range +.05, 0.05)
                         ax[plt_index].set_xticks(x_tickes)
@@ -813,7 +813,7 @@ class InvestigatorReportGeneration():
                     # ax[plt_index].set_ylim(-20, 20) 
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(min(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1, max(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1)
-                ax[plt_index].set_ymargin(.25)
+                ax[plt_index].set_ymargin(.05)
                 # ax[plt_index].set_xmargin(.15)
                 
             if attr == archiveType.RATIO or attr == archiveType.STATIC_PRIMES:
@@ -914,27 +914,27 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
     ratio_value:int = 1
     
     
-    for ratio in  archived_data.investigator.investigator_results.comparison_eval_results.ratios[0].__dict__:
-        ratio_value = 1
-        if 'last_' in ratio and '_last' not in ratio:
-            # temp_value = 5 
-            continue
+    # for ratio in  archived_data.investigator.investigator_results.comparison_eval_results.ratios[0].__dict__:
+    #     ratio_value = 1
+    #     if 'last_' in ratio and '_last' not in ratio:
+    #         # temp_value = 5 
+    #         continue
             
-        if 'to_both' in ratio:
-            # ratio_value = 5
-            continue
-        # else:
-        #     temp_value = ratio_value
+    #     if 'to_both' in ratio:
+    #         # ratio_value = 5
+    #         continue
+    #     # else:
+    #     #     temp_value = ratio_value
             
-        plot_investigaot.plot_all_ratio_plots(x_range=ratio_value,
-                                            data=pnas_data,
-                                            source_data=source_data, 
-                                            attr=archiveType.RATIO, 
-                                            nuc_count_name=ratio,
-                                            training=False,
-                                            timestr=timestr)
+    #     plot_investigaot.plot_all_ratio_plots(x_range=ratio_value,
+    #                                         data=pnas_data,
+    #                                         source_data=source_data, 
+    #                                         attr=archiveType.RATIO, 
+    #                                         nuc_count_name=ratio,
+    #                                         training=False,
+    #                                         timestr=timestr)
     
-    return
+    # return
     # if archived_data.design_info.wetlab_results.NumberOfClusters1 > 0:#200:
     snare_test_name:List[str] = ["moleculare_snare_nuc_to_total",'signal_fold_nuc_count_to_total']
     if snare_binding != None:
@@ -1122,11 +1122,11 @@ ssng1_second_start_index:int = 35
 ssng3_first_start_index:int = 43
 ssng3_second_start_index:int = 67
 
-for kcla_index in [1]:#[1,2,7]:
+for kcla_index in [1,2,7]: #[1]:#
     for sublab_index in [1,2,3]:
         sublab_name:str = f'SSNG{sublab_index}'
         Kcal_range:int = kcla_index
-        test_name:str = 'Check_all_ratios_All_Designs'#'moleculare_snare_paper_Check_Fold_good_bound'
+        test_name:str = 'Check_entire_7_kcal_Good_Designs'#'moleculare_snare_paper_Check_Fold_good_bound'
         if sublab_name == 'SSNG3':
             first_half_value:int = ssng3_first_start_index
             second_half_value:int = ssng3_second_start_index
