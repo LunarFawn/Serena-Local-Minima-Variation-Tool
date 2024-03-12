@@ -414,7 +414,7 @@ class InvestigatorReportGeneration():
         ax:plt = None
         ax:Axes
         fig:Figure
-        fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(50, 15))
+        fig, ax = plt.subplots(num_groups, constrained_layout=True, figsize=(50, 20))
         subtitle_filename:str = ''
         if attr == archiveType.STATIC_PRIMES:
             subtitle_filename = f'{nuc_count_name}_to_total'
@@ -734,7 +734,7 @@ class InvestigatorReportGeneration():
                 label_high = f'> {str(med_structs_num)} and < {str(high_structs_num)} stucts'
                 label_obsurde=f'> {str(high_structs_num)} stucts'
                 
-                fil_style:str = 'none'
+                fil_style:str = 'full'
                 # # marker_size = 
                 # marker_size = [20]*len(x)
                 new_size:int = 60*7
@@ -755,7 +755,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].set_ylabel("Foldchange",fontsize=fontsize_plots)
                     filename_type = 'Foldchange'
                     # ax[plt_index].set_ymargin(.1)
-                    # ax[plt_index].set_ylim(0, max(result_fold_change_low_structs + result_fold_change_med_structs + result_fold_change_high_structs + result_fold_change_obsurd_structs)+1)
+                    max_foldchange = max(result_fold_change_low_structs + result_fold_change_med_structs + result_fold_change_high_structs + result_fold_change_obsurd_structs)
+                    ax[plt_index].set_ylim(-2, max_foldchange*1.35)
                 elif score_type == ScoreType.BASELINE:
                     # ax[plt_index].scatter(result_list, baseline_scores, color='red')
                     
@@ -806,7 +807,7 @@ class InvestigatorReportGeneration():
                     ax[plt_index].set_ylabel("KDON",fontsize=fontsize_plots)
                     filename_type = 'KDON'
                     # ax[plt_index].set_ymargin(.1)
-                    # ax[plt_index].set_ylim(0, max(kdone_low_structs + kdone_med_structs + kdone_high_structs + kdone_obsurd_structs)+1)
+                    ax[plt_index].set_ylim(-50, max(kdone_low_structs + kdone_med_structs + kdone_high_structs + kdone_obsurd_structs)*1.35)
                 elif score_type == ScoreType.KDOFF:
                     # ax[plt_index].scatter(result_list, kdoff_values, color='black')
                     ax[plt_index].scatter(obsurd_structs, kdoff_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
@@ -818,7 +819,7 @@ class InvestigatorReportGeneration():
                     ax[plt_index].set_ylabel("KDOFF",fontsize=fontsize_plots)
                     filename_type = 'KDOFF'
                     # ax[plt_index].set_ymargin(.1)
-                    # ax[plt_index].set_ylim(0, max(kdoff_low_structs + kdoff_med_structs + kdoff_high_structs + kdoff_obsurd_structs)+1)
+                    ax[plt_index].set_ylim(-50, max(kdoff_low_structs + kdoff_med_structs + kdoff_high_structs + kdoff_obsurd_structs)*1.35)
                 elif score_type == ScoreType.ETERNA:
                     # ax[plt_index].scatter(result_list, eterna_values, color='black')
                     ax[plt_index].scatter(obsurd_structs, eterna_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
@@ -829,7 +830,8 @@ class InvestigatorReportGeneration():
                     ax[plt_index].set_ylabel("Eterna Score",fontsize=fontsize_plots)
                     filename_type = 'Eterna'
                     # ax[plt_index].set_ymargin(.1)
-                    # ax[plt_index].set_ylim(0, max(eterna_low_structs + eterna_med_structs + eterna_high_structs + eterna_obsurd_structs)+1)
+                    # max_kdoff = max(eterna_low_structs + eterna_med_structs + eterna_high_structs + eterna_obsurd_structs)
+                    # ax[plt_index].set_ylim(-50, max_kdoff*1.35)
                 elif score_type == ScoreType.BASIC:
                     # ax[plt_index].scatter(result_list, serena_basic_values, color='black')
                     ax[plt_index].scatter(obsurd_structs, serena_basic_obsurd_structs, color='red',marker=MarkerStyle(high_marker, fil_style), s=obsurd_structs_size,label=label_obsurde)
@@ -853,7 +855,21 @@ class InvestigatorReportGeneration():
                     # ax[plt_index].set_ylim(-20, 20) 
                     # ax[plt_index].set_ymargin(.1)
                     # ax[plt_index].set_ylim(min(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1, max(serena_advanced_low_structs + serena_advanced_med_structs + serena_advanced_high_structs + serena_advanced_obsurd_structs)+1)
-                ax[plt_index].set_ymargin(.35) #.25
+                
+                if score_type == ScoreType.FOLDCHANGE:  
+                    # ax[plt_index].set_ylim(-10,210)
+                    y_tickes = np.arange(0, 205, 5)
+                    ax[plt_index].set_yticks(y_tickes)
+                    # plt.margins()
+                elif score_type == ScoreType.KDOFF:  
+                    # ax[plt_index].set_ylim(-100,1800)
+                    y_tickes = np.arange(0, 1850, 50)
+                    ax[plt_index].set_yticks(y_tickes)
+                elif score_type == ScoreType.KDON:
+                    y_tickes = np.arange(0, 850, 50)
+                    ax[plt_index].set_yticks(y_tickes)
+                else:
+                    ax[plt_index].set_ymargin(.35) #.25
                
                 # ax[plt_index].set_xmargin(.15)
                 
@@ -942,11 +958,13 @@ def plot_investigator(sublab:str, test_name:str, cluster_size_threshold:int, pna
                                              use_db=True)
             temp_archive.fmn_folded_weighted = backup_records.data.fmn_folded_weighted
             
-            if archived_data.design_info.wetlab_results.Eterna_Score == 100:
-            
-                source_data.append(temp_archive)
-                pnas_data.append(archived_data)
-                break
+            do_debug_test:bool = False
+            if do_debug_test is True:       
+                if archived_data.design_info.wetlab_results.Eterna_Score == 100:
+                
+                    source_data.append(temp_archive)
+                    pnas_data.append(archived_data)
+                    break
         
              
             
@@ -1173,7 +1191,7 @@ for kcla_index in [1]:#[1,2,7]: #
     for sublab_index in [1,2,3]:
         sublab_name:str = f'SSNG{sublab_index}'
         Kcal_range:int = kcla_index
-        test_name:str = 'Check_entire_7_kcal_All_Designs'#'moleculare_snare_paper_Check_Fold_good_bound'
+        test_name:str = 'Check_entire_7_kcal_All_Designs_filled_marker'#'moleculare_snare_paper_Check_Fold_good_bound'
         if sublab_name == 'SSNG3':
             first_half_value:int = ssng3_first_start_index
             second_half_value:int = ssng3_second_start_index
